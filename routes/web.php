@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SignInController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -96,4 +97,37 @@ Route::middleware('web')->group(function () {
             ]);
         })->name('dashboard.updates');
     });
+});
+
+Route::get('/run-migrate', function () {
+    Artisan::call('migrate --force');
+    return response('Migrations complete!', 200)->header('Content-Type', 'text/plain');
+});
+
+Route::get('/run-seed', function () {
+    Artisan::call('db:seed --force');
+    return response('Database seeding complete!', 200)->header('Content-Type', 'text/plain');
+});
+
+Route::get('/clear-cache', function () {
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    return response('All caches cleared!', 200)->header('Content-Type', 'text/plain');
+});
+
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return response('Storage link created!', 200)->header('Content-Type', 'text/plain');
+});
+
+Route::get('/config-cache', function () {
+    Artisan::call('config:cache');
+    return response('Config cached!', 200)->header('Content-Type', 'text/plain');
+});
+
+Route::get('/optimize', function () {
+    Artisan::call('optimize');
+    return response('Application optimized!', 200)->header('Content-Type', 'text/plain');
 });
