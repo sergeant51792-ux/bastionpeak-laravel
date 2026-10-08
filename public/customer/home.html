@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Home - Bastion Peak</title>
+  <meta name="description" content="Your Bastion Peak account dashboard.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .carousel-wrap { position: relative; }
+    .carousel-track {
+      display: flex;
+      gap: var(--space-3);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: var(--space-1) var(--side-pad) var(--space-3);
+      margin: 0 calc(-1 * var(--side-pad));
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-slide {
+      flex: 0 0 calc(100% - var(--space-8));
+      scroll-snap-align: center;
+      min-width: 0;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: var(--line);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: background var(--duration-fast), width var(--duration-fast);
+    }
+    .carousel-dot.active {
+      background: #fff;
+      width: 20px;
+    }
+    .carousel-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: var(--space-2);
+    }
+    .account-card { border-radius: 24px; padding: 20px; color: #fff; position: relative; overflow: hidden; min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; transition: background-color var(--duration-slow); }
+    .account-card[data-color="ledger-green"] { background-color: #0E6E63; }
+    .account-card[data-color="amber"] { background-color: #9A6212; }
+    .account-card[data-color="iris"] { background-color: #5B4BC4; }
+    .account-card[data-color="ink"] { background-color: #3A4B61; }
+    .ac-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .ac-type { font-size: 11px; font-weight: 500; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.06em; }
+    .ac-currency { font-size: 12px; font-weight: 500; opacity: 0.7; }
+    .ac-name { font-size: 14px; font-weight: 500; opacity: 0.95; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+    .ac-name .masked { font-family: monospace; font-size: 12px; opacity: 0.7; }
+    .ac-balance-label { font-size: 12px; opacity: 0.8; font-weight: 500; margin-top: 12px; }
+    .ac-balance { font-size: 28px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; margin-top: 2px; }
+    .ac-footer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; opacity: 0.85; margin-top: 12px; }
+    .ac-status { display: flex; align-items: center; gap: 4px; }
+    .ac-eye { background: none; border: none; padding: 4px; color: #fff; opacity: 0.85; cursor: pointer; display: flex; align-items: center; border-radius: 4px; }
+    .ac-eye svg { width: 18px; height: 18px; }
+    .ac-extra { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+    .ac-rate { font-size: 12px; opacity: 0.7; margin-top: 6px; }
+    .quick-actions-strip { display: flex; justify-content: space-between; padding: 16px 20px; gap: 12px; }
+    .quick-action { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); font-size: 12px; font-weight: 500; text-decoration: none; }
+    .quick-action-circle { width: 56px; height: 56px; border-radius: 9999px; background: var(--surface-raised); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; transition: background var(--duration-fast); }
+    .quick-action:active .quick-action-circle { transform: scale(0.95); }
+    .quick-action:hover .quick-action-circle { background: var(--line); }
+    .quick-action svg { width: 22px; height: 22px; color: var(--text); }
+    .hscroll-strip { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 4px 20px; margin: 0 -20px; }
+    .hscroll-strip::-webkit-scrollbar { display: none; }
+    .hscroll-tile { flex: 0 0 auto; width: 72px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: var(--text); font-size: 12px; font-weight: 500; text-align: center; }
+    .hscroll-tile-avatar { width: 56px; height: 56px; border-radius: 9999px; background: var(--surface-raised); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--text-muted); }
+    .hscroll-tile-avatar.dashed { border-style: dashed; background: none; }
+    .hscroll-tile-avatar.dashed svg { width: 22px; height: 22px; color: var(--text-muted); }
+    .hscroll-tile-name { max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .in-progress-strip { margin-top: 20px; }
+    .in-progress-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 8px; cursor: pointer; transition: background var(--duration-fast); min-height: 44px; text-decoration: none; color: var(--text); }
+    .in-progress-item:last-child { margin-bottom: 0; }
+    .in-progress-info { flex: 1; min-width: 0; }
+    .in-progress-title { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .in-progress-account { font-size: 12px; color: var(--text-muted); }
+    .in-progress-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .in-progress-amount { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+    .section-header-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .section-header-link { font-size: 13px; color: var(--text-muted); text-decoration: none; font-weight: 500; }
+    .txn-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); cursor: pointer; min-height: 44px; transition: background var(--duration-fast); }
+    .txn-row:last-child { border-bottom: none; }
+    .txn-icon { width: 40px; height: 40px; border-radius: 9999px; background: var(--surface-raised); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 600; font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
+    .txn-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .txn-title { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .txn-meta { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .txn-amount { font-size: 15px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; color: var(--text); }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: calc(72px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--surface); border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-around; z-index: 20; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 72px; color: var(--text-muted); font-size: 11px; font-weight: 500; position: relative; transition: color var(--duration-fast); text-decoration: none; }
+    .nav-item.active { color: var(--text); }
+    .nav-item svg { width: 22px; height: 22px; }
+    .nav-badge { position: absolute; top: 4px; right: calc(50% - 16px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9999px; background: var(--status-rejected); color: var(--text); font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .home-raised { position: relative; top: -12px; }
+    .home-raised .quick-action-circle { background: var(--text); border-color: var(--text); }
+    .home-raised svg { color: var(--bg); }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="home-header">
+      <div class="home-header-left">
+        <div class="avatar avatar-md" aria-hidden="true">AO</div>
+        <div>
+          <div class="home-greeting" id="greeting">Good morning</div>
+          <div class="home-name">Amara Okafor</div>
+        </div>
+      </div>
+      <div class="home-header-actions">
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <button class="icon-btn" id="bell-btn" aria-label="Notifications" title="Notifications" style="position:relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="nav-badge" style="position:static;min-width:auto;height:auto;padding:0;font-size:0;line-height:0;">4</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="carousel-wrap">
+        <div class="carousel-track" id="account-carousel" role="region" aria-label="Account carousel" aria-roledescription="carousel">
+          <!-- Slide 1: Main wallet -->
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Account 1 of 3, Main wallet">
+            <div class="account-card" data-color="ledger-green" data-index="0">
+              <div class="account-card-inner">
+                <div>
+                  <div class="ac-top">
+                    <span class="ac-type">Main wallet</span>
+                    <span class="ac-currency">USD</span>
+                  </div>
+                  <div class="ac-name">Amara Okafor <span class="masked">•••• 8388</span></div>
+                </div>
+                <div>
+                  <div class="ac-balance-label">Available balance</div>
+                  <div class="ac-balance" id="balance-0">$64,600.00</div>
+                  <div class="ac-footer">
+                    <div class="ac-status">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <span>Active</span>
+                    </div>
+                    <span>Updated 21 Nov</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Bitcoin -->
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Account 2 of 3, Bitcoin wallet">
+            <div class="account-card" data-color="amber" data-index="1">
+              <div class="account-card-inner">
+                <div>
+                  <div class="ac-top">
+                    <span class="ac-type">Bitcoin wallet</span>
+                    <span class="ac-currency">BTC</span>
+                  </div>
+                  <div class="ac-name">Amara Okafor</div>
+                </div>
+                <div>
+                  <div class="ac-balance-label">Balance</div>
+                  <div class="ac-balance">0.408736 BTC</div>
+                  <div style="font-size:14px;opacity:0.85;margin-top:2px;">About $35,178.44</div>
+                  <div class="ac-rate">1 BTC = $86,069 Live rate</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Travel only sub-account -->
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Account 3 of 3, Travel only">
+            <div class="account-card" data-color="iris" data-index="2">
+              <div class="account-card-inner">
+                <div>
+                  <div class="ac-top">
+                    <span class="ac-type">Travel only</span>
+                    <span class="ac-currency">USD</span>
+                  </div>
+                  <div class="ac-name">Amara Okafor <span class="masked">•••• 2210</span></div>
+                </div>
+                <div>
+                  <div class="ac-balance-label">Available balance</div>
+                  <div class="ac-balance">$4,200.00</div>
+                  <div class="ac-extra">Spend at: Skyline Travel +2</div>
+                  <div class="ac-footer">
+                    <div class="ac-status">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <span>Active</span>
+                    </div>
+                    <span>Updated 21 Nov</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-dots" id="carousel-dots" aria-label="Account navigation">
+        <button class="carousel-dot active" aria-label="Account 1" data-index="0"></button>
+        <button class="carousel-dot" aria-label="Account 2" data-index="1"></button>
+        <button class="carousel-dot" aria-label="Account 3" data-index="2"></button>
+      </div>
+      <div class="carousel-hint" id="carousel-hint">Swipe to switch accounts</div>
+
+      <nav class="quick-actions-strip" aria-label="Quick actions">
+        <a href="topup.html" class="quick-action">
+          <div class="quick-action-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <span>Top up</span>
+        </a>
+        <a href="pay.html" class="quick-action">
+          <div class="quick-action-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+          <span>Pay</span>
+        </a>
+        <a href="receive.html" class="quick-action">
+          <div class="quick-action-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+          </div>
+          <span>Receive</span>
+        </a>
+        <a href="#" class="quick-action" id="more-action">
+          <div class="quick-action-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+          <span>More</span>
+        </a>
+      </nav>
+
+      <!-- In progress -->
+      <div class="in-progress-strip" id="in-progress-section">
+        <div class="section-header">
+          <span class="section-header-title">In progress</span>
+        </div>
+        <a href="transfer.html" class="in-progress-item">
+          <div class="in-progress-info">
+            <div class="in-progress-title">Deposit $2,000</div>
+            <div class="in-progress-account">Main wallet</div>
+          </div>
+          <div class="in-progress-right">
+            <span class="in-progress-amount" style="color:var(--status-pending);">+$2,000.00</span>
+            <span class="status-pill status-pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>In review</span>
+            </span>
+          </div>
+        </a>
+        <a href="transfer.html" class="in-progress-item">
+          <div class="in-progress-info">
+            <div class="in-progress-title">Payment $340</div>
+            <div class="in-progress-account">Main wallet</div>
+          </div>
+          <div class="in-progress-right">
+            <span class="in-progress-amount">-$340.00</span>
+            <span class="status-pill status-pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>In review</span>
+            </span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Approved payees -->
+      <div class="mt-6">
+        <div class="section-header">
+          <span class="section-header-title">Approved payees</span>
+          <a href="#" class="section-header-link">View all</a>
+        </div>
+        <div class="hscroll-strip">
+          <a href="messages.html?prefill=Ask+to+add" class="hscroll-tile">
+            <div class="hscroll-tile-avatar dashed">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <span class="hscroll-tile-name">Ask to add</span>
+          </a>
+          <a href="pay.html?payee=greenfield" class="hscroll-tile">
+            <div class="hscroll-tile-avatar">G</div>
+            <span class="hscroll-tile-name">Greenfield Foods</span>
+          </a>
+          <a href="pay.html?payee=skyline" class="hscroll-tile">
+            <div class="hscroll-tile-avatar">S</div>
+            <span class="hscroll-tile-name">Skyline Travel</span>
+          </a>
+          <a href="pay.html?payee=officemax" class="hscroll-tile">
+            <div class="hscroll-tile-avatar">O</div>
+            <span class="hscroll-tile-name">OfficeMax</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="recent-activity mt-6">
+        <div class="section-header">
+          <span class="section-header-title">Recent activity</span>
+          <a href="activity.html" class="section-header-link">View all</a>
+        </div>
+        <div class="card" style="padding:0 20px;">
+          <a href="activity.html" class="txn-row" style="text-decoration:none;color:inherit;">
+            <div class="txn-icon">G</div>
+            <div class="txn-body">
+              <div class="txn-title">Greenfield Foods</div>
+              <div class="txn-meta">In review</div>
+            </div>
+            <div class="txn-amount" style="margin-left:auto;padding-left:12px;">-$340.00</div>
+          </a>
+          <a href="activity.html" class="txn-row" style="text-decoration:none;color:inherit;">
+            <div class="txn-icon" style="background:rgba(63,191,127,0.12);color:var(--status-active);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="txn-body">
+              <div class="txn-title">Deposit</div>
+              <div class="txn-meta">Credited, 9:41 am</div>
+            </div>
+            <div class="txn-amount" style="margin-left:auto;padding-left:12px;color:var(--text);">+$2,000.00</div>
+          </a>
+          <a href="activity.html" class="txn-row" style="text-decoration:none;color:inherit;">
+            <div class="txn-icon">S</div>
+            <div class="txn-body">
+              <div class="txn-title">Skyline Travel</div>
+              <div class="txn-meta">Approved</div>
+            </div>
+            <div class="txn-amount" style="margin-left:auto;padding-left:12px;">-$840.00</div>
+          </a>
+          <a href="activity.html" class="txn-row" style="text-decoration:none;color:inherit;">
+            <div class="txn-icon" style="background:rgba(63,191,127,0.12);color:var(--status-active);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="txn-body">
+              <div class="txn-title">Refund</div>
+              <div class="txn-meta">Credited, yesterday</div>
+            </div>
+            <div class="txn-amount" style="margin-left:auto;padding-left:12px;color:var(--text);">+$85.00</div>
+          </a>
+        </div>
+      </div>
+
+      <div style="height: 24px;"></div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="activity.html" class="nav-item" aria-label="Activity">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Activity</span>
+      </a>
+      <a href="transfer.html" class="nav-item" aria-label="Transfer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Transfer</span>
+      </a>
+      <a href="home.html" class="nav-item active home-raised" aria-label="Home" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="cards.html" class="nav-item" aria-label="Cards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span>Cards</span>
+      </a>
+      <a href="profile.html" class="nav-item" aria-label="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </a>
+    </nav>
+  </main>
+
+  <script>
+    (function() {
+      var carousel = document.getElementById('account-carousel');
+      var dots = document.querySelectorAll('.carousel-dot');
+      var hint = document.getElementById('carousel-hint');
+      var currentIndex = 0;
+      var hintHidden = false;
+
+      function updateDots(index) {
+        dots.forEach(function(d, i) { d.classList.toggle('active', i === index); });
+        currentIndex = index;
+      }
+
+      function scrollToSlide(index) {
+        var slides = carousel.querySelectorAll('.carousel-slide');
+        if (!slides[index]) return;
+        slides[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        updateDots(index);
+      }
+
+      carousel.addEventListener('scroll', function() {
+        var slides = carousel.querySelectorAll('.carousel-slide');
+        var scrollLeft = carousel.scrollLeft;
+        var slideWidth = slides[0] ? slides[0].offsetWidth + 12 : 0;
+        var newIndex = Math.round(scrollLeft / slideWidth);
+        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < slides.length) {
+          updateDots(newIndex);
+        }
+        if (!hintHidden && scrollLeft > 10) {
+          hint.style.display = 'none';
+          hintHidden = true;
+        }
+      });
+
+      dots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+          var index = parseInt(dot.getAttribute('data-index'), 10);
+          scrollToSlide(index);
+        });
+      });
+
+      document.getElementById('bell-btn').addEventListener('click', function() {
+        window.location.href = 'notifications.html';
+      });
+
+      document.getElementById('theme-toggle').addEventListener('click', function() {
+        document.body.classList.toggle('theme-dark');
+        var isDark = document.body.classList.contains('theme-dark');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#0A1320' : '#F2F5F9');
+        localStorage.setItem('bp-theme', isDark ? 'dark' : 'light');
+      });
+
+      // Restore theme
+      var savedTheme = localStorage.getItem('bp-theme');
+      if (savedTheme === 'light') {
+        document.body.classList.add('theme-dark');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F2F5F9');
+      }
+    })();
+  </script>
+</body>
+</html>

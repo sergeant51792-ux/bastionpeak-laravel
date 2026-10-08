@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Profile - Bastion Peak</title>
+  <meta name="description" content="Your account profile and settings.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .profile-header { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 32px 20px 24px; }
+    .profile-name { font-size: 20px; font-weight: 600; margin-top: 12px; }
+    .profile-email { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+    .profile-section { margin-bottom: 24px; padding: 0 20px; }
+    .profile-section-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 20px; margin-bottom: 8px; }
+    .list-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); min-height: 44px; cursor: pointer; transition: background var(--duration-fast); text-decoration: none; color: var(--text); }
+    .list-item:last-child { border-bottom: none; }
+    .list-item:hover { background: var(--surface-raised); }
+    .list-item-icon { width: 20px; height: 20px; color: var(--text-muted); flex-shrink: 0; }
+    .list-item-body { flex: 1; font-size: 15px; font-weight: 500; }
+    .list-item-meta { font-size: 13px; color: var(--text-muted); }
+    .list-item-chevron { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+    .sign-out-btn { margin: 24px 20px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+    .switch { width: 44px; height: 24px; border-radius: 9999px; background: var(--line); position: relative; cursor: pointer; transition: background var(--duration-fast); flex-shrink: 0; }
+    .switch.on { background: var(--text); }
+    .switch-knob { width: 20px; height: 20px; border-radius: 9999px; background: #fff; position: absolute; top: 2px; left: 2px; transition: transform var(--duration-fast); }
+    .switch.on .switch-knob { transform: translateX(20px); }
+  </style>
+</head>
+<body>
+  <main class="page page-no-nav">
+    <div class="profile-header">
+      <div class="avatar avatar-xl">AO</div>
+      <div class="profile-name">Amara Okafor</div>
+      <div class="profile-email">amara@example.com</div>
+    </div>
+
+    <div class="profile-section-title">Account</div>
+    <a href="#" class="list-item" style="text-decoration:none;color:var(--text);">
+      <div class="list-item-body">Personal details</div>
+      <div class="list-item-meta" style="flex:1;text-align:right;padding-right:8px;">Read-only</div>
+      <svg class="list-item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a href="#" class="list-item" style="text-decoration:none;color:var(--text);">
+      <div class="list-item-body">Change password</div>
+      <svg class="list-item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <div class="profile-section-title">Preferences</div>
+    <div class="list-item" style="cursor:default;">
+      <div class="list-item-body">Notifications</div>
+      <div class="list-item-meta" style="flex:1;text-align:right;padding-right:8px;">In-app, Email</div>
+      <svg class="list-item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="list-item" style="cursor:default;">
+      <div class="list-item-body">Theme</div>
+      <div class="list-item-meta" style="flex:1;text-align:right;padding-right:8px;">System</div>
+      <svg class="list-item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="list-item" style="cursor:default;">
+      <div class="list-item-body">Hide balances by default</div>
+      <div class="switch" id="hide-balances" role="switch" aria-checked="false" tabindex="0"><div class="switch-knob"></div></div>
+    </div>
+
+    <div class="profile-section-title">Support</div>
+    <a href="messages.html" class="list-item" style="text-decoration:none;color:var(--text);">
+      <div class="list-item-body">Messages</div>
+      <span class="badge" style="margin-right:8px;">2</span>
+      <svg class="list-item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a href="statements.html" class="list-item" style="text-decoration:none;color:var(--text);">
+      <div class="list-item-body">Statements</div>
+      <svg class="list-item-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+    <div class="sign-out-btn">
+      <button class="btn btn-destructive btn-block" id="sign-out-btn">Sign out</button>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      var sw = document.getElementById('hide-balances');
+      if (sw) {
+        sw.addEventListener('click', function() { sw.classList.toggle('on'); sw.setAttribute('aria-checked', sw.classList.contains('on')); });
+        sw.addEventListener('keydown', function(e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); sw.click(); } });
+      }
+      document.getElementById('sign-out-btn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to sign out?')) { window.location.href = 'signin.html'; }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Messages - Bastion Peak</title>
+  <meta name="description" content="Your messages inbox.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .page { padding-bottom: 0; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex-shrink: 0; padding: 10px 14px; font-size: 14px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; cursor: pointer; background: none; border-top: none; border-left: none; border-right: none; }
+    .tab.active { color: var(--text); border-bottom-color: var(--text); }
+    .thread-item { display: flex; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background var(--duration-fast); min-height: 60px; text-decoration: none; color: var(--text); }
+    .thread-item:last-child { border-bottom: none; }
+    .thread-item:hover { background: var(--surface-raised); }
+    .thread-body { flex: 1; min-width: 0; }
+    .thread-subject { font-size: 15px; font-weight: 500; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .thread-preview { font-size: 13px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .thread-meta { text-align: right; flex-shrink: 0; }
+    .thread-time { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+    .unread-dot { width: 8px; height: 8px; border-radius: 9999px; background: var(--text); margin-left: auto; margin-top: 4px; }
+    .chat-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 10; }
+    .chat-messages { padding: 16px 20px; padding-bottom: 80px; display: flex; flex-direction: column; gap: 12px; min-height: calc(100dvh - 180px); }
+    .chat-message { display: flex; gap: 10px; max-width: 80%; }
+    .chat-message.sent { margin-left: auto; flex-direction: row-reverse; }
+    .chat-message.received { margin-right: auto; }
+    .chat-bubble { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+    .chat-bubble.sent { background: var(--surface-raised); color: var(--text); border-bottom-right-radius: 4px; }
+    .chat-bubble.received { background: var(--surface); border: 1px solid var(--line); color: var(--text); border-bottom-left-radius: 4px; }
+    .chat-time { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .chat-attachments { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .chat-attachment { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--surface-raised); border: 1px solid var(--line); border-radius: 8px; font-size: 13px; color: var(--text-muted); }
+    .message-composer { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); padding: 10px 20px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 8px; align-items: flex-end; }
+    .message-composer textarea { flex: 1; resize: none; min-height: 40px; max-height: 120px; padding: 8px 12px; font-size: 15px; }
+    .message-composer .icon-btn { flex-shrink: 0; width: 40px; height: 40px; }
+    .view-toggle { display: flex; gap: 4px; }
+    .view-toggle .tab { border-radius: 9999px; border: 1px solid var(--line); }
+    .view-toggle .tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  </style>
+</head>
+<body>
+  <main class="page" id="inbox-view">
+    <header class="activity-header">
+      <h1 class="activity-title">Messages</h1>
+      <button class="icon-btn" aria-label="New message" title="New message" id="new-msg-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </header>
+
+    <div class="tabs" style="padding:0 20px;">
+      <button class="tab active" data-tab="all">All</button>
+      <button class="tab" data-tab="unread">Unread</button>
+    </div>
+
+    <div class="page-content" style="padding-top:8px;">
+      <a href="#" class="thread-item" id="thread-admin">
+        <div class="avatar avatar-md" style="background:var(--surface-raised);border:1px solid var(--line);flex-shrink:0;">A</div>
+        <div class="thread-body">
+          <div class="thread-subject">Payment to Greenfield Foods</div>
+          <div class="thread-preview">Your payment request of $340 has been received and is in review.</div>
+        </div>
+        <div class="thread-meta">
+          <div class="thread-time">9:41 am</div>
+          <div class="unread-dot"></div>
+        </div>
+      </a>
+      <a href="#" class="thread-item">
+        <div class="avatar avatar-md" style="background:var(--surface-raised);border:1px solid var(--line);flex-shrink:0;">A</div>
+        <div class="thread-body">
+          <div class="thread-subject">Deposit approved</div>
+          <div class="thread-preview">Your deposit of $2,000 has been credited to Main wallet.</div>
+        </div>
+        <div class="thread-meta">
+          <div class="thread-time">Yesterday</div>
+        </div>
+      </a>
+      <a href="#" class="thread-item">
+        <div class="avatar avatar-md" style="background:var(--surface-raised);border:1px solid var(--line);flex-shrink:0;">A</div>
+        <div class="thread-body">
+          <div class="thread-subject">Travel only account low balance</div>
+          <div class="thread-preview">Your Travel only account is low. $42.10 left.</div>
+        </div>
+        <div class="thread-meta">
+          <div class="thread-time">18 Nov</div>
+        </div>
+      </a>
+      <a href="#" class="thread-item">
+        <div class="avatar avatar-md" style="background:var(--surface-raised);border:1px solid var(--line);flex-shrink:0;">A</div>
+        <div class="thread-body">
+          <div class="thread-subject">Account statement ready</div>
+          <div class="thread-preview">Your October statement is available for download.</div>
+        </div>
+        <div class="thread-meta">
+          <div class="thread-time">1 Nov</div>
+        </div>
+      </a>
+      <div style="height:24px;"></div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="activity.html" class="nav-item" aria-label="Activity">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Activity</span>
+      </a>
+      <a href="transfer.html" class="nav-item" aria-label="Transfer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Transfer</span>
+      </a>
+      <a href="home.html" class="nav-item" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="cards.html" class="nav-item" aria-label="Cards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span>Cards</span>
+      </a>
+      <a href="profile.html" class="nav-item" aria-label="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </a>
+    </nav>
+  </main>
+
+  <script>
+    (function() {
+      var tabs = document.querySelectorAll('.tab');
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(function(t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+        });
+      });
+      document.getElementById('new-msg-btn').addEventListener('click', function() {
+        window.location.href = 'messages.html?compose=1';
+      });
+    })();
+  </script>
+</body>
+</html>

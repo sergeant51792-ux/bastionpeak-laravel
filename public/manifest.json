@@ -1,0 +1,9 @@
+{
+    "name": "Bastion Peak",
+    "short_name": "BastionPeak",
+    "start_url": "/home",
+    "display": "standalone",
+    "background_color": "#0A1320",
+    "theme_color": "#0A1320",
+    "icons": []
+}

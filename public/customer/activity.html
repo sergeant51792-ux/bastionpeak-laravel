@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Activity - Bastion Peak</title>
+  <meta name="description" content="Your transaction history.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .activity-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; position: sticky; top: 0; z-index: 10; background: var(--bg); gap: 12px; }
+    .activity-title { font-size: 20px; font-weight: 600; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex-shrink: 0; padding: 10px 14px; font-size: 14px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color var(--duration-fast), border-color var(--duration-fast); }
+    .tab.active { color: var(--text); border-bottom-color: var(--text); }
+    .account-dropdown { position: relative; }
+    .account-dropdown-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; height: 44px; padding: 0 16px; background: var(--surface-raised); border: 1px solid var(--line); border-radius: 12px; font-size: 14px; color: var(--text); cursor: pointer; }
+    .account-dropdown-trigger svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+    .date-group-header { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 16px 0 8px; }
+    .txn-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); cursor: pointer; min-height: 44px; transition: background var(--duration-fast); text-decoration: none; color: var(--text); }
+    .txn-row:last-child { border-bottom: none; }
+    .txn-icon { width: 40px; height: 40px; border-radius: 9999px; background: var(--surface-raised); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 600; font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
+    .txn-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .txn-title { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .txn-meta { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .txn-amount { font-size: 15px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; color: var(--text); margin-left: auto; padding-left: 12px; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="activity-header">
+      <h1 class="activity-title">Activity</h1>
+      <button class="icon-btn" aria-label="Search transactions" title="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </header>
+
+    <div class="activity-filters">
+      <div class="tabs" role="tablist" aria-label="Transaction filters">
+        <button class="tab active" role="tab" aria-selected="true" data-filter="all">All</button>
+        <button class="tab" role="tab" aria-selected="false" data-filter="in">Money in</button>
+        <button class="tab" role="tab" aria-selected="false" data-filter="out">Money out</button>
+        <button class="tab" role="tab" aria-selected="false" data-filter="review">In review</button>
+      </div>
+      <div class="account-dropdown">
+        <button class="account-dropdown-trigger" id="account-dropdown-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span>All accounts</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <!-- Today -->
+      <div class="date-group-header">Today</div>
+      <a href="#" class="txn-row">
+        <div class="txn-icon">G</div>
+        <div class="txn-body">
+          <div class="txn-title">Greenfield Foods</div>
+          <div class="txn-meta">
+            <span class="status-pill status-pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>In review</span>
+            </span>
+          </div>
+        </div>
+        <div class="txn-amount">-$340.00</div>
+      </a>
+      <a href="#" class="txn-row">
+        <div class="txn-icon" style="background:rgba(63,191,127,0.12);color:var(--status-active);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="txn-body">
+          <div class="txn-title">Deposit</div>
+          <div class="txn-meta">Credited, 9:41 am</div>
+        </div>
+        <div class="txn-amount" style="color:var(--text);">+$2,000.00</div>
+      </a>
+      <a href="#" class="txn-row">
+        <div class="txn-icon">S</div>
+        <div class="txn-body">
+          <div class="txn-title">Skyline Travel</div>
+          <div class="txn-meta">Approved</div>
+        </div>
+        <div class="txn-amount">-$840.00</div>
+      </a>
+      <a href="#" class="txn-row">
+        <div class="txn-icon" style="background:rgba(63,191,127,0.12);color:var(--status-active);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="txn-body">
+          <div class="txn-title">Refund</div>
+          <div class="txn-meta">Credited, 10:15 am</div>
+        </div>
+        <div class="txn-amount" style="color:var(--text);">+$85.00</div>
+      </a>
+
+      <!-- Yesterday -->
+      <div class="date-group-header" style="margin-top:8px;">Yesterday</div>
+      <a href="#" class="txn-row">
+        <div class="txn-icon">O</div>
+        <div class="txn-body">
+          <div class="txn-title">OfficeMax</div>
+          <div class="txn-meta">Approved</div>
+        </div>
+        <div class="txn-amount">-$124.50</div>
+      </a>
+      <a href="#" class="txn-row">
+        <div class="txn-icon" style="background:rgba(63,191,127,0.12);color:var(--status-active);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="txn-body">
+          <div class="txn-title">Deposit</div>
+          <div class="txn-meta">Credited, 3:22 pm</div>
+        </div>
+        <div class="txn-amount" style="color:var(--text);">+$950.00</div>
+      </a>
+      <a href="#" class="txn-row">
+        <div class="txn-icon">G</div>
+        <div class="txn-body">
+          <div class="txn-title">Greenfield Foods</div>
+          <div class="txn-meta">Approved</div>
+        </div>
+        <div class="txn-amount">-$275.00</div>
+      </a>
+
+      <!-- 21 Nov -->
+      <div class="date-group-header" style="margin-top:8px;">21 Nov</div>
+      <a href="#" class="txn-row">
+        <div class="txn-icon" style="background:rgba(240,112,106,0.12);color:var(--status-rejected);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div class="txn-body">
+          <div class="txn-title">Payment to Chidi Eze</div>
+          <div class="txn-meta">Rejected</div>
+        </div>
+        <div class="txn-amount">-$200.00</div>
+      </a>
+
+      <div style="height:24px;"></div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="activity.html" class="nav-item active" aria-label="Activity" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Activity</span>
+      </a>
+      <a href="transfer.html" class="nav-item" aria-label="Transfer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Transfer</span>
+      </a>
+      <a href="home.html" class="nav-item" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="cards.html" class="nav-item" aria-label="Cards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span>Cards</span>
+      </a>
+      <a href="profile.html" class="nav-item" aria-label="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </a>
+    </nav>
+  </main>
+
+  <script>
+    (function() {
+      var tabs = document.querySelectorAll('.tab');
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

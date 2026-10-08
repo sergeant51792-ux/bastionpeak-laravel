@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Notifications - Bastion Peak</title>
+  <meta name="description" content="Your notification center.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; position: sticky; top: 0; z-index: 10; background: var(--bg); }
+    .sub-header-title { font-size: 18px; font-weight: 600; flex: 1; }
+    .mark-read-btn { font-size: 13px; color: var(--text-muted); background: none; border: none; cursor: pointer; font-weight: 500; white-space: nowrap; }
+    .mark-read-btn:hover { color: var(--text); }
+    .notification-group-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 16px 20px 8px; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+    .notification-item { display: flex; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background var(--duration-fast); min-height: 44px; text-decoration: none; color: var(--text); }
+    .notification-item:last-child { border-bottom: none; }
+    .notification-item:hover { background: var(--surface-raised); }
+    .notification-item.unread { background: var(--surface-raised); }
+    .notification-dot { width: 8px; height: 8px; border-radius: 9999px; background: var(--text); flex-shrink: 0; margin-top: 6px; }
+    .notification-body { flex: 1; min-width: 0; }
+    .notification-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+    .notification-message { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+    .notification-time { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <main class="page page-no-nav">
+    <header class="sub-header">
+      <a href="home.html" class="icon-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </a>
+      <h1 class="sub-header-title">Notifications</h1>
+      <button class="mark-read-btn" id="mark-all-read">Mark all read</button>
+    </header>
+
+    <div class="page-content" style="padding-top:0;">
+      <div class="notification-group-title">Today</div>
+      <a href="activity.html" class="notification-item unread" style="text-decoration:none;">
+        <div class="notification-dot"></div>
+        <div class="notification-body">
+          <div class="notification-title">Deposit approved</div>
+          <div class="notification-message">$2,000 is now in Main wallet.</div>
+        </div>
+        <div class="notification-time">9:41 am</div>
+      </a>
+      <a href="messages.html" class="notification-item unread" style="text-decoration:none;">
+        <div class="notification-dot"></div>
+        <div class="notification-body">
+          <div class="notification-title">Message from admin</div>
+          <div class="notification-message">About your payment to Greenfield Foods.</div>
+        </div>
+        <div class="notification-time">10:15 am</div>
+      </a>
+
+      <div class="notification-group-title">Earlier</div>
+      <a href="activity.html" class="notification-item" style="text-decoration:none;">
+        <div class="notification-body" style="display:flex;gap:12px;">
+          <div style="width:8px;flex-shrink:0;"></div>
+          <div>
+            <div class="notification-title">Travel only account is low</div>
+            <div class="notification-message">$42.10 left.</div>
+          </div>
+        </div>
+        <div class="notification-time">18 Nov</div>
+      </a>
+      <a href="activity.html" class="notification-item" style="text-decoration:none;">
+        <div class="notification-body" style="display:flex;gap:12px;">
+          <div style="width:8px;flex-shrink:0;"></div>
+          <div>
+            <div class="notification-title">Payment approved</div>
+            <div class="notification-message">Your payment of $840 to Skyline Travel has been approved.</div>
+          </div>
+        </div>
+        <div class="notification-time">17 Nov</div>
+      </a>
+      <a href="statements.html" class="notification-item" style="text-decoration:none;">
+        <div class="notification-body" style="display:flex;gap:12px;">
+          <div style="width:8px;flex-shrink:0;"></div>
+          <div>
+            <div class="notification-title">Statement ready</div>
+            <div class="notification-message">Your October statement is available.</div>
+          </div>
+        </div>
+        <div class="notification-time">1 Nov</div>
+      </a>
+
+      <div style="height:24px;"></div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      document.getElementById('mark-all-read').addEventListener('click', function() {
+        document.querySelectorAll('.notification-item.unread').forEach(function(item) {
+          item.classList.remove('unread');
+          var dot = item.querySelector('.notification-dot');
+          if (dot) dot.remove();
+        });
+        document.getElementById('mark-all-read').textContent = 'All read';
+        document.getElementById('mark-all-read').disabled = true;
+        document.getElementById('mark-all-read').style.opacity = '0.5';
+        document.getElementById('mark-all-read').style.cursor = 'default';
+      });
+    })();
+  </script>
+</body>
+</html>

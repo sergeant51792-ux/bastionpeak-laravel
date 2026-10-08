@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Main wallet - Bastion Peak</title>
+  <meta name="description" content="Account details for Main wallet.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; position: sticky; top: 0; z-index: 10; background: var(--bg); }
+    .sub-header-title { font-size: 18px; font-weight: 600; flex: 1; }
+    .detail-card { border-radius: 24px; padding: 20px; color: #fff; position: relative; overflow: hidden; min-height: 170px; display: flex; flex-direction: column; justify-content: space-between; margin: 0 20px; }
+    .detail-card[data-color="ledger-green"] { background-color: #0E6E63; }
+    .account-detail-section { margin-bottom: 24px; padding: 0 20px; }
+    .account-detail-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .limit-meter { margin-bottom: 16px; }
+    .limit-meter-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .limit-meter-label { font-size: 14px; color: var(--text-muted); }
+    .limit-meter-value { font-size: 14px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+    .limit-meter-track { height: 6px; background: var(--surface-raised); border-radius: 9999px; overflow: hidden; }
+    .limit-meter-fill { height: 100%; border-radius: 9999px; background: var(--text-muted); transition: width var(--duration-slow); }
+    .progress-bar-track { height: 6px; background: rgba(255,255,255,0.15); border-radius: 9999px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 9999px; background: #fff; transition: width var(--duration-slow); }
+    .detail-table-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; gap: 12px; }
+    .detail-table-row:last-child { border-bottom: none; }
+    .detail-table-key { color: var(--text-muted); flex-shrink: 0; }
+    .detail-table-value { color: var(--text); text-align: right; word-break: break-all; }
+    .copy-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; padding: 4px; border-radius: 4px; transition: color var(--duration-fast); white-space: nowrap; }
+    .copy-btn:hover { color: var(--text); }
+    .copy-btn svg { width: 14px; height: 14px; }
+  </style>
+</head>
+<body>
+  <main class="page page-no-nav">
+    <header class="sub-header">
+      <a href="home.html" class="icon-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </a>
+      <h1 class="sub-header-title">Main wallet</h1>
+    </header>
+
+    <div class="detail-card" data-color="ledger-green" style="margin-bottom:24px;">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <span style="font-size:12px;font-weight:500;opacity:0.85;text-transform:uppercase;letter-spacing:0.06em;">Main wallet</span>
+          <span style="font-size:12px;font-weight:500;opacity:0.7;">USD</span>
+        </div>
+        <div style="font-size:14px;font-weight:500;opacity:0.95;margin-top:4px;display:flex;align-items:center;justify-content:space-between;gap:8px;">Amara Okafor <span style="font-family:monospace;font-size:12px;opacity:0.7;">•••• 8388</span></div>
+      </div>
+      <div>
+        <div style="font-size:12px;opacity:0.8;font-weight:500;">Available balance</div>
+        <div style="font-size:28px;font-weight:700;line-height:1.1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;font-feature-settings:'tnum';margin-top:2px;">$64,600.00</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;opacity:0.85;margin-top:12px;">
+          <div style="display:flex;align-items:center;gap:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Active</span>
+          </div>
+          <span>Updated 21 Nov</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-detail-section">
+      <div class="account-detail-title">Limits</div>
+      <div class="limit-meter">
+        <div class="limit-meter-header">
+          <span class="limit-meter-label">Per payment</span>
+          <span class="limit-meter-value">$5,000.00</span>
+        </div>
+        <div class="limit-meter-track"><div class="limit-meter-fill" style="width:100%;background:var(--status-active);"></div></div>
+      </div>
+      <div class="limit-meter">
+        <div class="limit-meter-header">
+          <span class="limit-meter-label">Today</span>
+          <span class="limit-meter-value">$1,200 of $3,000</span>
+        </div>
+        <div class="limit-meter-track" style="background:rgba(255,255,255,0.15);"><div class="progress-bar-fill" style="width:40%;"></div></div>
+      </div>
+      <div class="limit-meter">
+        <div class="limit-meter-header">
+          <span class="limit-meter-label">This month</span>
+          <span class="limit-meter-value">$9,800 of $20,000</span>
+        </div>
+        <div class="limit-meter-track" style="background:rgba(255,255,255,0.15);"><div class="progress-bar-fill" style="width:49%;"></div></div>
+      </div>
+    </div>
+
+    <div class="account-detail-section">
+      <div class="account-detail-title">Where you can spend</div>
+      <div class="card" style="padding:16px 20px;">
+        <div style="font-size:14px;color:var(--text);margin-bottom:8px;">Approved payees only</div>
+        <div style="font-size:13px;color:var(--text-muted);">Categories: Food, Office supplies</div>
+      </div>
+    </div>
+
+    <div class="account-detail-section">
+      <div class="account-detail-title">Account details</div>
+      <div class="card" style="padding:0 20px;">
+        <div class="detail-table-row">
+          <span class="detail-table-key">Account number</span>
+          <span class="detail-table-value">10 8388 2210 <button class="copy-btn" aria-label="Copy account number" onclick="navigator.clipboard.writeText('10 8388 2210').then(function(){var b=document.querySelector('.copy-btn');b.textContent='Copied';setTimeout(function(){b.innerHTML='<svg viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.75\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'><rect x=\\'9\\' y=\\'9\\' width=\\'13\\' height=\\'13\\' rx=\\'2\\' ry=\\'2\\'/><path d=\\'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\\'/></svg> Copy';});})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></span>
+        </div>
+        <div class="detail-table-row">
+          <span class="detail-table-key">Currency</span>
+          <span class="detail-table-value">USD</span>
+        </div>
+        <div class="detail-table-row">
+          <span class="detail-table-key">Opened</span>
+          <span class="detail-table-value">3 Mar 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-detail-section" style="padding-bottom: 24px;">
+      <a href="statements.html" class="btn btn-secondary btn-block" style="margin-bottom:12px;">Download statement</a>
+      <a href="messages.html" class="btn btn-secondary btn-block">Message admin about this account</a>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // Copy button handler is inline above for brevity
+    })();
+  </script>
+</body>
+</html>

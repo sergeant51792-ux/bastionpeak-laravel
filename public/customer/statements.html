@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Statements - Bastion Peak</title>
+  <meta name="description" content="Download your account statements.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; position: sticky; top: 0; z-index: 10; background: var(--bg); }
+    .sub-header-title { font-size: 18px; font-weight: 600; flex: 1; }
+    .form-page { padding: var(--space-4) var(--side-pad); padding-top: var(--space-2); padding-bottom: calc(var(--space-6) + var(--safe-bottom)); }
+    .range-chips { display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
+    .range-chips::-webkit-scrollbar { display: none; }
+    .chip { flex-shrink: 0; padding: 8px 16px; border-radius: 9999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 500; cursor: pointer; transition: all var(--duration-fast); white-space: nowrap; }
+    .chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .statement-history { margin-top: 24px; }
+    .statement-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .statement-item:last-child { border-bottom: none; }
+    .statement-item-title { font-size: 14px; font-weight: 500; }
+    .statement-item-meta { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+    .statement-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .statement-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--duration-fast); text-decoration: none; }
+    .statement-btn:hover { background: var(--surface-raised); }
+    .status-line { font-size: 13px; color: var(--text-muted); margin-top: 8px; display: none; }
+    .status-line.visible { display: flex; align-items: center; gap: 6px; }
+    .spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--text); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main class="page page-no-nav">
+    <header class="sub-header">
+      <a href="home.html" class="icon-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </a>
+      <h1 class="sub-header-title">Statements</h1>
+    </header>
+
+    <div class="form-page">
+      <div class="form-group">
+        <label class="form-label">Date range</label>
+        <div class="range-chips">
+          <button class="chip active" data-range="this-month">This month</button>
+          <button class="chip" data-range="last-month">Last month</button>
+          <button class="chip" data-range="custom">Custom</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="stmt-account">Account</label>
+        <select id="stmt-account">
+          <option value="main">Main wallet (USD) - •••• 8388</option>
+          <option value="travel">Travel only (USD) - •••• 2210</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Format</label>
+        <div class="range-chips">
+          <button class="chip active" data-format="pdf">PDF</button>
+          <button class="chip" data-format="csv">CSV</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="generate-stmt">Download statement</button>
+
+      <div class="status-line" id="stmt-status" role="status" aria-live="polite">
+        <span class="spinner"></span>
+        <span>Generating statement...</span>
+      </div>
+
+      <div class="statement-history" style="margin-top:32px;">
+        <div class="account-detail-title">History</div>
+        <div class="card" style="padding:0 20px;">
+          <div class="statement-item">
+            <div>
+              <div class="statement-item-title">October 2026</div>
+              <div class="statement-item-meta">Main wallet, PDF, 24 KB</div>
+            </div>
+            <div class="statement-item-actions">
+              <button class="statement-btn" aria-label="Download PDF">PDF</button>
+              <button class="statement-btn" aria-label="Download CSV">CSV</button>
+            </div>
+          </div>
+          <div class="statement-item">
+            <div>
+              <div class="statement-item-title">September 2026</div>
+              <div class="statement-item-meta">Main wallet, PDF, 18 KB</div>
+            </div>
+            <div class="statement-item-actions">
+              <button class="statement-btn" aria-label="Download PDF">PDF</button>
+              <button class="statement-btn" aria-label="Download CSV">CSV</button>
+            </div>
+          </div>
+          <div class="statement-item">
+            <div>
+              <div class="statement-item-title">August 2026</div>
+              <div class="statement-item-meta">Main wallet, PDF, 21 KB</div>
+            </div>
+            <div class="statement-item-actions">
+              <button class="statement-btn" aria-label="Download PDF">PDF</button>
+              <button class="statement-btn" aria-label="Download CSV">CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      var chips = document.querySelectorAll('.chip');
+      var activeRange = 'this-month';
+      var activeFormat = 'pdf';
+
+      chips.forEach(function(chip) {
+        chip.addEventListener('click', function() {
+          var range = chip.getAttribute('data-range');
+          var format = chip.getAttribute('data-format');
+          if (range) {
+            document.querySelectorAll('.chip[data-range]').forEach(function(c) { c.classList.remove('active'); });
+            chip.classList.add('active');
+            activeRange = range;
+          }
+          if (format) {
+            document.querySelectorAll('.chip[data-format]').forEach(function(c) { c.classList.remove('active'); });
+            chip.classList.add('active');
+            activeFormat = format;
+          }
+        });
+      });
+
+      document.getElementById('generate-stmt').addEventListener('click', function() {
+        var status = document.getElementById('stmt-status');
+        status.classList.add('visible');
+        var btn = document.getElementById('generate-stmt');
+        btn.disabled = true;
+        setTimeout(function() {
+          status.classList.remove('visible');
+          btn.disabled = false;
+          alert('Statement generated. Download would start here.');
+        }, 2000);
+      });
+    })();
+  </script>
+</body>
+</html>

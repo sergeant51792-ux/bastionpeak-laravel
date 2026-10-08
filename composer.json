@@ -1,0 +1,72 @@
+{
+    "name": "bastionpeak/banking",
+    "description": "Bastion Peak internal banking system",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^2.0",
+        "doctrine/dbal": "*",
+        "filament/filament": "^3.0",
+        "laravel/breeze": "^2.0",
+        "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.0",
+        "livewire/livewire": "^3.0",
+        "mallardduck/blade-lucide-icons": "^2.0",
+        "spatie/laravel-activitylog": "^4.0",
+        "spatie/laravel-permission": "^6.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "laravel/tinker": "*",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/",
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php artisan breeze:install",
+            "@php artisan migrate --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "laravel/pint": true,
+            "laravel/framework": true,
+            "pestphp/pest-plugin": true
+        },
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        }
+    },
+    "policy": {
+        "advisories": {
+            "block": false
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

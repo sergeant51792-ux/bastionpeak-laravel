@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Receive - Bastion Peak</title>
+  <meta name="description" content="Funding details for your account.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; position: sticky; top: 0; z-index: 10; background: var(--bg); }
+    .sub-header-title { font-size: 18px; font-weight: 600; flex: 1; }
+    .form-page { padding: var(--space-4) var(--side-pad); padding-top: var(--space-2); padding-bottom: calc(var(--space-6) + var(--safe-bottom)); }
+    .funding-card { background: var(--surface-raised); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px; margin-top: 12px; }
+    .funding-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .funding-row:last-child { border-bottom: none; }
+    .funding-key { color: var(--text-muted); flex-shrink: 0; }
+    .funding-value { color: var(--text); text-align: right; word-break: break-all; display: flex; align-items: center; gap: 8px; }
+    .funding-instructions { background: var(--surface-raised); border-radius: 16px; padding: 16px 20px; margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--text); }
+  </style>
+</head>
+<body>
+  <main class="page page-no-nav">
+    <header class="sub-header">
+      <a href="home.html" class="icon-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </a>
+      <h1 class="sub-header-title">Receive</h1>
+    </header>
+
+    <div class="form-page">
+      <div class="form-group">
+        <label class="form-label" for="account-select">Account</label>
+        <select id="account-select">
+          <option value="main">Main wallet (USD) - •••• 8388</option>
+          <option value="travel">Travel only (USD) - •••• 2210</option>
+        </select>
+      </div>
+
+      <div class="funding-card">
+        <div class="funding-row">
+          <span class="funding-key">Account name</span>
+          <span class="funding-value">Amara Okafor <button class="copy-btn" aria-label="Copy account name" onclick="navigator.clipboard.writeText('Amara Okafor').then(function(){var b=document.querySelectorAll('.copy-btn')[0];b.textContent='Copied';setTimeout(function(){b.innerHTML='<svg viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.75\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'><rect x=\\'9\\' y=\\'9\\' width=\\'13\\' height=\\'13\\' rx=\\'2\\' ry=\\'2\\'/><path d=\\'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\\'/></svg> Copy';});})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></span>
+        </div>
+        <div class="funding-row">
+          <span class="funding-key">Account number</span>
+          <span class="funding-value">10 8388 2210 <button class="copy-btn" aria-label="Copy account number" onclick="navigator.clipboard.writeText('10 8388 2210').then(function(){var b=document.querySelectorAll('.copy-btn')[1];b.textContent='Copied';setTimeout(function(){b.innerHTML='<svg viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.75\\' stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\'><rect x=\\'9\\' y=\\'9\\' width=\\'13\\' height=\\'13\\' rx=\\'2\\' ry=\\'2\\'/><path d=\\'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\\'/></svg> Copy';});})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></span>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <div class="account-detail-title" style="padding:0;">How to fund this account</div>
+        <div class="funding-instructions">
+          <p style="margin-bottom:8px;">Use the account details above to make a bank transfer or deposit. Funds will be credited to your Main wallet after admin review and approval.</p>
+          <p style="color:var(--text-muted);font-size:13px;">Include your name and account number in the transfer reference so we can match your payment quickly.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;">
+        <button class="btn btn-primary btn-block" id="share-btn">Share details</button>
+        <a href="topup.html" class="btn btn-secondary btn-block">Top up after paying</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      document.getElementById('share-btn').addEventListener('click', function() {
+        if (navigator.share) {
+          navigator.share({ title: 'Bastion Peak - Funding details', text: 'Account name: Amara Okafor\nAccount number: 10 8388 2210' }).catch(function(){});
+        } else {
+          alert('Account details copied to clipboard.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

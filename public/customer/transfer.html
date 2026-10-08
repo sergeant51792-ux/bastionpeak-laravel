@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Transfer - Bastion Peak</title>
+  <meta name="description" content="Manage your transfers and requests.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="page">
+    <header class="activity-header">
+      <h1 class="activity-title">Transfer</h1>
+    </header>
+
+    <div class="transfer-hero">
+      <a href="topup.html" class="transfer-tile">
+        <div class="transfer-tile-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div>
+          <div class="transfer-tile-title">Top up</div>
+          <div class="transfer-tile-desc">Add money to your account</div>
+        </div>
+      </a>
+      <a href="pay.html" class="transfer-tile">
+        <div class="transfer-tile-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+        <div>
+          <div class="transfer-tile-title">Pay</div>
+          <div class="transfer-tile-desc">Pay a payee</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="page-content">
+      <div class="section-header">
+        <span class="section-header-title">Your requests</span>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Request filters">
+        <button class="tab active" role="tab" aria-selected="true">All</button>
+        <button class="tab" role="tab" aria-selected="false">In review</button>
+        <button class="tab" role="tab" aria-selected="false">Done</button>
+        <button class="tab" role="tab" aria-selected="false">Rejected</button>
+      </div>
+
+      <div class="list-group mt-4">
+        <a href="#" class="list-item" style="text-decoration:none;color:var(--text);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:500;">Payment</div>
+            <div style="font-size:13px;color:var(--text-muted);">Greenfield Foods</div>
+          </div>
+          <span class="status-pill status-pending">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>In review</span>
+          </span>
+        </a>
+        <a href="#" class="list-item" style="text-decoration:none;color:var(--text);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:500;">Deposit</div>
+            <div style="font-size:13px;color:var(--text-muted);">Main wallet</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;font-feature-settings:'tnum';">+$2,000.00</div>
+            <span class="status-pill status-active" style="margin-top:4px;display:inline-flex;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Credited</span>
+            </span>
+          </div>
+        </a>
+        <a href="#" class="list-item" style="text-decoration:none;color:var(--text);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:500;">Payment</div>
+            <div style="font-size:13px;color:var(--text-muted);">Skyline Travel</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;font-feature-settings:'tnum';">-$840.00</div>
+            <span class="status-pill status-active" style="margin-top:4px;display:inline-flex;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Approved</span>
+            </span>
+          </div>
+        </a>
+        <a href="#" class="list-item" style="text-decoration:none;color:var(--text);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:500;">Deposit</div>
+            <div style="font-size:13px;color:var(--text-muted);">Main wallet</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;font-feature-settings:'tnum';">+$950.00</div>
+            <span class="status-pill status-rejected" style="margin-top:4px;display:inline-flex;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span>Rejected</span>
+            </span>
+          </div>
+        </a>
+      </div>
+
+      <div style="height:24px;"></div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="activity.html" class="nav-item" aria-label="Activity">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Activity</span>
+      </a>
+      <a href="transfer.html" class="nav-item active" aria-label="Transfer" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Transfer</span>
+      </a>
+      <a href="home.html" class="nav-item" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="cards.html" class="nav-item" aria-label="Cards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span>Cards</span>
+      </a>
+      <a href="profile.html" class="nav-item" aria-label="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </a>
+    </nav>
+  </main>
+
+  <script>
+    (function() {
+      var tabs = document.querySelectorAll('.tab');
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

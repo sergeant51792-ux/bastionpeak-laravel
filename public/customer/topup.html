@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1320">
+  <title>Top up - Bastion Peak</title>
+  <meta name="description" content="Request a deposit into your account.">
+  <link rel="stylesheet" href="app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:opsz,wght@12..72,400;12..72,500;12..72,600&display=swap" rel="stylesheet">
+  <style>
+    .form-page { padding: var(--space-4) var(--side-pad); padding-top: var(--space-2); padding-bottom: calc(var(--space-6) + var(--safe-bottom)); }
+    .sub-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; position: sticky; top: 0; z-index: 10; background: var(--bg); }
+    .sub-header-title { font-size: 18px; font-weight: 600; flex: 1; }
+    .form-actions { position: sticky; bottom: 0; background: var(--bg); padding: 16px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
+    .amount-field-wrap { position: relative; }
+    .amount-prefix { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 600; color: var(--text); pointer-events: none; }
+    .amount-field-wrap input { padding-left: calc(16px + 20px); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+    .amount-limit { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+    .upload-actions { display: flex; gap: 12px; margin-top: 12px; }
+    .upload-area { border: 2px dashed var(--line); border-radius: 16px; padding: 24px; text-align: center; transition: border-color var(--duration-fast), background-color var(--duration-fast); cursor: pointer; }
+    .upload-area:hover { border-color: var(--text-muted); background: var(--surface-raised); }
+    .upload-preview { margin-top: 12px; display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--surface-raised); border-radius: 12px; border: 1px solid var(--line); }
+    .upload-preview-thumb { width: 40px; height: 40px; border-radius: 8px; background: var(--line); display: flex; align-items: center; justify-content: center; }
+    .upload-preview-thumb svg { width: 18px; height: 18px; color: var(--text-muted); }
+    .upload-preview-info { flex: 1; font-size: 13px; color: var(--text-muted); }
+    .upload-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px; }
+    .upload-remove:hover { color: var(--text); }
+    .upload-remove svg { width: 16px; height: 16px; }
+    .error-summary { background: rgba(240,112,106,0.1); border: 1px solid var(--status-rejected); border-radius: 12px; padding: 12px 16px; font-size: 14px; color: var(--status-rejected); margin-bottom: 16px; display: none; }
+    .error-summary.visible { display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+  <main class="page page-no-nav">
+    <header class="sub-header">
+      <a href="home.html" class="icon-btn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </a>
+      <h1 class="sub-header-title">Top up</h1>
+    </header>
+
+    <div class="form-page">
+      <div id="topup-error" class="error-summary" role="alert" aria-live="polite">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="topup-error-text"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="account-select">Into</label>
+        <select id="account-select">
+          <option value="main">Main wallet (USD) - •••• 8388</option>
+          <option value="travel">Travel only (USD) - •••• 2210</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="topup-amount">Amount</label>
+        <div class="amount-field-wrap">
+          <span class="amount-prefix">$</span>
+          <input type="text" id="topup-amount" inputmode="decimal" placeholder="0.00" autocomplete="off">
+        </div>
+        <div class="amount-limit">Balance cap: $100,000.00</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="topup-note">Note <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+        <input type="text" id="topup-note" placeholder="What is this for?">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Proof of deposit</label>
+        <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Upload proof of deposit">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);margin:0 auto 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="font-size:14px;font-weight:500;color:var(--text);">Take photo</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">or</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text);margin-top:4px;">Choose file</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">JPG, PNG or PDF, up to 5 MB</div>
+        </div>
+        <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none;" aria-hidden="true">
+        <div id="upload-preview" class="upload-preview" style="display:none;">
+          <div class="upload-preview-thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="upload-preview-info" id="upload-file-name">receipt.jpg</div>
+          <button class="upload-remove" id="upload-remove" aria-label="Remove file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary btn-block" id="review-btn">Review request</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      var uploadArea = document.getElementById('upload-area');
+      var fileInput = document.getElementById('file-input');
+      var preview = document.getElementById('upload-preview');
+      var fileName = document.getElementById('upload-file-name');
+      var removeBtn = document.getElementById('upload-remove');
+      var errorBox = document.getElementById('topup-error');
+      var errorText = document.getElementById('topup-error-text');
+      var reviewBtn = document.getElementById('review-btn');
+      var uploadedFile = null;
+
+      function showError(msg) { errorText.textContent = msg; errorBox.classList.add('visible'); }
+      function hideError() { errorBox.classList.remove('visible'); }
+
+      uploadArea.addEventListener('click', function() { fileInput.click(); });
+      uploadArea.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+
+      fileInput.addEventListener('change', function() {
+        if (fileInput.files && fileInput.files[0]) {
+          var f = fileInput.files[0];
+          if (f.size > 5 * 1024 * 1024) { showError('That file is over 5 MB. Choose a smaller one or take a new photo.'); fileInput.value = ''; return; }
+          uploadedFile = f;
+          fileName.textContent = f.name;
+          preview.style.display = 'flex';
+          hideError();
+        }
+      });
+
+      removeBtn.addEventListener('click', function() { fileInput.value = ''; uploadedFile = null; preview.style.display = 'none'; });
+
+      reviewBtn.addEventListener('click', function() {
+        hideError();
+        if (!uploadedFile) { showError('Add a photo or file of your deposit proof.'); return; }
+        reviewBtn.disabled = true;
+        reviewBtn.textContent = 'Reviewing...';
+        setTimeout(function() { reviewBtn.disabled = false; reviewBtn.textContent = 'Review request'; alert('Request sent. Admin reviews this before money arrives.'); }, 1000);
+      });
+    })();
+  </script>
+</body>
+</html>
