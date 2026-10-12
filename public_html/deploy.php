@@ -274,7 +274,7 @@ if ($kernel && $bootError === null) {
                 // Install/update composer dependencies
                 $composerOutput = [];
                 $composerCode = 0;
-                $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && (composer install --no-dev --optimize-autoloader 2>&1 || /usr/local/bin/composer install --no-dev --optimize-autoloader 2>&1 || php composer.phar install --no-dev --optimize-autoloader 2>&1)';
+                $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && (php /home/bastionpeaks/composer-stable.phar install --no-dev --optimize-autoloader 2>&1 || php /home/bastionpeaks/composer-setup.phar install --no-dev --optimize-autoloader 2>&1 || /usr/local/bin/composer install --no-dev --optimize-autoloader 2>&1 || composer install --no-dev --optimize-autoloader 2>&1)';
                 exec($composerCmd, $composerOutput, $composerCode);
                 bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
 
