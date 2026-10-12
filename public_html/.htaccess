@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Force HTTPS (accounts for cPanel reverse-proxy / Cloudflare).
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # Redirect trailing slashes when not a directory.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+    # Send requests to the front controller.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Block direct access to sensitive files.
+<FilesMatch "^\.env|\.env\..*|composer\.(json|lock)$|\.git">
+    Require all denied
+</FilesMatch>
+
+# NOTE: delete deploy.php from public_html as soon as setup is finished.
