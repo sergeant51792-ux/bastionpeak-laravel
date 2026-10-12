@@ -2,8 +2,8 @@
 
 @section('title', 'Account statements')
 @section('content')
-<div class="space-y-6">
-    <h1 class="text-2xl font-bold text-[var(--text)] tracking-tight">Account statements</h1>
+<div class="px-3 sm:px-4 lg:px-6 pt-4 space-y-6">
+    <h1 class="text-xl font-bold text-[var(--text)] tracking-tight">Account statements</h1>
 
     <form method="POST" action="{{ route('statements.generate') }}" class="space-y-5">
         @csrf
@@ -46,7 +46,7 @@
     </form>
 
     @if(session('status'))
-        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700 font-medium">
+        <div class="p-3 rounded-xl text-sm font-medium border" style="background: var(--success-bg); color: var(--success); border-color: rgba(5, 150, 105, 0.2);">
             {{ session('status') }}
         </div>
     @endif
@@ -55,20 +55,20 @@
         <h2 class="section-title">Recent statements</h2>
         <div class="space-y-2">
             @forelse($history->take(5) as $stmt)
-                <div class="flex items-center justify-between p-4 bg-white border border-[var(--line)] rounded-xl hover:border-[var(--accent)] transition-all">
+                <div class="flex items-center justify-between p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-xl hover:border-[var(--accent)] transition-all">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-[var(--line-soft)] flex items-center justify-center text-[var(--text-muted)]">
                             <x-icon name="file-text"  class="w-4 h-4" />
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-[var(--text)]">{{ $stmt->type->label() }}</p>
+                            <p class="text-sm font-semibold text-[var(--text)]">{{ $stmt->type->customerLabel() }}</p>
                             <p class="text-xs text-[var(--text-muted)]">{{ $stmt->created_at->format('d M Y') }}</p>
                         </div>
                     </div>
                     <button class="text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">Download</button>
                 </div>
             @empty
-                <div class="empty-state bg-white border border-[var(--line)] rounded-2xl">
+                <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
                     <p class="text-sm text-[var(--text-muted)]">No statements yet.</p>
                 </div>
             @endforelse

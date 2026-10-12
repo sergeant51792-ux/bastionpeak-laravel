@@ -39,20 +39,11 @@ class SendPaymentRejectedNotification implements ShouldQueue
         $transaction = $event->transaction;
         $customerId = $transaction->customer_id;
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'withdrawal_approved',
-            'Payment Rejected',
-            'Your payment of ' . $transaction->amount . ' was rejected. Reason: ' . $transaction->memo,
-            'in-app'
-        );
+        $reason = $transaction->rejection_reason ?: 'Please contact support for details.';
+        $title  = 'Payment declined';
+        $body   = 'Your payment of ' . $transaction->formattedAmount() . ' was declined. Reason: ' . $reason;
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'withdrawal_approved',
-            'Payment Rejected',
-            'Your payment of ' . $transaction->amount . ' was rejected. Reason: ' . $transaction->memo,
-            'email'
-        );
+        $this->notificationService->sendToUser($customerId, 'payment_rejected', $title, $body, 'in-app');
+        $this->notificationService->sendToUser($customerId, 'payment_rejected', $title, $body, 'email');
     }
 }

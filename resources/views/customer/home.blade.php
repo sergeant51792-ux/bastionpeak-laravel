@@ -2,56 +2,23 @@
 
 @section('title', 'Home')
 
+@php
+    $hour = now()->hour;
+    $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
+@endphp
+
 @section('content')
 <div class="px-3 sm:px-4 lg:px-6 pt-4 space-y-6" id="customer-dashboard">
+    {{-- Greeting --}}
     <div class="flex items-center justify-between w-full">
         <div class="min-w-0 flex-1">
-            <p class="text-xs text-[var(--text-muted)] sm:text-sm">Welcome back</p>
+            <p class="text-xs text-[var(--text-muted)] sm:text-sm">{{ $greeting }}</p>
             <h1 class="text-lg sm:text-xl font-bold text-[var(--text)] tracking-tight truncate">{{ $user->name }}</h1>
         </div>
-        <a href="{{ route('profile') }}" class="relative flex-shrink-0 ml-3">
-            @if($user->profile_picture_url)
-                <img src="{{ $user->profile_picture_url }}" alt="Profile" class="w-10 sm:w-12 h-10 sm:h-12 rounded-full object-cover ring-2 sm:ring-[var(--primary)]/20 ring-1 ring-[var(--primary)]/10">
-            @else
-                <div class="w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold text-sm sm:text-xl">
-                    {{ strtoupper(substr($user->name ?? $user->email, 0, 2)) }}
-                </div>
-            @endif
+        <a href="{{ route('profile') }}" class="flex-shrink-0 ml-3" aria-label="Open profile">
+            <x-avatar :user="$user" size="md" />
         </a>
     </div>
-
-    {{-- Active Card --}}
-    @if($activeCard)
-        <div class="relative">
-            <div class="card-chip rounded-3xl p-6 text-white overflow-hidden" style="background: radial-gradient(120% 120% at 20% 30%, #3b82f6 0%, #1e40af 40%, #0f172a 100%);">
-                <div class="absolute inset-0 opacity-10">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/20 to-transparent rounded-full -translate-y-1/2 translate-x-1/4"></div>
-                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-white/10 to-transparent rounded-full -translate-x-1/3 translate-y-1/3"></div>
-                </div>
-                <div class="relative">
-                    <div class="flex items-center justify-between mb-2">
-                    <div class="w-12 h-12">
-                        <x-icon name="credit-card" class="w-12 h-12" />
-                    </div>
-                        <span class="text-xs font-medium bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-sm">{{ $activeCard->card_type === 'virtual' ? 'Virtual' : 'Physical' }}</span>
-                    </div>
-                    <div class="font-mono text-xl tracking-wider mb-4" style="font-variant-numeric: tabular-nums;">
-                        {{ $activeCard->card_number_masked }}
-                    </div>
-                    <div class="flex items-center justify-between text-sm">
-                        <div>
-                            <p class="text-xs text-white/60 uppercase tracking-wider">Card holder</p>
-                            <p class="font-medium">{{ $user->name }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs text-white/60 uppercase tracking-wider">Expires</p>
-                            <p class="font-medium">{{ $activeCard->valid_to ? $activeCard->valid_to->format('m/y') : '—' }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 
     {{-- Wallet Balance --}}
     <div>
@@ -61,13 +28,13 @@
                     @foreach($walletBalances as $code => $wallet)
                         <div class="w-full flex-shrink-0" data-currency="{{ $code }}">
                             <div class="card-balance h-44 sm:h-48">
-                                <div class="relative z-10">
-                                    <div class="flex items-center justify-between mb-4">
-                                     <div>
-                                            <p class="text-sm text-white/70 font-medium">{{ $wallet['name'] }}</p>
-                                            <p class="font-semibold text-sm text-white">Main wallet</p>
+                                <div class="relative z-10 flex h-full flex-col justify-between">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <p class="text-xs font-medium uppercase tracking-wider text-white/60">Wallet</p>
+                                            <p class="font-semibold text-white">{{ $wallet['name'] }}</p>
                                         </div>
-                                        <span class="text-sm font-bold text-white/90 bg-white/15 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $wallet['symbol'] }}</span>
+                                        <span class="text-sm font-bold text-white/90 bg-white/10 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $wallet['symbol'] }}</span>
                                     </div>
                                     <div>
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
@@ -75,9 +42,7 @@
                                             {{ number_format((float) $wallet['balance'], $wallet['decimals']) }}
                                             <span class="text-sm text-white/60 block mt-1 font-medium">{{ $wallet['symbol'] }}</span>
                                         </p>
-                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">
-                                            ••••
-                                        </p>
+                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">••••••</p>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +52,9 @@
             </div>
             <div class="flex items-center justify-center gap-2 mt-3">
                 @foreach($walletBalances as $code => $wallet)
-                    <button onclick="switchWallet('{{ $code }}')" class="wallet-dot h-2 rounded-full transition-all {{ ($walletCurrency === $code || ($loop->first && !$walletCurrency)) ? 'bg-white w-4' : 'bg-white/40 w-2' }}" aria-label="Switch to {{ $wallet['name'] }}"></button>
+                    <button onclick="switchWallet('{{ $code }}')"
+                            class="wallet-dot h-1.5 rounded-full transition-all {{ ($walletCurrency === $code || ($loop->first && !$walletCurrency)) ? 'bg-[var(--primary)] w-5' : 'bg-[var(--line)] w-1.5' }}"
+                            aria-label="Switch to {{ $wallet['name'] }}"></button>
                 @endforeach
             </div>
         @else
@@ -96,13 +63,13 @@
                     @foreach($accounts as $account)
                         <div class="w-full flex-shrink-0" data-currency="{{ $account->currency->code }}">
                             <div class="card-balance h-44 sm:h-48">
-                                <div class="relative z-10">
-                                    <div class="flex items-center justify-between mb-4">
+                                <div class="relative z-10 flex h-full flex-col justify-between">
+                                    <div class="flex items-start justify-between">
                                         <div>
-                                            <p class="text-sm text-white/70 font-medium">{{ $account->currency->name ?? $account->currency->code }}</p>
-                                            <p class="font-semibold text-sm text-white">{{ $account->name }}</p>
+                                            <p class="text-xs font-medium uppercase tracking-wider text-white/60">Account</p>
+                                            <p class="font-semibold text-white">{{ $account->name }}</p>
                                         </div>
-                                        <span class="text-sm font-bold text-white/90 bg-white/15 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $account->currency->symbol }}</span>
+                                        <span class="text-sm font-bold text-white/90 bg-white/10 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $account->currency->symbol }}</span>
                                     </div>
                                     <div>
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
@@ -110,6 +77,7 @@
                                             {{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }}
                                             <span class="text-sm text-white/60 block mt-1 font-medium">{{ $account->currency->symbol }}</span>
                                         </p>
+                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">••••••</p>
                                     </div>
                                 </div>
                             </div>
@@ -119,86 +87,55 @@
             </div>
             <div class="flex items-center justify-center gap-2 mt-3">
                 @foreach($accounts as $account)
-                    <button onclick="switchWallet('{{ $account->currency->code }}')" class="wallet-dot h-2 rounded-full transition-all {{ $loop->first ? 'bg-white w-4' : 'bg-white/40 w-2' }}" aria-label="Switch to {{ $account->name }}"></button>
+                    <button onclick="switchWallet('{{ $account->currency->code }}')"
+                            class="wallet-dot h-1.5 rounded-full transition-all {{ $loop->first ? 'bg-[var(--primary)] w-5' : 'bg-[var(--line)] w-1.5' }}"
+                            aria-label="Switch to {{ $account->name }}"></button>
                 @endforeach
             </div>
         @endif
     </div>
 
     {{-- Quick Actions --}}
-    <div class="mt-6">
-        <h2 class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">Quick actions</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <a href="{{ route('transfer') }}" class="flex flex-col items-center gap-2 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
-                    <x-icon name="send" class="w-5 h-5" />
-                </div>
-                <span class="text-xs font-semibold text-[var(--text)]">Send</span>
-            </a>
-            <a href="{{ route('receive') }}" class="flex flex-col items-center gap-2 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
-                    <x-icon name="download" class="w-5 h-5" />
-                </div>
-                <span class="text-xs font-semibold text-[var(--text)]">Receive</span>
-            </a>
-            <a href="{{ route('cards') }}" class="flex flex-col items-center gap-2 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
-                    <x-icon name="credit-card" class="h-5 w-5" />
-                </div>
-                <span class="text-xs font-semibold text-[var(--text)]">My cards</span>
-            </a>
-            <a href="{{ route('deposit') }}" class="flex flex-col items-center gap-2 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
-                    <x-icon name="wallet" class="w-5 h-5" />
-                </div>
-                <span class="text-xs font-semibold text-[var(--text)]">Deposit</span>
-            </a>
+    <div>
+        <h2 class="section-title">Quick actions</h2>
+        <div class="grid grid-cols-4 gap-2 sm:gap-3">
+            @foreach([
+                ['route' => 'transfer', 'icon' => 'send', 'label' => 'Send'],
+                ['route' => 'receive', 'icon' => 'download', 'label' => 'Receive'],
+                ['route' => 'cards', 'icon' => 'credit-card', 'label' => 'Cards'],
+                ['route' => 'deposit', 'icon' => 'wallet', 'label' => 'Add money'],
+            ] as $action)
+                <a href="{{ route($action['route']) }}" class="flex flex-col items-center gap-2 p-3 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
+                    <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                        <x-icon name="{{ $action['icon'] }}" class="w-5 h-5" />
+                    </span>
+                    <span class="text-xs font-semibold text-[var(--text)] text-center leading-tight">{{ $action['label'] }}</span>
+                </a>
+            @endforeach
         </div>
     </div>
-
-    {{-- Financial Services --}}
-    <section class="mt-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="section-title">
-                <x-icon name="trending-up" class="w-4 h-4 text-[var(--accent)]" />
-                Financial services
-            </h2>
-            <a href="{{ route('financial-services') }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
-        </div>
-        <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-4 text-center">
-            <div class="flex flex-col items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
-                    <x-icon name="trending-up" class="w-6 h-6" />
-                </div>
-                <p class="font-semibold text-[var(--text)]">Explore financial services</p>
-                <p class="text-xs text-[var(--text-muted)]">Loans, insurance, and investment products tailored to your needs</p>
-                <a href="{{ route('financial-services') }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">Get started →</a>
-            </div>
-        </div>
-    </section>
 
     {{-- Pending --}}
     @if($inProgress->count() > 0)
         <section>
-            <h2 class="section-title flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                Pending
-            </h2>
-            <div class="bg-white border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)]">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="section-title mb-0">Pending</h2>
+                <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
+            </div>
+            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
                 @foreach($inProgress as $txn)
-                    <a href="#" class="flex items-center justify-between p-4 hover:bg-[var(--line-soft)] transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                                <x-icon name="clock" class="w-4 h-4" />
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-[var(--text)]">{{ $txn->memo ?? ($txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : '—') }}</p>
-                                <p class="text-xs text-[var(--text-muted)]">{{ $txn->created_at->diffForHumans() }}</p>
-                            </div>
-                        </div>
-                        <span @class(['badge', 'bg-amber-50 text-amber-700 border border-amber-200' => $txn->status === \App\Enums\TransactionStatus::PendingReview, 'bg-blue-50 text-blue-700 border border-blue-200' => $txn->status === \App\Enums\TransactionStatus::PendingMatch])>
-                            {{ $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? '—') }}
+                    <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
+                        <span class="txn-icon w-10 h-10" style="background: var(--warning-bg); color: var(--warning); border-color: rgba(217, 119, 6, 0.15);">
+                            <x-icon name="clock" class="w-4 h-4" />
                         </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-[var(--text)] truncate">{{ $txn->memo ?: $txn->type->customerLabel() }}</p>
+                            <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $txn->created_at->format('d M Y, H:i') }}</p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <p class="text-sm font-semibold text-balance text-[var(--text)]">{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</p>
+                            <x-status-pill :status="$txn->status" :label="$txn->customerStatusLabel()" />
+                        </div>
                     </a>
                 @endforeach
             </div>
@@ -207,31 +144,57 @@
 
     {{-- Recent Transactions --}}
     <section>
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-3">
             <h2 class="section-title mb-0">Recent transactions</h2>
             <a href="{{ route('activity') }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
         </div>
-        <div class="bg-white border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)]">
+        <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
             @forelse($recentActivity as $txn)
-                <a href="#" class="flex items-center justify-between p-4 hover:bg-[var(--line-soft)] transition-colors group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-[var(--line-soft)] flex items-center justify-center text-[var(--text-muted)] group-hover:bg-[var(--accent-subtle)] group-hover:text-[var(--accent)] transition-all">
-                            <x-icon name="external-link" class="w-5 h-5" />
-                        </div>
-                        <div>
-                            <p class="text-sm font-semibold text-[var(--text)]">{{ $txn->memo ?? ($txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : '—') }}</p>
-                            <p class="text-xs text-[var(--text-muted)]">{{ $txn->created_at->format('d M Y, H:i') }}</p>
-                        </div>
-                    </div>
-                    <span class="text-sm font-bold text-balance {{ in_array($txn->type->value ?? $txn->type, ['deposit_credit', 'credit', 'refund']) ? 'text-emerald-600' : 'text-[var(--text)]' }}">
-                        {{ in_array($txn->type->value ?? $txn->type, ['deposit_credit', 'credit', 'refund']) ? '+' : '-' }}{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}
-                    </span>
-                </a>
+                <x-txn-row :transaction="$txn" variant="mobile" />
             @empty
                 <div class="empty-state">
+                    <x-icon name="list-tree" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
                     <p class="text-sm text-[var(--text-muted)]">No activity yet.</p>
                 </div>
             @endforelse
+        </div>
+    </section>
+
+    {{-- Financial Services --}}
+    <section>
+        <h2 class="section-title">Financial services</h2>
+        <a href="{{ route('financial-services') }}" class="flex items-center gap-3 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
+            <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] flex-shrink-0">
+                <x-icon name="trending-up" class="w-5 h-5" />
+            </span>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-[var(--text)]">Explore financial services</p>
+                <p class="text-xs text-[var(--text-muted)]">Loans, insurance and investment products</p>
+            </div>
+            <x-icon name="chevron-right" class="w-5 h-5 text-[var(--text-muted)] flex-shrink-0" />
+        </a>
+    </section>
+
+    {{-- Support & resources --}}
+    <section>
+        <h2 class="section-title">Support &amp; resources</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            @foreach([
+                ['route' => 'support', 'icon' => 'headphones', 'title' => 'Help & support', 'desc' => 'Get in touch with our team'],
+                ['route' => 'learn', 'icon' => 'book-open', 'title' => 'Learn banking', 'desc' => 'Guides on money and security'],
+                ['route' => 'recommendations', 'icon' => 'sparkles', 'title' => 'Recommendations', 'desc' => 'Tailored financial services'],
+                ['route' => 'policies', 'icon' => 'shield-check', 'title' => 'Policies & terms', 'desc' => 'Legal and privacy information'],
+            ] as $item)
+                <a href="{{ route($item['route']) }}" class="flex items-center gap-3 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
+                    <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] flex-shrink-0">
+                        <x-icon name="{{ $item['icon'] }}" class="w-5 h-5" />
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-[var(--text)]">{{ $item['title'] }}</p>
+                        <p class="text-xs text-[var(--text-muted)]">{{ $item['desc'] }}</p>
+                    </div>
+                </a>
+            @endforeach
         </div>
     </section>
 </div>
@@ -257,14 +220,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateDots() {
-        var buttons = document.querySelectorAll('.wallet-dot');
-        buttons.forEach(function (btn, index) {
+        document.querySelectorAll('.wallet-dot').forEach(function (btn, index) {
             if (index === currentIndex) {
-                btn.classList.add('bg-white', 'w-4');
-                btn.classList.remove('bg-white/40', 'w-2');
+                btn.classList.add('bg-[var(--primary)]', 'w-5');
+                btn.classList.remove('bg-[var(--line)]', 'w-1.5');
             } else {
-                btn.classList.remove('bg-white', 'w-4');
-                btn.classList.add('bg-white/40', 'w-2');
+                btn.classList.remove('bg-[var(--primary)]', 'w-5');
+                btn.classList.add('bg-[var(--line)]', 'w-1.5');
             }
         });
     }
@@ -274,9 +236,21 @@ document.addEventListener('DOMContentLoaded', function () {
             return slide.getAttribute('data-currency') === code;
         });
         if (!target) return;
-        var index = slides.indexOf(target);
-        goTo(index);
+        goTo(slides.indexOf(target));
     };
+
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        var diff = startX - currentX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0 && currentIndex < slides.length - 1) {
+                goTo(currentIndex + 1);
+            } else if (diff < 0 && currentIndex > 0) {
+                goTo(currentIndex - 1);
+            }
+        }
+    }
 
     track.addEventListener('touchstart', function (e) {
         startX = e.touches[0].clientX;
@@ -289,18 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentX = e.touches[0].clientX;
     }, { passive: true });
 
-    track.addEventListener('touchend', function () {
-        if (!isDragging) return;
-        isDragging = false;
-        var diff = startX - currentX;
-        if (Math.abs(diff) > 50) {
-            if (diff > 0 && currentIndex < slides.length - 1) {
-                goTo(currentIndex + 1);
-            } else if (diff < 0 && currentIndex > 0) {
-                goTo(currentIndex - 1);
-            }
-        }
-    });
+    track.addEventListener('touchend', endDrag);
 
     track.addEventListener('mousedown', function (e) {
         e.preventDefault();
@@ -314,23 +277,8 @@ document.addEventListener('DOMContentLoaded', function () {
         currentX = e.clientX;
     });
 
-    track.addEventListener('mouseup', function () {
-        if (!isDragging) return;
-        isDragging = false;
-        var diff = startX - currentX;
-        if (Math.abs(diff) > 50) {
-            if (diff > 0 && currentIndex < slides.length - 1) {
-                goTo(currentIndex + 1);
-            } else if (diff < 0 && currentIndex > 0) {
-                goTo(currentIndex - 1);
-            }
-        }
-    });
-
-    track.addEventListener('mouseleave', function () {
-        if (!isDragging) return;
-        isDragging = false;
-    });
+    track.addEventListener('mouseup', endDrag);
+    track.addEventListener('mouseleave', function () { isDragging = false; });
 
     updateDots();
 });

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SignInController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -35,7 +34,17 @@ Route::middleware('web')->group(function () {
     Route::get('/', function () {
         return view('landing');
     })->name('landing');
+
+    Route::get('/support', [\App\Http\Controllers\PageController::class, 'support'])->name('support');
+    Route::post('/support', [\App\Http\Controllers\PageController::class, 'submitSupport'])->name('support.submit');
+    Route::get('/policies', [\App\Http\Controllers\PageController::class, 'policies'])->name('policies');
+    Route::get('/terms', [\App\Http\Controllers\PageController::class, 'terms'])->name('terms');
+    Route::get('/privacy', [\App\Http\Controllers\PageController::class, 'privacy'])->name('privacy');
+    Route::get('/learn', [\App\Http\Controllers\PageController::class, 'learn'])->name('learn');
+    Route::get('/recommendations', [\App\Http\Controllers\PageController::class, 'recommendations'])->name('recommendations');
     Route::post('/signin', [SignInController::class, 'signIn'])->name('signin.post');
+    Route::get('/signin/otp', [SignInController::class, 'showVerifyOtp'])->name('signin.otp');
+    Route::post('/signin/otp', [SignInController::class, 'verifyOtp'])->name('signin.otp.post');
     Route::post('/signout', [SignInController::class, 'signOut'])->name('signout');
 
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -99,35 +108,8 @@ Route::middleware('web')->group(function () {
     });
 });
 
-Route::get('/run-migrate', function () {
-    Artisan::call('migrate --force');
-    return response('Migrations complete!', 200)->header('Content-Type', 'text/plain');
-});
-
-Route::get('/run-seed', function () {
-    Artisan::call('db:seed --force');
-    return response('Database seeding complete!', 200)->header('Content-Type', 'text/plain');
-});
-
-Route::get('/clear-cache', function () {
-    Artisan::call('view:clear');
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('route:clear');
-    return response('All caches cleared!', 200)->header('Content-Type', 'text/plain');
-});
-
-Route::get('/storage-link', function () {
-    Artisan::call('storage:link');
-    return response('Storage link created!', 200)->header('Content-Type', 'text/plain');
-});
-
-Route::get('/config-cache', function () {
-    Artisan::call('config:cache');
-    return response('Config cached!', 200)->header('Content-Type', 'text/plain');
-});
-
-Route::get('/optimize', function () {
-    Artisan::call('optimize');
-    return response('Application optimized!', 200)->header('Content-Type', 'text/plain');
-});
+// NOTE: The old web-based Artisan routes (/run-migrate, /run-seed,
+// /storage-link, /config-cache, /optimize, /clear-cache, /copy-build) were
+// removed because they were publicly reachable. Database migrations, seeding,
+// the storage link and asset copying are now handled by the token-protected
+// `deploy.php` helper at the project root. Delete that file after setup.

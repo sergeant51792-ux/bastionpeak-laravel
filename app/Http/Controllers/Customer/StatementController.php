@@ -77,7 +77,7 @@ class StatementController extends Controller
                 fputcsv($file, [
                     $txn->created_at->format('Y-m-d H:i'),
                     $txn->transaction_id,
-                    $txn->type->label(),
+                    $txn->type->customerLabel(),
                     $txn->memo ?? '',
                     $txn->amount,
                     $txn->balance_after ?? '',

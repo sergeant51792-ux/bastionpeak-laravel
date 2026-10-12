@@ -28,17 +28,56 @@ class DepositController extends Controller
                     $method->account_id = $account->id;
                     $method->account_name = $account->name;
                     $method->currency = $account->currency;
+                    $method->category = $this->categoryFor($method->type);
                     return $method;
                 });
             $depositMethods = $depositMethods->merge($methods);
         }
 
+        $depositMethods = $depositMethods->unique('id')->values();
+
+        $categories = [
+            'crypto' => [
+                'key' => 'crypto',
+                'label' => 'Cryptocurrency',
+                'description' => 'Bitcoin, USDT, Ethereum and more',
+                'icon' => 'bitcoin',
+                'methods' => $depositMethods->where('category', 'crypto')->values(),
+            ],
+            'giftcard' => [
+                'key' => 'giftcard',
+                'label' => 'Gift card',
+                'description' => 'Redeem a supported gift card',
+                'icon' => 'gift',
+                'methods' => $depositMethods->where('category', 'giftcard')->values(),
+            ],
+            'transfer' => [
+                'key' => 'transfer',
+                'label' => 'Bank transfer',
+                'description' => 'Wire, ACH, SEPA, SWIFT and more',
+                'icon' => 'landmark',
+                'methods' => $depositMethods->where('category', 'transfer')->values(),
+            ],
+        ];
+
+        $categories = array_filter($categories, fn ($category) => $category['methods']->isNotEmpty());
+
         return view('customer.deposit', [
             'user'             => $user,
             'accounts'         => $activeAccounts,
-            'depositMethods'   => $depositMethods->unique('id'),
+            'depositMethods'   => $depositMethods,
+            'categories'       => $categories,
             'idempotency'      => bin2hex(random_bytes(32)),
         ]);
+    }
+
+    private function categoryFor(?string $type): string
+    {
+        return match ($type) {
+            'crypto' => 'crypto',
+            'giftcard', 'gift_card' => 'giftcard',
+            default => 'transfer',
+        };
     }
 
     public function submit(Request $request): \Illuminate\Http\RedirectResponse
@@ -67,7 +106,7 @@ class DepositController extends Controller
             userId: $user->id,
             accountId: $account->id,
             amount: (float) $validated['amount'],
-            note: $validated['deposit_method'] . ' - ' . ($validated['note'] ?? 'Deposit request'),
+            note: $validated['note'] ?: null,
             proofFile: $proofPath,
             depositMethod: $validated['deposit_method'] ?? null,
             metadata: [
@@ -77,6 +116,6 @@ class DepositController extends Controller
             ],
         );
 
-        return redirect()->route('deposit', ['status' => 'submitted'])->with('status', 'Deposit request submitted. It will be reviewed before crediting your account.');
+        return redirect()->route('deposit', ['status' => 'submitted']);
     }
 }

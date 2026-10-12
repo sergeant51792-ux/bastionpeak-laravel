@@ -39,20 +39,10 @@ class SendDepositApprovedNotification implements ShouldQueue
         $transaction = $event->transaction;
         $customerId = $transaction->customer_id;
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'deposit_approved',
-            'Deposit Approved',
-            'Your deposit of ' . $transaction->amount . ' has been approved and credited.',
-            'in-app'
-        );
+        $title = 'Deposit approved';
+        $body  = 'Your deposit of ' . $transaction->formattedAmount() . ' has been approved and credited to your account.';
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'deposit_approved',
-            'Deposit Approved',
-            'Your deposit of ' . $transaction->amount . ' has been approved and credited.',
-            'email'
-        );
+        $this->notificationService->sendToUser($customerId, 'deposit_approved', $title, $body, 'in-app');
+        $this->notificationService->sendToUser($customerId, 'deposit_approved', $title, $body, 'email');
     }
 }

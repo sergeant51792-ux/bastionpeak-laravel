@@ -41,7 +41,7 @@
 <body class="bg-[var(--bg)] text-[var(--text)]">
     <div class="min-h-screen flex flex-col">
         <header class="absolute top-6 left-0 right-0 z-20">
-            <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+            <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">
                 <a href="{{ route('landing') }}">
                     <x-bp-logo :width="40" :height="40" />
                 </a>

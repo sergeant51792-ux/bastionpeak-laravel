@@ -39,20 +39,10 @@ class SendPaymentApprovedNotification implements ShouldQueue
         $transaction = $event->transaction;
         $customerId = $transaction->customer_id;
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'withdrawal_approved',
-            'Payment Approved',
-            'Your payment of ' . $transaction->amount . ' has been approved and processed.',
-            'in-app'
-        );
+        $title = 'Payment approved';
+        $body  = 'Your payment of ' . $transaction->formattedAmount() . ' has been approved and processed.';
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'withdrawal_approved',
-            'Payment Approved',
-            'Your payment of ' . $transaction->amount . ' has been approved and processed.',
-            'email'
-        );
+        $this->notificationService->sendToUser($customerId, 'withdrawal_approved', $title, $body, 'in-app');
+        $this->notificationService->sendToUser($customerId, 'withdrawal_approved', $title, $body, 'email');
     }
 }

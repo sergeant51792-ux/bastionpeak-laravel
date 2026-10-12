@@ -18,10 +18,65 @@ use App\Models\Message;
 use App\Models\AuditLog;
 use App\Services\NotificationService;
 use App\Services\LedgerService;
+use App\Services\TotpService;
+use App\Http\Controllers\Auth\RegisterController;
 
 class UserController extends Controller
 {
-    public function __construct(protected NotificationService $notifications, protected LedgerService $ledger) {}
+    public function __construct(
+        protected NotificationService $notifications,
+        protected LedgerService $ledger,
+        protected TotpService $totp,
+    ) {}
+
+    public function approve(Request $request, User $user): RedirectResponse
+    {
+        if ($user->status !== 'pending') {
+            return back()->with('status', 'This user has already been processed.');
+        }
+
+        DB::transaction(function () use ($user) {
+            $user->update([
+                'status' => 'active',
+                'approved_at' => now(),
+                'approved_by' => Auth::id(),
+            ]);
+
+            RegisterController::provisionAccount($user);
+        });
+
+        $this->notifications->sendToUser(
+            $user->id,
+            'welcome',
+            'Your account is ready',
+            'Your Bastion Peak account has been approved and is ready to use.'
+        );
+
+        return back()->with('status', 'User approved and account activated.');
+    }
+
+    public function generateAuthenticator(Request $request, User $user): RedirectResponse
+    {
+        $secret = $this->totp->generateSecret();
+
+        $user->update([
+            'totp_secret' => $secret,
+            'totp_enabled' => true,
+        ]);
+
+        return back()->with('status', 'Authenticator issued. Share the setup key with the customer.')
+            ->with('totp_issued', $secret);
+    }
+
+    public function disableAuthenticator(Request $request, User $user): RedirectResponse
+    {
+        $user->update([
+            'totp_secret' => null,
+            'totp_enabled' => false,
+        ]);
+
+        return back()->with('status', 'Authenticator removed for this customer.');
+    }
 
     public function index(Request $request): \Illuminate\View\View
     {
@@ -303,7 +358,7 @@ class UserController extends Controller
                 'fee'               => 0,
                 'net_amount'        => abs($diff),
                 'status'            => 'posted',
-                'memo'              => 'Balance adjustment: ' . ($diff > 0 ? 'Credit' : 'Debit') . ' of ' . abs($diff) . ' by admin',
+                'memo'              => 'Balance adjustment: ' . ($diff > 0 ? 'credit' : 'debit') . ' of ' . abs($diff),
                 'reference'         => 'BAL-ADJ-' . strtoupper(uniqid()),
                 'idempotency_key'   => 'bal-adj-' . $account->id . '-' . md5((string)time()),
                 'operator_id'       => Auth::id(),
@@ -455,7 +510,7 @@ class UserController extends Controller
             'user_id'                => $user->id,
             'currency_id'            => $currency->id,
             'type'                   => $validated['type'],
-            'name'                   => $validated['type'] === 'main' ? 'Main wallet' : 'Sub-account',
+            'name'                   => $validated['type'] === 'main' ? 'Primary Account' : 'Sub-account',
             'account_number'         => str_replace(' ', '', '10 ' . str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT) . ' ' . str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT) . ' ' . str_pad((string) random_int(1000, 9999), 4, '0', STR_PAD_LEFT)),
             'balance'                => (float) ($validated['opening_balance'] ?? 0),
             'per_transaction_cap'    => (float) ($validated['per_transaction_cap'] ?? 0),

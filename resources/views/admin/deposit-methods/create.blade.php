@@ -37,6 +37,7 @@
                     'faster_payments' => 'Faster Payments (UK)',
                     'bacs' => 'BACS (UK)',
                     'chaps' => 'CHAPS (UK)',
+                    'giftcard' => 'Gift card',
                     'other' => 'Other',
                 ]"
                 placeholder="Select type"

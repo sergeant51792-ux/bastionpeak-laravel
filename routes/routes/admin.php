@@ -36,6 +36,9 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::get('users/{user}/transactions', [UserController::class, 'transactions'])->name('users.transactions');
     Route::post('users/{user}/block', [UserController::class, 'block'])->name('users.block');
     Route::post('users/{user}/freeze', [UserController::class, 'freeze'])->name('users.freeze');
+    Route::post('users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+    Route::post('users/{user}/authenticator', [UserController::class, 'generateAuthenticator'])->name('users.authenticator');
+    Route::delete('users/{user}/authenticator', [UserController::class, 'disableAuthenticator'])->name('users.authenticator.destroy');
 
     Route::get('accounts/{account}/deposit-methods', [\App\Http\Controllers\Admin\AccountDepositMethodController::class, 'index'])->name('accounts.deposit-methods.index');
     Route::post('accounts/{account}/deposit-methods', [\App\Http\Controllers\Admin\AccountDepositMethodController::class, 'store'])->name('accounts.deposit-methods.store');

@@ -5,7 +5,7 @@
 @section('content')
 <div class="px-3 sm:px-4 lg:px-6 pt-4 space-y-6" id="profile-page">
     @if(session('status'))
-        <div class="sticky top-0 z-10 mb-4 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
+        <div class="mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border" style="background: var(--success-bg); color: var(--success); border-color: rgba(5, 150, 105, 0.2);">
             <x-icon name="check-circle" class="w-4 h-4 flex-shrink-0" />
             {{ session('status') }}
         </div>
@@ -15,31 +15,20 @@
     <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <h2 class="text-base font-bold text-[var(--text)] mb-4">Profile</h2>
 
-        <div class="flex items-center gap-6">
-            <div class="flex-shrink-0">
-                @if($user->profile_picture_url)
-                    <img src="{{ $user->profile_picture_url }}" alt="Profile" class="w-20 h-20 rounded-full object-cover ring-2 ring-[var(--accent)]/20">
-                @else
-                    <div class="w-20 h-20 rounded-full bg-[var(--primary)] flex items-center justify-center text-white text-2xl font-bold">
-                        {{ strtoupper(substr($user->name ?? $user->email, 0, 2)) }}
-                    </div>
-                @endif
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm text-[var(--text-muted)]">Profile picture</p>
-                <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $user->profile_picture ? 'Uploaded' : 'No picture set' }}</p>
-            </div>
-            <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-5">
+            <x-avatar :user="$user" size="lg" />
+
+            <div class="flex flex-col gap-2 ml-auto">
                 @if($user->profile_picture)
                     <form method="POST" action="{{ route('profile.picture.remove') }}" class="inline">
                         @csrf
-                        <button type="submit" class="w-full px-3 py-2 text-xs font-medium text-red-600 hover:text-red-700 border border-red-200 rounded-lg min-h-[44px] transition-colors">
-                            Remove
+                        <button type="submit" class="w-full px-4 py-2 text-xs font-semibold rounded-lg min-h-[40px] transition-colors border" style="color: var(--danger); border-color: rgba(220, 38, 38, 0.25);">
+                            Remove photo
                         </button>
                     </form>
                 @endif
-                <label for="picture-input" class="cursor-pointer w-full px-3 py-2 text-xs font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] border border-[var(--accent)]/30 rounded-lg min-h-[44px] flex items-center justify-center transition-colors">
-                    Change
+                <label for="picture-input" class="cursor-pointer w-full px-4 py-2 text-xs font-semibold text-center text-[var(--accent)] hover:text-[var(--accent-dark)] border border-[var(--accent)]/30 rounded-lg min-h-[40px] flex items-center justify-center transition-colors">
+                    Change photo
                 </label>
             </div>
             <input type="file" id="picture-input" name="picture" accept="image/*" class="hidden">
@@ -154,7 +143,7 @@
     {{-- Logout --}}
     <form method="POST" action="{{ route('signout') }}" class="pt-2">
         @csrf
-        <button type="submit" class="w-full py-3.5 border-2 border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 hover:border-red-300 transition-all min-h-[44px]">
+        <button type="submit" class="w-full py-3.5 btn-danger min-h-[44px]">
             Log out
         </button>
     </form>
@@ -206,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    var currentTheme = '{{ $user->theme_preference ?: "light" }}';
+    var currentTheme = localStorage.getItem('theme') || '{{ $user->theme_preference ?: "light" }}';
 
     function applyTheme(theme) {
         if (theme === 'dark') {
@@ -248,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('theme', currentTheme);
     }
 
-    if (themeBtn) {
+     if (themeBtn) {
         themeBtn.addEventListener('click', function () {
             var themes = ['light', 'dark', 'system'];
             var idx = themes.indexOf(currentTheme);
@@ -261,7 +250,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.removeItem('theme');
             }
             showPrefBtn();
+            // Save to DB immediately
+            savePreferences();
         });
+    }
+    
+    function savePreferences() {
+        var formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('theme_preference', currentTheme);
+        fetch('{{ route('profile.preferences') }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        }).then(r => r.ok || r.text()).catch(() => {});
     }
 });
 
@@ -281,3 +283,44 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 @endsection
+
+@push('scripts')
+<script>
+(function() {
+    var input = document.getElementById('picture-input');
+    if (input) {
+        input.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                var formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('picture', this.files[0]);
+                 fetch('{{ route('profile.picture.upload') }}', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                }).then(r => {
+                    if (!r.ok) {
+                        throw new Error(r.status + ': ' + r.statusText);
+                    }
+                    return r.text();
+                }).then(() => {
+                    var statusDiv = document.createElement('div');
+                    statusDiv.className = 'mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border';
+                    statusDiv.style.cssText = 'background: var(--success-bg); color: var(--success); border-color: rgba(5,150,105,.2);';
+                    statusDiv.textContent = 'Profile picture updated.';
+                    document.querySelector('#profile-page').prepend(statusDiv);
+                    setTimeout(() => location.reload(), 1500);
+                }).catch(err => {
+                    var statusDiv = document.createElement('div');
+                    statusDiv.className = 'mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border';
+                    statusDiv.style.cssText = 'background: var(--danger-bg); color: var(--danger); border-color: rgba(220,38,38,.2);';
+                    statusDiv.textContent = 'Upload failed: ' + err.message;
+                    document.querySelector('#profile-page').prepend(statusDiv);
+                });
+                this.value = '';
+            }
+        });
+    }
+})();
+</script>
+@endpush

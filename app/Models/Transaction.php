@@ -106,6 +106,72 @@ class Transaction extends Model
         return $this->belongsTo(Transaction::class, 'parent_transaction_id');
     }
 
+    public function isIncoming(): bool
+    {
+        return in_array($this->type, [
+            \App\Enums\TransactionType::Credit,
+            \App\Enums\TransactionType::DepositCredit,
+            \App\Enums\TransactionType::Refund,
+        ], true);
+    }
+
+    public function isOutgoing(): bool
+    {
+        return ! $this->isIncoming();
+    }
+
+    /**
+     * Human-readable amount including currency symbol.
+     */
+    public function formattedAmount(): string
+    {
+        $decimals = $this->currency?->decimals ?? 2;
+        $symbol = $this->currency?->symbol ?? '';
+
+        return trim(number_format((float) $this->amount, $decimals) . ' ' . $symbol);
+    }
+
+    public function customerStatusLabel(): string
+    {
+        $status = $this->status instanceof \App\Enums\TransactionStatus
+            ? $this->status
+            : \App\Enums\TransactionStatus::from((string) $this->status);
+
+        if ($status === \App\Enums\TransactionStatus::Rejected) {
+            return 'Failed';
+        }
+
+        if ($status === \App\Enums\TransactionStatus::PendingReview
+            || $status === \App\Enums\TransactionStatus::PendingMatch) {
+            return 'Pending';
+        }
+
+        if ($status === \App\Enums\TransactionStatus::Reversed) {
+            return 'Reversed';
+        }
+
+        return $this->isOutgoing() ? 'Debited' : 'Credited';
+    }
+
+    public function customerStatusTone(): string
+    {
+        $status = $this->status instanceof \App\Enums\TransactionStatus
+            ? $this->status
+            : \App\Enums\TransactionStatus::from((string) $this->status);
+
+        if ($status === \App\Enums\TransactionStatus::Rejected) {
+            return 'danger';
+        }
+
+        if ($status === \App\Enums\TransactionStatus::PendingReview
+            || $status === \App\Enums\TransactionStatus::PendingMatch
+            || $status === \App\Enums\TransactionStatus::Reversed) {
+            return 'warning';
+        }
+
+        return $this->isIncoming() ? 'success' : 'neutral';
+    }
+
     public function scopePending($query)
     {
         return $query->where('status', 'pending_review');

@@ -2,25 +2,27 @@
 
 @section('title', 'Cards')
 @section('content')
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-xl font-bold text-[var(--text)] tracking-tight">Cards</h1>
-            <p class="text-sm text-[var(--text-muted)] mt-1">Manage payment cards</p>
-        </div>
+<div class="px-3 sm:px-4 lg:px-6 pt-4 space-y-6">
+    <div>
+        <h1 class="text-xl font-bold text-[var(--text)] tracking-tight">Cards</h1>
+        <p class="text-sm text-[var(--text-muted)] mt-0.5">Manage your payment cards</p>
     </div>
 
     <div class="space-y-6">
-            @forelse($cards as $card)
+        @forelse($cards as $card)
             @php
-                $statusColors = [
-                    'active' => 'bg-green-100 text-green-800',
-                    'frozen' => 'bg-blue-100 text-blue-800',
-                    'blocked' => 'bg-red-100 text-red-800',
-                    'cancelled' => 'bg-gray-100 text-gray-800',
-                    'closed' => 'bg-gray-100 text-gray-800',
-                ];
-                $statusColor = $statusColors[$card->status] ?? 'bg-gray-100 text-gray-800';
+                $tone = match ($card->status) {
+                    'active' => 'success',
+                    'frozen' => 'info',
+                    'blocked' => 'danger',
+                    default => 'neutral',
+                };
+                $toneClass = match ($tone) {
+                    'success' => 'badge-success',
+                    'info' => 'badge-info',
+                    'danger' => 'badge-danger',
+                    default => 'badge-neutral',
+                };
                 $isUsable = $card->status === 'active';
             @endphp
             <div class="relative">
@@ -41,50 +43,47 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-white/50 mb-0.5">Expires</p>
-                                <p class="text-sm font-medium text-white">Valid {{ $card->valid_to?->format('m/y') ?? '09/28' }}</p>
+                                <p class="text-sm font-medium text-white">{{ $card->valid_to?->format('m/y') ?? '—' }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="absolute -bottom-3 right-4">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $statusColor }}">{{ ucfirst($card->status ?? 'unknown') }}</span>
+                    <span class="badge {{ $toneClass }}">{{ ucfirst($card->status ?? 'unknown') }}</span>
                 </div>
 
                 <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl mt-4">
-                    <div class="p-5 space-y-0">
-                        <div class="flex items-center justify-between py-3">
-                            <span class="text-sm text-[var(--text-muted)]">Status</span>
-                            <span class="text-sm font-medium text-[var(--text)]">{{ ucfirst($card->status ?? 'unknown') }}</span>
-                        </div>
-                        <hr class="border-[var(--line)]">
-                        <div class="flex items-center justify-between py-3">
-                            <span class="text-sm text-[var(--text-muted)]">Linked to</span>
-                            <span class="text-sm font-medium text-[var(--text)]">{{ optional($card->account)->name ?? 'Main wallet' }}</span>
-                        </div>
-                        <hr class="border-[var(--line)]">
-                        <div class="flex items-center justify-between py-3">
-                            <span class="text-sm text-[var(--text-muted)]">Per-transaction limit</span>
-                            <span class="text-sm font-semibold text-[var(--text)]">{{ number_format((float) ($card->per_transaction_cap ?? 500), 0) }}</span>
-                        </div>
-                        <hr class="border-[var(--line)]">
-                        <div class="flex items-center justify-between py-3">
-                            <span class="text-sm text-[var(--text-muted)]">Monthly limit</span>
-                            <span class="text-sm font-semibold text-[var(--text)]">{{ number_format((float) ($card->monthly_cap ?? 2000), 0) }}</span>
-                        </div>
-                        <hr class="border-[var(--line)]">
-                        <div class="flex items-center justify-between py-3">
-                            <span class="text-sm text-[var(--text-muted)]">Allowed categories</span>
-                            <span class="text-sm font-medium text-[var(--text)]">{{ $card->category_restrictions ? implode(', ', $card->category_restrictions) : 'Food, Office supplies' }}</span>
-                        </div>
-                        <hr class="border-[var(--line)]">
-                        <div class="pt-3 flex gap-3">
+                    <div class="p-5">
+                        <dl class="divide-y divide-[var(--line)]">
+                            <div class="flex items-center justify-between py-3">
+                                <dt class="text-sm text-[var(--text-muted)]">Status</dt>
+                                <dd class="text-sm font-medium text-[var(--text)]">{{ ucfirst($card->status ?? 'unknown') }}</dd>
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <dt class="text-sm text-[var(--text-muted)]">Linked to</dt>
+                                <dd class="text-sm font-medium text-[var(--text)]">{{ optional($card->account)->name ?? 'Primary account' }}</dd>
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <dt class="text-sm text-[var(--text-muted)]">Per-transaction limit</dt>
+                                <dd class="text-sm font-semibold text-[var(--text)] text-balance">{{ number_format((float) ($card->per_transaction_cap ?? 500), 0) }}</dd>
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <dt class="text-sm text-[var(--text-muted)]">Monthly limit</dt>
+                                <dd class="text-sm font-semibold text-[var(--text)] text-balance">{{ number_format((float) ($card->monthly_cap ?? 2000), 0) }}</dd>
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <dt class="text-sm text-[var(--text-muted)]">Allowed categories</dt>
+                                <dd class="text-sm font-medium text-[var(--text)] text-right">{{ $card->category_restrictions ? implode(', ', $card->category_restrictions) : 'Food, Office supplies' }}</dd>
+                            </div>
+                        </dl>
+                        <div class="pt-4 flex flex-wrap gap-4">
                             @if($card->status === 'frozen')
-                                <span class="text-xs text-blue-600 font-medium">Card is frozen</span>
+                                <span class="text-xs font-medium text-[var(--accent)]">Card is frozen</span>
                             @elseif($card->status === 'blocked')
-                                <span class="text-xs text-red-600 font-medium">Card is blocked</span>
+                                <span class="text-xs font-medium" style="color: var(--danger);">Card is blocked</span>
                             @elseif($card->status === 'active')
-                                <span class="text-xs text-green-600 font-medium">Card is active</span>
+                                <span class="text-xs font-medium" style="color: var(--success);">Card is active</span>
                             @endif
                             <a href="{{ route('card.pin', $card) }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">Manage PIN</a>
                             <a href="{{ route('messages', ['subject' => 'Card problem: ' . $card->card_number_masked]) }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">Report problem</a>
@@ -93,14 +92,14 @@
                 </div>
             </div>
         @empty
-            <div class="empty-state bg-white border border-[var(--line)] rounded-2xl">
-                <x-icon name="file-text" class="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)]" />
+            <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
+                <x-icon name="credit-card" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
                 <p class="text-sm text-[var(--text-muted)]">No cards issued yet.</p>
             </div>
         @endforelse
 
         @if(!$pendingRequest)
-            <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
                 <h2 class="text-base font-bold text-[var(--text)] mb-1">Request a card</h2>
                 <p class="text-sm text-[var(--text-muted)] mb-4">Submit a request and it will be reviewed shortly.</p>
                 <form method="POST" action="{{ route('cards.request') }}" class="space-y-4">
@@ -118,16 +117,16 @@
                         <label for="reason" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Reason</label>
                         <input type="text" id="reason" name="reason" required maxlength="255" class="input-field" placeholder="Why do you need this card?">
                     </div>
-                    <button type="submit" class="w-full py-3 btn-primary">Submit request</button>
+                    <button type="submit" class="w-full py-3 btn-primary min-h-[44px]">Submit request</button>
                 </form>
             </div>
         @else
-            <div class="bg-white border border-[var(--line)] rounded-2xl p-5">
+            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
                 <h2 class="text-base font-bold text-[var(--text)] mb-1">Card request</h2>
-                <p class="text-sm text-[var(--text-muted)]">A pending request for <span class="font-medium">{{ optional($pendingRequest->account)->name ?? '—' }}</span> is being reviewed.</p>
-                <span @class(['badge mt-3 inline-block', 'bg-amber-50 text-amber-700 border border-amber-200' => $pendingRequest->status === 'pending', 'bg-green-50 text-green-700 border border-green-200' => $pendingRequest->status === 'approved', 'bg-red-50 text-red-700 border border-red-200' => $pendingRequest->status === 'rejected'])>
-                    {{ ucfirst($pendingRequest->status) }}
-                </span>
+                <p class="text-sm text-[var(--text-muted)]">A pending request for <span class="font-medium text-[var(--text)]">{{ optional($pendingRequest->account)->name ?? '—' }}</span> is being reviewed.</p>
+                <div class="mt-3">
+                    <x-status-pill :status="$pendingRequest->status" />
+                </div>
             </div>
         @endif
     </div>

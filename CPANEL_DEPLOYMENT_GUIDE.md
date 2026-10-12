@@ -18,111 +18,184 @@ Before starting, ensure your cPanel hosting meets these requirements:
 
 ---
 
-## No Terminal Access — Web-Based Deployment
+## No Terminal Access — Quick Start (recommended)
 
-If your cPanel hosting does not provide Terminal/SSH access, use this alternative approach:
+This is the supported path when your cPanel has **no Terminal/SSH**. It keeps the
+Laravel application **outside** the web root (so `.env`, `app/`, `storage/` are
+never exposed) and uses a single token-protected helper script to do everything
+artisan would normally do.
 
-### Method A: Deploy via ZIP Upload
+### 1. Upload the application
 
-1. **Prepare locally**:
-   ```bash
-   composer install --optimize-autoloader --no-dev
-   npm install && npm run build
-   php artisan config:cache
-   ```
-2. **Zip the entire project** (including `vendor/`, `storage/`, `node_modules/` optional).
-3. **Upload via cPanel File Manager** to your home directory.
-4. **Extract** via File Manager.
+Put the whole project in your home directory (NOT the web root), e.g.:
 
-### Method B: Artisan Command Routes (Temporary)
-
-The project includes temporary web routes for environments with **no terminal access**. These let you run Artisan commands through your browser.
-
-After deploying files to the server:
-
-1. Visit these URLs in your browser (in order):
-   - `https://bastionpeaks.com/storage-link` — Creates the storage symlink
-   - `https://bastionpeaks.com/run-migrate` — Runs database migrations
-   - `https://bastionpeaks.com/run-seed` — Seeds default data (roles, currencies, admin user)
-   - `https://bastionpeaks.com/config-cache` — Caches configuration
-   - `https://bastionpeaks.com/optimize` — Runs `php artisan optimize`
-   - `https://bastionpeaks.com/clear-cache` — Clears all caches (if needed)
-
-2. **Delete these routes after setup** is complete — they are a security risk if left exposed.
-
-### Document Root Without Terminal
-
-If you cannot change the document root:
-
-1. Move `public/` contents into `public_html/`:
-   - `public/index.php` → `public_html/index.php`
-   - `public/.htaccess` → `public_html/.htaccess`
-   - `public/build/` → `public_html/build/`
-   - `public/storage` → `public_html/storage` (symlink)
-   - `public/favicon.*` → `public_html/`
-
-2. **Edit `public_html/index.php`** (3 paths need updating):
-   ```php
-   // Change these lines from:
-   require __DIR__.'/../vendor/autoload.php';
-   $app = require_once __DIR__.'/../bootstrap/app.php';
-
-   // To:
-   require __DIR__.'/../bastionpeak-laravel/vendor/autoload.php';
-   $app = require_once __DIR__.'/../bastionpeak-laravel/bootstrap/app.php';
-   ```
-
-3. **Set APP_URL** in `.env` to `https://bastionpeaks.com`.
-
-### Cron Without Terminal
-
-If Cron Jobs are available via cPanel's **Cron Jobs** UI:
 ```
-* * * * * GET https://bastionpeaks.com/  (just to keep it alive)
+/home/bastionpeaks/bastionpeak-laravel/
 ```
-Or use curl:
-```
-* * * * * /usr/bin/curl -s https://bastionpeaks.com >/dev/null 2>&1
-```
-Note: Without cron, scheduled tasks (cleanup, limits reset) will not run automatically.
 
-### Environment Configuration
+Upload the ZIP through **File Manager → Upload**, then **Extract**. Make sure
+`vendor/` is included (run `composer install` and `npm run build` on your own
+machine first, then upload). Never upload `node_modules/`.
 
-Create `.env` via **cPanel File Manager** (create new file, edit):
+### 2. Create the web root
+
+In `/home/bastionpeaks/public_html/` place these files:
+
+1. `cpanel/index.php`  →  `public_html/index.php`
+2. `cpanel/.htaccess`  →  `public_html/.htaccess`
+3. `deploy.php` (from the project root) → `public_html/deploy.php`
+
+`index.php` automatically finds the app folder and calls `usePublicPath()`, so
+`public_path()`, `@vite`, `asset()` and `storage:link` all resolve to
+`public_html`. If your app folder has a different name, edit the
+`$APP_DIR_SEARCH` array at the top of `index.php`.
+
+### 3. Create `.env`
+
+Create `/home/bastionpeaks/bastionpeak-laravel/.env` via File Manager with real
+credentials (copy `.env.example`, then edit). Minimum:
 
 ```env
 APP_NAME="Bastion Peak"
 APP_ENV=production
-APP_KEY=base64:GENERATE_ON_LOCAL=THEN_PASTE
+APP_KEY=base64:PASTE_KEY_FROM_YOUR_MACHINE
 APP_DEBUG=false
 APP_URL=https://bastionpeaks.com
 
 DB_CONNECTION=mysql
 DB_HOST=localhost
 DB_PORT=3306
-DB_DATABASE=bastionpeak_db
-DB_USERNAME=bastionpeak_user
-DB_PASSWORD=your_strong_db_password
+DB_DATABASE=bastionpeak
+DB_USERNAME=bastionpeak
+DB_PASSWORD=your_db_password
 
-SESSION_DRIVER=database
-CACHE_DRIVER=file
+SESSION_DRIVER=file
+CACHE_STORE=file
 QUEUE_CONNECTION=sync
-FILESYSTEM_DISK=public
+FILESYSTEM_DISK=local
 
-MAIL_MAILER=smtp
-MAIL_HOST=localhost
-MAIL_PORT=25
-MAIL_FROM_ADDRESS=noreply@bastionpeaks.com
-MAIL_FROM_NAME="Bastion Peak"
+DEPLOY_KEY=some-long-random-string-only-you-know
 ```
 
-### Generate APP_KEY Locally
+> Generate `APP_KEY` locally with `php artisan key:generate` and paste the value.
+> Use `SESSION_DRIVER=file` / `CACHE_STORE=file` initially — `database` drivers
+> will 500 on every page until migrations have created the `sessions`/`cache`
+> tables. Switch to `database` after step 5 if you prefer.
 
-Run on your local machine:
-```bash
-php artisan key:generate
+### 4. Set the deploy key
+
+Add a long random secret to the app's `.env`:
+
+```env
+DEPLOY_KEY=some-long-random-string-only-you-know
 ```
-Then paste the generated `base64:...` value into `APP_KEY` in `.env` on the server.
+
+`deploy.php` reads `DEPLOY_KEY` from `.env`. It falls back to a default key if
+missing (and shows a warning on the page telling you to set it), so set this
+before exposing the file.
+
+### 5. Run setup through the browser
+
+Open:
+
+```
+https://bastionpeaks.com/deploy.php?key=YOUR_KEY
+```
+
+The page shows a health check (PHP version, extensions, DB connection, writable
+folders) and buttons. Click them **in order**:
+
+1. **Run migrations**
+2. **Seed data**
+3. **Copy build assets** (copies `public/build` into `public_html/build`)
+4. **Storage link** (creates `public_html/storage` → `storage/app/public`)
+5. **Cache config** / **Cache routes** / **Cache views**
+
+`Run everything` does all of the above at once. `Clear caches` is available if
+you change `.env` or code.
+
+### 6. Delete `deploy.php`
+
+**Delete `deploy.php` from `public_html` as soon as setup works.** Anyone with
+the key can run migrations and seeders.
+
+### 7. Smoke test
+
+- `https://bastionpeaks.com/` → landing page
+- `https://bastionpeaks.com/signin` → login
+- `https://bastionpeaks.com/register` → signup (creates a pending user)
+- `https://bastionpeaks.com/admin` → admin panel (seeded Super Admin)
+
+If you see a 500, view `storage/logs/laravel.log`, then re-add `deploy.php`
+temporarily and check the **info** page.
+
+## Deploying Updates via GitHub
+
+Once the first setup above is done, use GitHub to ship updates instead of
+re-uploading files by hand. There are two supported options.
+
+### Option 1 — cPanel «Git™ Version Control» (no terminal)
+
+Most cPanel hosts expose **Git™ Version Control** even when there is no terminal.
+
+1. cPanel → **Git™ Version Control** → **Create**.
+2. Clone URL: `https://github.com/sergeant51792-ux/bastionpeak-laravel.git`.
+3. Repository path: `/home/bastionpeaks/bastionpeak-laravel` (the app folder,
+   **outside** `public_html`).
+4. Create. For later updates, click **Update from Remote** (runs `git pull`).
+
+Because `vendor/`, `.env` and `storage/` are git-ignored, pulls never overwrite
+them. After a pull that adds migrations, re-open
+`deploy.php?key=…&action=migrate` (or `action=all`), then delete `deploy.php`
+again.
+
+### Option 2 — GitHub Actions (auto-deploy on push)
+
+`.github/workflows/deploy.yml` builds Composer + Vite assets on every push to
+`main` and FTPs them to cPanel. Add these **repository secrets**
+(Settings → Secrets and variables → Actions):
+
+| Secret | Example | Purpose |
+|---|---|---|
+| `FTP_SERVER` | `ftp.bastionpeaks.com` | FTP host from cPanel |
+| `FTP_USERNAME` | `bastionpeaks` | FTP account |
+| `FTP_PASSWORD` | `…` | FTP password |
+| `APP_DIR` | `/home/bastionpeaks/bastionpeak-laravel` | App folder (outside web root) |
+| `PUBLIC_DIR` | `/home/bastionpeaks/public_html` | Web root |
+| `DEPLOY_URL` | `https://bastionpeaks.com/deploy.php` | Optional: for the migration step |
+| `DEPLOY_KEY` | same as `.env` `DEPLOY_KEY` | Optional: for the migration step |
+
+The workflow uploads the app (including a freshly built `vendor/`, so the server
+needs no Composer) and syncs `public/` into `public_html` — it deliberately does
+**not** overwrite `public_html/index.php` or `.htaccess`, so your cPanel shim
+stays. To run migrations after a deploy, use **Actions → Deploy to cPanel → Run
+workflow** and tick **run_migrations**.
+
+> Keep the repository **private** — this is a banking application. Never commit
+> `.env`, and rotate `DEPLOY_KEY` if it is ever exposed.
+
+### Changing the document root instead (alternative)
+
+If cPanel lets you change the document root, point it at
+`/home/bastionpeaks/bastionpeak-laravel/public` and skip `cpanel/index.php`.
+Everything else (steps 3, 4, 5, 6) is identical — `deploy.php` auto-detects the
+layout.
+
+> The old public Artisan URLs (`/run-migrate`, `/run-seed`, `/storage-link`,
+> `/config-cache`, `/optimize`, `/clear-cache`, `/copy-build`) were **removed**
+> because they were reachable by anyone. `deploy.php` replaces them and is
+> key-protected.
+
+### Cron without terminal
+
+Through **cPanel → Cron Jobs** (if available):
+
+```
+* * * * * /usr/bin/curl -s https://bastionpeaks.com/up >/dev/null 2>&1
+```
+
+Without cron, scheduled tasks (cleanup, limit resets) will not run
+automatically. Everything else works without it.
 
 ---
 
@@ -408,6 +481,7 @@ php artisan optimize
 | APP_ENV | production |
 | APP_DEBUG | false |
 | HTTPS | Enforced |
+| DEPLOY_KEY | set in `.env`; delete `deploy.php` after setup |
 
 ---
 

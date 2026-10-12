@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
@@ -50,7 +51,7 @@ class RegisterController extends Controller
             'postal_code' => $request->postal_code,
             'password' => Hash::make($request->password),
             'pin_hash' => Hash::make($request->pin),
-            'status' => 'active',
+            'status' => 'pending',
             'email_verified_at' => now(),
         ]);
 
@@ -58,26 +59,41 @@ class RegisterController extends Controller
             $user->assignRole($customerRole);
         }
 
+        return redirect()->route('register')->with('registered', true);
+    }
+
+    public static function provisionAccount(User $user): Account
+    {
         $currency = Currency::where('code', 'USD')->first();
 
-        if ($currency) {
-            Account::create([
-                'user_id' => $user->id,
-                'currency_id' => $currency->id,
-                'type' => 'main',
-                'name' => 'Main Wallet',
-                'account_number' => $this->generateAccountNumber(),
-                'balance' => 0,
-                'status' => 'active',
+        if (! $currency) {
+            $currency = Currency::create([
+                'code' => 'USD',
+                'name' => 'US Dollar',
+                'symbol' => '$',
+                'decimals' => 2,
+                'exchange_rate' => 1,
             ]);
         }
 
-        auth()->login($user);
+        $existing = Account::where('user_id', $user->id)->first();
 
-        return redirect()->route('home');
+        if ($existing) {
+            return $existing;
+        }
+
+        return Account::create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+            'type' => 'main',
+            'name' => 'Primary Account',
+            'account_number' => self::generateAccountNumber(),
+            'balance' => 0,
+            'status' => 'active',
+        ]);
     }
 
-    private function generateAccountNumber(): string
+    public static function generateAccountNumber(): string
     {
         $parts = [
             str_pad((string)random_int(1000, 9999), 4, '0', STR_PAD_LEFT),

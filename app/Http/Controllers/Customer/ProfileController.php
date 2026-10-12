@@ -57,7 +57,7 @@ class ProfileController extends Controller
         return back()->with('status', 'Password updated.');
     }
 
-    public function uploadPicture(Request $request): RedirectResponse
+    public function uploadPicture(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $user = $request->user();
 
@@ -69,16 +69,31 @@ class ProfileController extends Controller
             Storage::disk('public')->delete($user->profile_picture);
         }
 
-        $path = $request->file('picture')->store('profile-pictures', 'public');
+        try {
+            $path = $request->file('picture')->store('profile-pictures', 'public');
+        } catch (\Throwable $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Upload failed. Please try again.'], 500);
+            }
+            return back()->with('error', 'Upload failed. Please try again.');
+        }
 
         $user->update([
             'profile_picture' => $path,
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'path' => $path,
+                'url' => asset('storage/' . $path),
+            ], 200);
+        }
+
         return back()->with('status', 'Profile picture updated.');
     }
 
-    public function removePicture(Request $request): RedirectResponse
+    public function removePicture(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $user = $request->user();
 
@@ -89,6 +104,10 @@ class ProfileController extends Controller
         $user->update([
             'profile_picture' => null,
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true], 200);
+        }
 
         return back()->with('status', 'Profile picture removed.');
     }

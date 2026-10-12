@@ -32,8 +32,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->id('bastion-peak-admin')
-            ->path('admin')
-            ->domain(config('app.url') . '/admin')
+            ->path('panel')
             ->login()
             ->colors([
                 'primary' => Color::hex('#0E6E63'),

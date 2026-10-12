@@ -26,10 +26,12 @@
     <script>
          (function() {
             @auth
-            var theme = '{{ auth()->user()->theme_preference ?: "light" }}';
+            var dbTheme = '{{ auth()->user()->theme_preference ?: "light" }}';
             @else
-            var theme = 'light';
+            var dbTheme = 'light';
             @endauth
+            var localStorageTheme = localStorage.getItem('theme');
+            var theme = localStorageTheme || dbTheme;
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (theme === 'dark' || (theme === 'system' && prefersDark)) {
                 document.body.classList.add('dark');
@@ -74,10 +76,10 @@
                     </a>
                     <a href="{{ route('deposit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('deposit')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="wallet" class="w-5 h-5" />
-                        Deposit
+                        Add money
                     </a>
                     <a href="{{ route('cards') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('cards')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
-                        <x-icon name="credit-card" class="h-6 w-6" />
+                        <x-icon name="credit-card" class="w-5 h-5" />
                         Cards
                     </a>
                     <a href="{{ route('financial-services') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('financial-services')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
@@ -89,7 +91,7 @@
                         Messages
                     </a>
                     <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('profile')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
-                        <x-icon name="user" class="h-6 w-6" />
+                        <x-icon name="user" class="w-5 h-5" />
                         Profile
                     </a>
                 </nav>
@@ -147,7 +149,7 @@
                 </a>
                 <a href="{{ route('deposit') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('deposit')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
                     <x-icon name="wallet" class="w-5 h-5 mb-0.5" />
-                    Deposit
+                    Add money
                 </a>
                 <button id="mobile-menu-btn-bottom" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium text-[var(--text-muted)]">
                     <x-icon name="menu" class="w-5 h-5 mb-0.5" />
@@ -239,6 +241,7 @@
 
         <div id="support-chat-collapsed" class="p-3 border-t border-[var(--line)]">
             <a href="{{ route('messages') }}" class="text-xs text-[var(--accent)] hover:text-[var(--accent-dark)] font-medium">Open messages</a>
+            <a href="mailto:support@bastionpeaks.com" class="text-xs text-[var(--text-muted)] hover:text-[var(--text)] block mt-1">support@bastionpeaks.com</a>
         </div>
     </div>
 
@@ -324,5 +327,26 @@
     @endif
 
     @stack('scripts')
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API = Tawk_API || {};
+    var Tawk_LoadStart = new Date();
+    Tawk_API.customStyle = {
+        visibility: {
+            desktop: { position: 'br', xOffset: 20, yOffset: 90 },
+            mobile: { position: 'br', xOffset: 16, yOffset: 96 }
+        }
+    };
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6ac799d68b8ed034c2db2364/1k4dr1sb9';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 </body>
 </html>

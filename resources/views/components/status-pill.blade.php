@@ -4,40 +4,42 @@
 ])
 
 @php
-    $label = $label ?? ucfirst(str_replace('_', ' ', $status));
-    $colorMap = [
-        'active' => 'text-emerald-400 bg-emerald-500/20',
-        'frozen' => 'text-sky-400 bg-sky-500/20',
-        'locked' => 'text-amber-400 bg-amber-500/20',
-        'closed' => 'text-red-400 bg-red-500/20',
-        'approved' => 'text-emerald-400 bg-emerald-500/20',
-        'pending_review' => 'text-amber-400 bg-amber-500/20',
-        'rejected' => 'text-red-400 bg-red-500/20',
-        'reversed' => 'text-slate-400 bg-slate-500/20',
-        'credited' => 'text-indigo-400 bg-indigo-500/20',
-        'pending_match' => 'text-purple-400 bg-purple-500/20',
-        'deactivated' => 'text-slate-400 bg-slate-500/20',
-        'active_de' => 'text-emerald-400 bg-emerald-500/20',
-    ];
+    $value = $status instanceof \BackedEnum ? $status->value : (string) $status;
 
-    $iconMap = [
-        'active' => 'check',
-        'frozen' => 'snowflake',
-        'locked' => 'lock',
-        'closed' => 'x',
-        'approved' => 'check',
-        'pending_review' => 'clock',
-        'rejected' => 'x',
-        'reversed' => 'refresh-cw',
-        'credited' => 'check',
-        'pending_match' => 'clock',
-        'deactivated' => 'minus-circle',
-    ];
+    $label = $label ?? ($status instanceof \App\Enums\TransactionStatus
+        ? $status->label()
+        : ucfirst(str_replace('_', ' ', $value)));
+
+    if ($status instanceof \App\Enums\TransactionStatus) {
+        $tone = $status->tone();
+    } else {
+        $tone = match ($value) {
+            'active', 'approved', 'credited', 'posted', 'success' => 'success',
+            'pending_review', 'pending_match', 'locked', 'reversed', 'warning' => 'warning',
+            'closed', 'rejected', 'blocked', 'failed', 'danger' => 'danger',
+            'frozen' => 'info',
+            default => 'neutral',
+        };
+    }
+
+    $badgeClass = match ($tone) {
+        'success' => 'badge-success',
+        'warning' => 'badge-warning',
+        'danger' => 'badge-danger',
+        'info' => 'badge-info',
+        default => 'badge-neutral',
+    };
+
+    $dotClass = match ($tone) {
+        'success' => 'bg-[var(--success)]',
+        'warning' => 'bg-[var(--warning)]',
+        'danger' => 'bg-[var(--danger)]',
+        'info' => 'bg-[var(--accent)]',
+        default => 'bg-[var(--text-muted)]',
+    };
 @endphp
 
-<span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium {{ $colorMap[$status] ?? 'text-slate-400 bg-slate-500/20' }}">
-    @if($iconMap[$status] ?? null)
-        <x-icon name="{{ $iconMap[$status] }}" class="h-3.5 w-3.5" />
-    @endif
+<span class="badge {{ $badgeClass }}">
+    <span class="w-1.5 h-1.5 rounded-full {{ $dotClass }}" aria-hidden="true"></span>
     {{ $label }}
 </span>

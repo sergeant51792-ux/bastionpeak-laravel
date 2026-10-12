@@ -11,6 +11,7 @@
                 placeholder="All statuses"
                 :options="[
                     '' => 'All statuses',
+                    'pending' => 'Pending',
                     'active' => 'Active',
                     'frozen' => 'Frozen',
                     'locked' => 'Locked',
@@ -53,13 +54,20 @@
                         <td class="px-4 py-3">{{ $accountCount }}</td>
                          <td class="px-4 py-3 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $totalBalance, 2) }} USD</td>
                         <td class="px-4 py-3">
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $user->status === 'active', 'bg-blue-100 text-blue-800' => $user->status === 'frozen', 'bg-red-100 text-red-800' => $user->status === 'locked', 'bg-gray-100 text-gray-800' => $user->status === 'closed'])>
+                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $user->status === 'active', 'bg-blue-100 text-blue-800' => $user->status === 'frozen', 'bg-red-100 text-red-800' => $user->status === 'locked', 'bg-gray-100 text-gray-800' => $user->status === 'closed', 'bg-amber-100 text-amber-800' => $user->status === 'pending'])>
                                 {{ ucfirst($user->status) }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex gap-1 justify-end">
-                                @if($user->status === 'active')
+                                @if($user->status === 'pending')
+                                    <form method="POST" action="{{ route('admin.users.approve', $user) }}" class="inline" onsubmit="return confirm('Approve this signup and activate their account?')">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors" aria-label="Approve signup">
+                                            Approve
+                                        </button>
+                                    </form>
+                                @elseif($user->status === 'active')
                                     <form method="POST" action="{{ route('admin.users.freeze', $user) }}" class="inline" onsubmit="return confirm('Freeze this user account?')">
                                         @csrf
                                         <button type="submit" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Freeze">

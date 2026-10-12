@@ -26,4 +26,21 @@ enum TransactionType: string
             self::Reversal => 'Reversal',
         };
     }
+
+    /**
+     * Customer-facing title for a transaction type. Avoids internal
+     * accounting phrasing on statements and activity feeds.
+     */
+    public function customerLabel(): string
+    {
+        return match ($this) {
+            self::Credit => 'Credit',
+            self::Debit => 'Payment',
+            self::DepositCredit => 'Deposit',
+            self::PaymentDebit => 'Payment',
+            self::Adjustment => 'Adjustment',
+            self::Refund => 'Refund',
+            self::Reversal => 'Reversal',
+        };
+    }
 }

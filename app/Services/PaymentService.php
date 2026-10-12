@@ -144,11 +144,11 @@ class PaymentService
         $transaction = Transaction::findOrFail($transactionId);
 
         $transaction->update([
-            'status'      => TransactionStatus::Rejected,
-            'operator_id' => $operatorId,
-            'memo'        => $transaction->memo . ' | Rejected: ' . $reason,
-            'rejected_at' => now(),
-            'updated_at'  => now(),
+            'status'           => TransactionStatus::Rejected,
+            'operator_id'      => $operatorId,
+            'rejection_reason' => $reason,
+            'rejected_at'      => now(),
+            'updated_at'       => now(),
         ]);
 
         return $transaction;

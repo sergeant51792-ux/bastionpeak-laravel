@@ -17,13 +17,28 @@ enum TransactionStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::PendingReview => 'In review',
+            self::PendingReview => 'Pending',
             self::Approved => 'Approved',
-            self::Rejected => 'Rejected',
+            self::Rejected => 'Failed',
             self::Reversed => 'Reversed',
-            self::PendingMatch => 'Pending match',
+            self::PendingMatch => 'Pending',
             self::Credited => 'Credited',
-            self::Posted => 'Posted',
+            self::Posted => 'Completed',
         };
+    }
+
+    public function tone(): string
+    {
+        return match ($this) {
+            self::Approved, self::Credited, self::Posted => 'success',
+            self::Rejected => 'danger',
+            self::Reversed => 'warning',
+            self::PendingReview, self::PendingMatch => 'pending',
+        };
+    }
+
+    public function isFinalFailure(): bool
+    {
+        return $this === self::Rejected;
     }
 }

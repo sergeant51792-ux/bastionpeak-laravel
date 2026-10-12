@@ -8,13 +8,20 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Hash;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens;
     use HasFactory;
     use HasRoles;
     use Notifiable;
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole('Super Admin');
+    }
 
     protected $fillable = [
         'name',
@@ -35,6 +42,10 @@ class User extends Authenticatable
         'pin_hash',
         'pin_attempts',
         'pin_locked_until',
+        'totp_secret',
+        'totp_enabled',
+        'approved_at',
+        'approved_by',
     ];
 
     protected function casts(): array
@@ -46,7 +57,25 @@ class User extends Authenticatable
             'hide_balance' => 'boolean',
             'failed_login_count' => 'integer',
             'tags' => 'array',
+            'totp_enabled' => 'boolean',
+            'approved_at' => 'datetime',
+            'pin_locked_until' => 'datetime',
         ];
+    }
+
+    public function hasTotp(): bool
+    {
+        return $this->totp_enabled && filled($this->totp_secret);
+    }
+
+    public function isPendingApproval(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function primaryAccount(): ?Account
+    {
+        return $this->accounts()->orderBy('id')->first();
     }
 
     public function getProfilePictureUrlAttribute(): string

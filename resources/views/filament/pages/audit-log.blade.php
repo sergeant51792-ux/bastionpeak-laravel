@@ -1,4 +1,4 @@
-<x-filament::page>
+<x-filament-panels::page>
     <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <p class="text-sm text-gray-500">Entries can't be changed or deleted.</p>
@@ -35,4 +35,4 @@
             {{ $logs->links() }}
         </div>
     </div>
-</x-filament::page>
+</x-filament-panels::page>

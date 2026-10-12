@@ -30,3 +30,17 @@ Thumbs.db
 /public/js/app.js.map
 /tests
 .php-cs-fixer.cache
+
+# cPanel / local deploy + debug scratch (deploy.php and cpanel/ are the supported path)
+/deploy-assets.php
+/deploy-info.php
+/deploy-script.php
+/encode-assets.php
+/make-deploy-script.php
+/css-b64.txt
+/js-b64.txt
+/check_*.php
+/test_*.php
+/fix_*.php
+/vite.config.js.timestamp-*.mjs
+

@@ -38,21 +38,11 @@ class SendDepositRejectedNotification implements ShouldQueue
     {
         $transaction = $event->transaction;
         $customerId = $transaction->customer_id;
+        $reason = $transaction->rejection_reason ?: 'Please contact support for details.';
+        $title  = 'Deposit declined';
+        $body   = 'Your deposit of ' . $transaction->formattedAmount() . ' was declined. Reason: ' . $reason;
 
-        $this->notificationService->sendToUser(
-            $customerId,
-            'deposit_rejected',
-            'Deposit Rejected',
-            'Your deposit of ' . $transaction->amount . ' was rejected. Reason: ' . $transaction->memo,
-            'in-app'
-        );
-
-        $this->notificationService->sendToUser(
-            $customerId,
-            'deposit_rejected',
-            'Deposit Rejected',
-            'Your deposit of ' . $transaction->amount . ' was rejected. Reason: ' . $transaction->memo,
-            'email'
-        );
+        $this->notificationService->sendToUser($customerId, 'deposit_rejected', $title, $body, 'in-app');
+        $this->notificationService->sendToUser($customerId, 'deposit_rejected', $title, $body, 'email');
     }
 }

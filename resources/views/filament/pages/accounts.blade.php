@@ -1,4 +1,4 @@
-<x-filament::layouts.app>
+<x-filament-panels::page>
     <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach(\App\Models\Account::with('user')->get()->take(6) as $account)
@@ -13,4 +13,4 @@
             @endforeach
         </div>
     </div>
-</x-filament::layouts.app>
+</x-filament-panels::page>

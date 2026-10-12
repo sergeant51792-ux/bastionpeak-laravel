@@ -1,91 +1,137 @@
 @extends('layouts.customer')
 
-@section('title', 'Deposit')
+@section('title', 'Add money')
+
+@php
+    $methodsData = $depositMethods->map(function ($method) {
+        return [
+            'id' => $method->id,
+            'code' => $method->code,
+            'name' => $method->name,
+            'account_id' => $method->account_id,
+            'account_name' => $method->account_name,
+            'currency_symbol' => $method->currency->symbol ?? '$',
+            'currency_code' => $method->currency->code ?? 'USD',
+            'address' => $method->pivot->address ?? '',
+            'instructions' => $method->pivot->instructions ?? '',
+            'qr_path' => $method->pivot->qr_path ?? '',
+        ];
+    })->keyBy('id');
+@endphp
 
 @section('content')
 <div class="px-3 sm:px-4 lg:px-6 pt-4 space-y-6" id="deposit-app">
     <header class="page-header">
-            <a href="{{ route('transfer') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
-                <x-icon name="arrow-left" class="w-5 h-5 text-[var(--text-muted)]" />
-            </a>
-        <h1 class="text-xl font-semibold">Deposit</h1>
+        <a href="{{ route('home') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
+            <x-icon name="arrow-left" class="w-5 h-5 text-[var(--text-muted)]" />
+        </a>
+        <h1 class="text-xl font-semibold">Add money</h1>
     </header>
 
-        @if(request('status') === 'submitted')
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                <div class="bg-white dark:bg-[var(--surface)] rounded-2xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
-                    <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-                        <x-icon name="circle-check" class="w-10 h-10 text-green-500" />
-                    </div>
-                    <h2 class="text-xl font-semibold text-[var(--text)] mb-2">Processing deposit</h2>
-                    <p class="text-[var(--text-muted)] mb-6">Your deposit request has been submitted successfully. It is being reviewed and your account will be credited once approved.</p>
-                    <a href="{{ route('activity') }}" class="inline-block w-full px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">View activity</a>
-                    <button onclick="window.location.href='{{ route('home') }}'" class="mt-3 text-xs text-[var(--text-muted)] hover:text-[var(--text)]">← Back to dashboard</button>
+    @if(request('status') === 'submitted')
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div class="bg-white dark:bg-[var(--surface)] rounded-2xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
+                <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <x-icon name="circle-check" class="w-10 h-10 text-green-500" />
                 </div>
+                <h2 class="text-xl font-semibold text-[var(--text)] mb-2">Processing</h2>
+                <p class="text-[var(--text-muted)] mb-6">Your add money request has been received and is being processed. Your balance will update once it is complete.</p>
+                <a href="{{ route('activity') }}" class="inline-block w-full px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">View activity</a>
+                <button onclick="window.location.href='{{ route('home') }}'" class="mt-3 text-xs text-[var(--text-muted)] hover:text-[var(--text)]">← Back to dashboard</button>
             </div>
-        @else
-        @if($depositMethods->isNotEmpty())
-            {{-- Step 1: Select a deposit method --}}
-            <div id="methods-list" class="space-y-4">
-                <div>
-                    <h2 class="text-sm font-semibold text-[var(--text-muted)]">Select deposit method</h2>
-                    <p class="text-xs text-[var(--text-muted)] mt-1">Choose how you want to deposit funds</p>
-                </div>
-                <div class="space-y-3">
-                    @foreach($depositMethods as $method)
-                        <div class="border border-[var(--line)] rounded-xl p-4 cursor-pointer hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-all"
-                             onclick="showPaymentForm('{{ $method->code }}', '{{ $method->account_id }}', '{{ addslashes($method->name) }}', '{{ addslashes($method->account_name) }}', '{{ addslashes($method->currency->symbol) }}', '{{ addslashes($method->currency->code) }}', '{{ addslashes($method->pivot->address ?? '') }}', '{{ addslashes($method->pivot->instructions ?? '') }}', '{{ $method->pivot->qr_path ?? '' }}', '{{ addslashes($method->type) }}')">
-                            <div class="flex items-start justify-between">
+        </div>
+    @elseif($depositMethods->isEmpty())
+        <div class="bg-white border border-[var(--line)] rounded-2xl p-8 text-center">
+            <x-icon name="wallet" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
+            <p class="text-[var(--text-muted)]">No add money methods are available right now. Please try again later.</p>
+        </div>
+    @else
+        {{-- Step 1: choose a category --}}
+        <div id="category-step" class="space-y-4">
+            <div>
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">How would you like to add money?</h2>
+                <p class="text-xs text-[var(--text-muted)] mt-1">Choose a category to continue</p>
+            </div>
+            <div class="space-y-3">
+                @foreach($categories as $category)
+                    <button type="button"
+                            onclick="selectCategory('{{ $category['key'] }}')"
+                            class="w-full text-left border border-[var(--line)] rounded-xl p-4 hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                                <x-icon name="{{ $category['icon'] }}" class="w-5 h-5" />
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-[var(--text)]">{{ $category['label'] }}</p>
+                                <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $category['description'] }}</p>
+                            </div>
+                            <x-icon name="chevron-right" class="w-5 h-5 text-[var(--text-muted)]" />
+                        </div>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Step 2: choose a method within the selected category --}}
+        <div id="method-step" class="hidden space-y-4">
+            <button type="button" onclick="backToCategories()" class="text-sm font-medium text-[var(--accent)] flex items-center gap-1.5">
+                <x-icon name="arrow-left" class="w-4 h-4" /> Categories
+            </button>
+            <div>
+                <h2 id="method-step-title" class="text-sm font-semibold text-[var(--text-muted)]">Select an option</h2>
+            </div>
+
+            @foreach($categories as $category)
+                <div id="method-list-{{ $category['key'] }}" class="space-y-3 hidden">
+                    @foreach($category['methods'] as $method)
+                        <button type="button"
+                                onclick="showPaymentForm({{ $method->id }})"
+                                class="w-full text-left border border-[var(--line)] rounded-xl p-4 hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-all">
+                            <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
-                    @if($method->type === 'crypto')
-                        <x-icon name="bitcoin" class="w-5 h-5" />
-                    @else
-                        <x-icon name="landmark" class="w-5 h-5" />
-                    @endif
+                                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                                        <x-icon name="{{ $method->category === 'crypto' ? 'bitcoin' : ($method->category === 'giftcard' ? 'gift' : 'landmark') }}" class="w-5 h-5" />
                                     </div>
                                     <div>
                                         <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
-                                        <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $method->account_name }} ({{ $method->currency->code }})</p>
-                                        @if($method->pivot->address)
-                                            <p class="text-xs text-[var(--text-muted)] mt-1 font-mono">{{ Str::limit($method->pivot->address, 40) }}</p>
-                                        @endif
+                                        <p class="text-xs text-[var(--text-muted)] mt-0.5">
+                                            {{ $method->pivot->address ? Str::limit($method->pivot->address, 42) : ($method->description ?: $method->account_name) }}
+                                        </p>
                                     </div>
                                 </div>
-                                <span class="text-xs text-[var(--text-muted)] bg-[var(--line-soft)] px-2.5 py-1 rounded-full">{{ ucfirst($method->type) }}</span>
+                                <span class="text-xs text-[var(--text-muted)] bg-[var(--line-soft)] px-2.5 py-1 rounded-full shrink-0">{{ $method->currency->code ?? 'USD' }}</span>
                             </div>
-                        </div>
+                        </button>
                     @endforeach
                 </div>
-            </div>
-        @else
-            <div class="bg-white border border-[var(--line)] rounded-2xl p-8 text-center">
-                <p class="text-[var(--text-muted)]">No deposit methods are currently available. Please contact support.</p>
-            </div>
-        @endif
+            @endforeach
+        </div>
 
-        {{-- Step 2: Payment form (hidden by default, shown after selecting a method) --}}
-        <div id="payment-form-container" class="hidden">
+        {{-- Step 3: details + amount --}}
+        <div id="payment-form-container" class="hidden space-y-5">
+            <button type="button" onclick="backToMethods()" class="text-sm font-medium text-[var(--accent)] flex items-center gap-1.5">
+                <x-icon name="arrow-left" class="w-4 h-4" /> Back
+            </button>
+
             <form id="deposit-form" method="POST" action="{{ route('deposit.submit') }}" enctype="multipart/form-data" class="space-y-5">
                 @csrf
                 <input type="hidden" name="idempotency" value="{{ $idempotency }}">
                 <input type="hidden" id="form_account_id" name="account_id" value="">
                 <input type="hidden" id="form_deposit_method" name="deposit_method" value="">
 
-                {{-- Display the deposit details }}
                 <div class="bg-[var(--surface-raised)] border border-[var(--line)] rounded-2xl p-5">
-                    <h3 class="text-sm font-semibold text-[var(--text-muted)] mb-3">Send payment to</h3>
-                    <div id="deposit-details" class="space-y-3">
+                    <h3 class="text-sm font-semibold text-[var(--text-muted)] mb-3">Send to</h3>
+                    <div class="space-y-3">
                         <p id="detail-method-name" class="font-medium text-[var(--text)]"></p>
                         <p id="detail-method-account" class="text-xs text-[var(--text-muted)]"></p>
                         <div id="detail-address" class="hidden">
                             <p class="text-xs text-[var(--text-muted)] mb-1">Address</p>
-                            <div class="inline-flex items-center gap-2 p-2 bg-white border border-[var(--line)] rounded-lg font-mono text-xs text-[var(--text)] relative">
-                                <span id="copy-address-value"></span>
-                                <button type="button" onclick="copyAddressText()" class="p-1 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">
+                            <div class="inline-flex items-center gap-2 p-2 bg-white border border-[var(--line)] rounded-lg font-mono text-xs text-[var(--text)] relative max-w-full">
+                                <span id="copy-address-value" class="break-all"></span>
+                                <button type="button" onclick="copyAddressText()" class="p-1 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors shrink-0">
                                     <x-icon name="copy" class="w-4 h-4" />
                                 </button>
-                                <span id="copy-tooltip" class="hidden absolute -bottom-6 left-0 px-2 py-1 bg-gray-800 text-white text-xs rounded">Copied!</span>
+                                <span id="copy-tooltip" class="hidden absolute -bottom-7 left-0 px-2 py-1 bg-gray-800 text-white text-xs rounded">Copied!</span>
                             </div>
                         </div>
                         <div id="detail-qr" class="hidden">
@@ -94,7 +140,7 @@
                         </div>
                         <div id="detail-instructions" class="hidden">
                             <p class="text-xs text-[var(--text-muted)] mb-1">Instructions</p>
-                            <p class="text-sm text-[var(--text)] whitespace-pre-line"></p>
+                            <p id="detail-instructions-text" class="text-sm text-[var(--text)] whitespace-pre-line"></p>
                         </div>
                     </div>
                 </div>
@@ -102,25 +148,22 @@
                 <div>
                     <label for="amount" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Amount</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm">$</span>
+                        <span id="amount-symbol" class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm">$</span>
                         <input type="text" inputmode="decimal" id="amount" name="amount" required
-                               class="input-field pl-8 pr-4 py-3"
-                               placeholder="0.00">
+                               class="input-field pl-8 pr-4 py-3" placeholder="0.00">
                     </div>
                 </div>
 
                 <div>
                     <label for="note" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Reference <span class="text-[var(--text-muted)] font-normal">(optional)</span></label>
-                    <input type="text" id="note" name="note" maxlength="500"
-                           class="input-field"
-                           placeholder="Payment reference or note">
+                    <input type="text" id="note" name="note" maxlength="500" class="input-field" placeholder="Payment reference or note">
                 </div>
 
                 <div>
                     <p class="block text-sm font-semibold text-[var(--text)] mb-2">Proof of payment</p>
                     <div class="border-2 border-dashed border-[var(--line)] rounded-xl p-6 text-center hover:border-[var(--accent)] transition-colors">
                         <x-icon name="file-image" class="w-8 h-8 mx-auto mb-2 text-[var(--text-muted)]" />
-                        <p class="text-sm text-[var(--text-muted)]">Take photo or Choose file</p>
+                        <p class="text-sm text-[var(--text-muted)]">Take photo or choose file</p>
                         <p class="text-xs text-[var(--text-muted)] mt-1">JPG, PNG, or PDF, up to 5 MB</p>
                         <input type="file" name="proof" accept="image/jpeg,image/jpg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" class="mt-3 text-sm">
                     </div>
@@ -132,65 +175,85 @@
                     </div>
                 @endif
 
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="backToList()" class="flex-1 py-3.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-medium text-[var(--text)] hover:bg-[var(--line-soft)] transition-colors">Back</button>
-                    <button type="submit" class="flex-1 py-3.5 btn-primary">Send payment</button>
-                </div>
+                <button type="submit" class="w-full py-3.5 btn-primary">Continue</button>
             </form>
         </div>
     @endif
 </div>
 
 <script>
-function showPaymentForm(code, accountId, name, accountName, currencySymbol, currencyCode, address, instructions, qrPath, type) {
-    document.getElementById('form_deposit_method').value = code;
-    document.getElementById('form_account_id').value = accountId;
-    document.getElementById('detail-method-name').textContent = name;
-    document.getElementById('detail-method-account').textContent = accountName + ' (' + currencyCode + ')';
+const METHODS = @json($methodsData);
+const STORAGE_URL = @json(asset('storage'));
 
-    var addressEl = document.getElementById('detail-address');
-    var qrEl = document.getElementById('detail-qr');
-    var instructionsEl = document.getElementById('detail-instructions');
+function selectCategory(key) {
+    document.querySelectorAll('[id^="method-list-"]').forEach(function (el) {
+        el.classList.add('hidden');
+    });
+    const target = document.getElementById('method-list-' + key);
+    if (target) target.classList.remove('hidden');
 
-    if (address) {
-        document.getElementById('copy-address-value').textContent = address;
+    document.getElementById('category-step').classList.add('hidden');
+    document.getElementById('payment-form-container').classList.add('hidden');
+    document.getElementById('method-step').classList.remove('hidden');
+}
+
+function showPaymentForm(id) {
+    const method = METHODS[id];
+    if (!method) return;
+
+    document.getElementById('form_deposit_method').value = method.code;
+    document.getElementById('form_account_id').value = method.account_id;
+    document.getElementById('detail-method-name').textContent = method.name;
+    document.getElementById('detail-method-account').textContent = method.account_name + ' (' + method.currency_code + ')';
+    document.getElementById('amount-symbol').textContent = method.currency_symbol;
+
+    const addressEl = document.getElementById('detail-address');
+    if (method.address) {
+        document.getElementById('copy-address-value').textContent = method.address;
         addressEl.classList.remove('hidden');
     } else {
         addressEl.classList.add('hidden');
         document.getElementById('copy-address-value').textContent = '';
     }
 
-    if (qrPath) {
-        document.getElementById('qr-image').src = '{{ asset('storage/') }}' + qrPath;
+    const qrEl = document.getElementById('detail-qr');
+    if (method.qr_path) {
+        document.getElementById('qr-image').src = STORAGE_URL + '/' + method.qr_path;
         qrEl.classList.remove('hidden');
     } else {
         qrEl.classList.add('hidden');
     }
 
-    if (instructions) {
-        instructionsEl.querySelector('p').textContent = instructions;
+    const instructionsEl = document.getElementById('detail-instructions');
+    if (method.instructions) {
+        document.getElementById('detail-instructions-text').textContent = method.instructions;
         instructionsEl.classList.remove('hidden');
     } else {
         instructionsEl.classList.add('hidden');
     }
 
-    document.getElementById('methods-list').classList.add('hidden');
+    document.getElementById('method-step').classList.add('hidden');
     document.getElementById('payment-form-container').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function backToList() {
+function backToCategories() {
+    document.getElementById('method-step').classList.add('hidden');
+    document.getElementById('category-step').classList.remove('hidden');
+}
+
+function backToMethods() {
     document.getElementById('payment-form-container').classList.add('hidden');
-    document.getElementById('methods-list').classList.remove('hidden');
+    document.getElementById('method-step').classList.remove('hidden');
 }
 
 function copyAddressText() {
-    var el = document.getElementById('copy-address-value');
-    var text = el.textContent;
+    const text = document.getElementById('copy-address-value').textContent;
     if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-        var tooltip = document.getElementById('copy-tooltip');
+    navigator.clipboard.writeText(text).then(function () {
+        const tooltip = document.getElementById('copy-tooltip');
         tooltip.classList.remove('hidden');
-        setTimeout(() => tooltip.classList.add('hidden'), 2000);
+        setTimeout(function () { tooltip.classList.add('hidden'); }, 2000);
     });
 }
 </script>

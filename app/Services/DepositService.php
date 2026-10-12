@@ -39,10 +39,7 @@ class DepositService
 
         $idempotencyKey = 'dep-req-' . $userId . '-' . $accountId . '-' . md5((string)time());
 
-        $memo = $note ?? 'Deposit request';
-        if ($depositMethod) {
-            $memo = '[' . ucfirst($depositMethod) . '] ' . $memo;
-        }
+        $memo = $note ?: 'Deposit';
 
         return DB::transaction(function () use ($account, $amount, $memo, $proofFile, $idempotencyKey, $depositMethod, $metadata) {
             $transaction = Transaction::create([
@@ -124,11 +121,11 @@ class DepositService
         $transaction = Transaction::findOrFail($transactionId);
 
         $transaction->update([
-            'status'      => TransactionStatus::Rejected,
-            'operator_id' => $operatorId,
-            'memo'        => $transaction->memo . ' | Rejected: ' . $reason,
-            'rejected_at' => now(),
-            'updated_at'  => now(),
+            'status'           => TransactionStatus::Rejected,
+            'operator_id'      => $operatorId,
+            'rejection_reason' => $reason,
+            'rejected_at'      => now(),
+            'updated_at'       => now(),
         ]);
 
         return $transaction;

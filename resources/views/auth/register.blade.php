@@ -16,7 +16,7 @@
 <body class="bg-[var(--bg)] text-[var(--text)]">
     <div class="min-h-screen flex flex-col">
         <header class="absolute top-6 left-0 right-0 z-20">
-            <div class="max-w-7xl mx-auto flex items-center justify-between px-6">
+            <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">
                 <a href="{{ route('landing') }}">
                     <x-bp-logo :width="40" :height="40" />
                 </a>
@@ -29,6 +29,21 @@
         <div class="flex-1 flex items-center justify-center">
             <div class="w-full max-w-2xl">
                 <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl shadow-xl p-8 mx-4">
+                    @if(session('registered'))
+                        <div class="text-center">
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-5">
+                                <x-icon name="check-circle" class="w-8 h-8" />
+                            </div>
+                            <h1 class="text-2xl font-bold text-[var(--text)] mb-2">Request received</h1>
+                            <p class="text-sm text-[var(--text-muted)] mb-6">
+                                Thank you for signing up. Your details are being reviewed and your account will be
+                                activated shortly. You will be able to sign in once it is ready.
+                            </p>
+                            <a href="{{ route('signin') }}" class="inline-flex items-center justify-center w-full py-3 btn-primary text-sm font-medium">
+                                Back to sign in
+                            </a>
+                        </div>
+                    @else
                     <div class="mb-8">
                         <h1 class="text-2xl font-bold text-[var(--text)] mb-2">Create your account</h1>
                         <p class="text-sm text-[var(--text-muted)]">Open your Bastion Peak account in minutes. Set up a 4-digit security PIN for account recovery.</p>
@@ -145,6 +160,7 @@
                     <p class="mt-6 text-center text-xs text-[var(--text-muted)]">
                         By creating an account, you agree to Bastion Peak's Terms of Service and Privacy Policy.
                     </p>
+                    @endif
                 </div>
             </div>
         </div>

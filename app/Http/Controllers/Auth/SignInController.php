@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\TotpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SignInController extends Controller
 {
+    public function __construct(private readonly TotpService $totp)
+    {
+    }
+
     public function showSignIn(): \Illuminate\View\View
     {
         return view('auth.signin');
@@ -22,19 +29,94 @@ class SignInController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            $request->session()->regenerate();
+        $user = User::where('email', $credentials['email'])->first();
 
-            if (Auth::user()->hasRole('Super Admin')) {
-                return redirect()->intended('/admin');
-            }
-
-            return redirect()->intended('/home');
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        if ($user->status === 'pending') {
+            return back()->withErrors([
+                'email' => 'Your request is still being processed. You will be notified once your account is ready.',
+            ])->onlyInput('email');
+        }
+
+        if (in_array($user->status, ['blocked', 'frozen', 'suspended'], true)) {
+            return back()->withErrors([
+                'email' => 'This account is not available right now. Please contact support.',
+            ])->onlyInput('email');
+        }
+
+        if ($user->hasTotp()) {
+            $request->session()->put('auth.pending_id', $user->id);
+            $request->session()->put('auth.remember', $request->filled('remember'));
+
+            return redirect()->route('signin.otp');
+        }
+
+        return $this->completeLogin($request, $user, $request->filled('remember'));
+    }
+
+    public function showVerifyOtp(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+    {
+        $userId = $request->session()->get('auth.pending_id');
+
+        if (! $userId) {
+            return redirect()->route('signin');
+        }
+
+        return view('auth.verify-otp', [
+            'email' => User::find($userId)?->email,
+            'secondsRemaining' => $this->totp->secondsRemaining(),
+        ]);
+    }
+
+    public function verifyOtp(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'code' => ['required', 'digits:6'],
+        ]);
+
+        $userId = $request->session()->get('auth.pending_id');
+        $user = $userId ? User::find($userId) : null;
+
+        if (! $user || ! $user->hasTotp()) {
+            $request->session()->forget(['auth.pending_id', 'auth.remember']);
+
+            return redirect()->route('signin');
+        }
+
+        if (! $this->totp->verify($user->totp_secret, (string) $request->input('code'))) {
+            return back()->withErrors([
+                'code' => 'That code is not valid. Enter the current code from your authenticator.',
+            ]);
+        }
+
+        $remember = (bool) $request->session()->pull('auth.remember', false);
+        $request->session()->forget('auth.pending_id');
+
+        return $this->completeLogin($request, $user, $remember);
+    }
+
+    private function completeLogin(Request $request, User $user, bool $remember): \Illuminate\Http\RedirectResponse
+    {
+        Auth::login($user, $remember);
+
+        $user->forceFill([
+            'last_login_at' => now(),
+            'failed_login_count' => 0,
+            'locked_until' => null,
+        ])->save();
+
+        $request->session()->regenerate();
+
+        if ($user->hasRole('Super Admin')) {
+            return redirect()->intended('/admin');
+        }
+
+        return redirect()->intended('/home');
     }
 
     public function signOut(Request $request): \Illuminate\Http\RedirectResponse

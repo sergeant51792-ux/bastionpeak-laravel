@@ -13,9 +13,17 @@
                 <p class="text-sm text-[var(--text-muted)]">{{ $user->email }}</p>
             </div>
         </div>
-        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $user->status === 'active', 'bg-blue-100 text-blue-800' => $user->status === 'frozen', 'bg-red-100 text-red-800' => $user->status === 'locked', 'bg-gray-100 text-gray-800' => $user->status === 'closed'])>
+        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $user->status === 'active', 'bg-blue-100 text-blue-800' => $user->status === 'frozen', 'bg-red-100 text-red-800' => $user->status === 'locked', 'bg-gray-100 text-gray-800' => $user->status === 'closed', 'bg-amber-100 text-amber-800' => $user->status === 'pending'])>
             {{ ucfirst($user->status) }}
         </span>
+        @if($user->status === 'pending')
+            <form method="POST" action="{{ route('admin.users.approve', $user) }}" class="inline" onsubmit="return confirm('Approve this signup and activate their account?')">
+                @csrf
+                <button type="submit" class="ml-2 px-4 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors">
+                    Approve signup
+                </button>
+            </form>
+        @endif
         @if($user->status !== 'locked')
             @if($user->status === 'frozen')
                 <form method="POST" action="{{ route('admin.users.update', $user) }}" class="inline">
@@ -164,6 +172,42 @@
                         <span class="text-[var(--text-muted)]">Pending approvals</span>
                         <span class="font-medium text-amber-600">{{ $requests->count() }}</span>
                     </div>
+                </div>
+
+                <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-3">
+                    <h2 class="text-sm font-semibold text-[var(--text-muted)]">Authenticator (2-step)</h2>
+
+                    @if(session('totp_issued'))
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                            <p class="text-xs text-emerald-700 mb-1">Setup key issued. Share this key with the customer:</p>
+                            <p class="font-mono text-sm font-semibold text-emerald-800 break-all">{{ session('totp_issued') }}</p>
+                        </div>
+                    @endif
+
+                    @if($user->hasTotp())
+                        <p class="text-xs text-[var(--text-muted)]">Enabled — the customer must enter an authenticator code to sign in.</p>
+                        <p class="text-xs text-[var(--text-muted)]">Current code:
+                            <span class="font-mono font-semibold text-[var(--text)]">{{ app(\App\Services\TotpService::class)->code($user->totp_secret) }}</span>
+                            <span class="opacity-60">({{ app(\App\Services\TotpService::class)->secondsRemaining() }}s)</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <form method="POST" action="{{ route('admin.users.authenticator', $user) }}" class="flex-1">
+                                @csrf
+                                <button type="submit" class="w-full px-3 py-2 bg-[var(--surface-raised)] border border-[var(--line)] rounded-lg text-xs font-medium hover:bg-[var(--line-soft)] transition-colors">Re-issue key</button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.users.authenticator.destroy', $user) }}" class="flex-1" onsubmit="return confirm('Disable authenticator for this customer?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full px-3 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors">Disable</button>
+                            </form>
+                        </div>
+                    @else
+                        <p class="text-xs text-[var(--text-muted)]">Not enabled. Issue a setup key and share the current code with the customer so they can add it to their authenticator app.</p>
+                        <form method="POST" action="{{ route('admin.users.authenticator', $user) }}">
+                            @csrf
+                            <button type="submit" class="w-full px-3 py-2 bg-[var(--primary)] text-white rounded-lg text-xs font-medium hover:opacity-90 transition-colors">Issue authenticator key</button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

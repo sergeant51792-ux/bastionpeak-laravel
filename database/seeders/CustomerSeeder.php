@@ -46,7 +46,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass1!'),
                 'status'    => 'active',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 64600.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 64600.00, 'label' => 'Primary'],
                     ['type' => 'crypto', 'currency_code' => 'BTC', 'balance' => 0.40873600, 'label' => 'Bitcoin Holdings'],
                     ['type' => 'travel', 'currency_code' => 'USD', 'balance' => 4200.00, 'label' => 'Travel Only'],
                 ],
@@ -57,7 +57,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass2!'),
                 'status'    => 'frozen',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 12300.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 12300.00, 'label' => 'Primary'],
                 ],
             ],
             [
@@ -66,7 +66,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass3!'),
                 'status'    => 'active',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 8400.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 8400.00, 'label' => 'Primary'],
                     ['type' => 'points', 'currency_code' => 'PTS', 'balance' => 12400, 'label' => 'Points Balance'],
                 ],
             ],
@@ -76,7 +76,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass4!'),
                 'status'    => 'active',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 45200.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 45200.00, 'label' => 'Primary'],
                 ],
             ],
             [
@@ -85,7 +85,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass5!'),
                 'status'    => 'active',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 23100.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 23100.00, 'label' => 'Primary'],
                     ['type' => 'travel', 'currency_code' => 'USD', 'balance' => 6800.00, 'label' => 'Travel Only'],
                 ],
             ],
@@ -95,7 +95,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass6!'),
                 'status'    => 'active',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 3200.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 3200.00, 'label' => 'Primary'],
                 ],
             ],
             [
@@ -104,7 +104,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass7!'),
                 'status'    => 'active',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 18700.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 18700.00, 'label' => 'Primary'],
                     ['type' => 'points', 'currency_code' => 'PTS', 'balance' => 8200, 'label' => 'Points Balance'],
                 ],
             ],
@@ -114,7 +114,7 @@ class CustomerSeeder extends Seeder
                 'password'  => Hash::make('CustomerPass8!'),
                 'status'    => 'locked',
                 'accounts'  => [
-                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 7500.00, 'label' => 'Main Wallet'],
+                    ['type' => 'main_wallet', 'currency_code' => 'USD', 'balance' => 7500.00, 'label' => 'Primary'],
                 ],
             ],
         ];
@@ -365,8 +365,8 @@ class CustomerSeeder extends Seeder
             $createdAt = $now->copy()->subDays($daysAgo)->addHours(rand(0, 23));
 
             $titleMap = [
-                'deposit_approved'   => 'Deposit Approved',
-                'deposit_rejected'   => 'Deposit Rejected',
+                'deposit_approved'   => 'Money Added',
+                'deposit_rejected'   => 'Funding Declined',
                 'withdrawal_approved' => 'Withdrawal Approved',
                 'account_locked'     => 'Account Locked',
                 'low_balance'        => 'Low Balance Warning',
@@ -374,8 +374,8 @@ class CustomerSeeder extends Seeder
             ];
 
             $bodyMap = [
-                'deposit_approved'   => 'Your deposit request has been approved and credited to your account.',
-                'deposit_rejected'   => 'Your deposit request was rejected. Please contact support for details.',
+                'deposit_approved'   => 'Your funding request has been approved and credited to your account.',
+                'deposit_rejected'   => 'Your funding request was declined. Please contact support for details.',
                 'withdrawal_approved' => 'Your withdrawal request has been approved and processed.',
                 'account_locked'     => 'Your account has been locked due to suspicious activity. Contact support.',
                 'low_balance'        => 'Your account balance is below the recommended threshold.',
@@ -409,7 +409,7 @@ class CustomerSeeder extends Seeder
         $now = Carbon::now();
         $subjects = [
             'Account Inquiry',
-            'Deposit Support',
+            'Funding Support',
             'Transaction Dispute',
             'Card Replacement Request',
             'Limit Adjustment',

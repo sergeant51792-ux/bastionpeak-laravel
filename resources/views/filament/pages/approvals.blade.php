@@ -1,4 +1,4 @@
-<x-filament::page>
+<x-filament-panels::page>
     <div class="h-[calc(100vh-120px)] flex flex-col">
         <div class="flex items-center gap-4 mb-4">
             <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
@@ -89,4 +89,4 @@
             </div>
         </div>
     </div>
-</x-filament::page>
+</x-filament-panels::page>

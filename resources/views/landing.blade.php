@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bastion Peak — Secure Banking Infrastructure</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <meta name="description" content="Bastion Peak is a modern internal banking platform for secure account management, transfers, and financial operations.">
+    <meta name="description" content="Bastion Peak is a modern banking platform for secure account management, transfers, and financial operations.">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
 </head>
 <body class="bg-white text-[var(--text)]">
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--line)]">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5">
                 <x-bp-logo :width="28" :height="28" />
                 <span class="font-semibold text-[var(--primary)] tracking-tight">Bastion Peak</span>
@@ -182,12 +182,24 @@
     </main>
 
     <footer class="bg-white border-t border-[var(--line)] py-12">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2.5">
-                <x-bp-logo :width="24" :height="24" />
-                <span class="text-sm font-semibold text-[var(--text)]">Bastion Peak</span>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-2.5">
+                    <x-bp-logo :width="24" :height="24" />
+                    <span class="text-sm font-semibold text-[var(--text)]">Bastion Peak</span>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--text-muted)]">
+                    <a href="{{ route('support') }}" class="hover:text-[var(--primary)]">Support</a>
+                    <a href="{{ route('learn') }}" class="hover:text-[var(--primary)]">Learn</a>
+                    <a href="{{ route('recommendations') }}" class="hover:text-[var(--primary)]">Recommendations</a>
+                    <a href="{{ route('policies') }}" class="hover:text-[var(--primary)]">Policies</a>
+                    <a href="{{ route('terms') }}" class="hover:text-[var(--primary)]">Terms</a>
+                    <a href="{{ route('privacy') }}" class="hover:text-[var(--primary)]">Privacy</a>
+                </div>
             </div>
-            <p class="text-xs text-[var(--text-muted)]">Internal banking platform. Secure. Compliant. Modern.</p>
+            <div class="mt-8 pt-6 border-t border-[var(--line)] text-center">
+                <p class="text-xs text-[var(--text-muted)]">&copy; {{ date('Y') }} Bastion Peak. Secure. Compliant. Modern.</p>
+            </div>
         </div>
     </footer>
 </body>
