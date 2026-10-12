@@ -263,6 +263,13 @@ if ($kernel && $bootError === null) {
             exec($command, $output, $exitCode);
             bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
             if ($exitCode === 0) {
+                // Install/update composer dependencies
+                $composerOutput = [];
+                $composerCode = 0;
+                $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && composer install --no-dev --optimize-autoloader 2>&1';
+                exec($composerCmd, $composerOutput, $composerCode);
+                bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
+
                 // Clear caches after pull
                 foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
                     $r = runArtisan($kernel, $cmd);
