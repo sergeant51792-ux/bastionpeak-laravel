@@ -16,7 +16,7 @@
                 ]"
             />
         </div>
-        <a href="#" class="px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Add merchant</a>
+        <button type="button" disabled class="px-4 py-2 bg-[var(--text-muted)] text-[var(--bg)] rounded-xl text-sm font-medium opacity-50 cursor-not-allowed">Add merchant</button>
     </div>
 
     <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">

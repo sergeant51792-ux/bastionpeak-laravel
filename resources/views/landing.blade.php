@@ -53,7 +53,7 @@
                             Get started
                             <x-icon name="arrow-right" class="ml-2 w-4 h-4" />
                         </a>
-                        <a href="#features" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-white bg-blue-800/40 hover:bg-blue-800/60 border border-blue-400/30 rounded-xl transition-colors backdrop-blur-sm">
+                        <a href="#section-features" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-white bg-[var(--primary)]/40 hover:bg-[var(--primary)]/60 border border-[var(--primary)]/30 rounded-xl transition-colors backdrop-blur-sm">
                             Learn more
                         </a>
                     </div>
@@ -61,7 +61,7 @@
             </div>
         </section>
 
-        <section id="features" class="py-20 lg:py-28 bg-[var(--bg)]">
+        <section id="section-features" class="py-20 lg:py-28 bg-[var(--bg)]">
             <div class="max-w-7xl mx-auto px-6">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl lg:text-4xl font-bold text-[var(--text)] tracking-tight">Everything you need to manage money</h2>

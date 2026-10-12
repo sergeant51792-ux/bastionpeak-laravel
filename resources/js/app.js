@@ -38,9 +38,7 @@ function initFormAnimations() {
 }
 
 function initCustomSelects() {
-    console.log('[custom-select] initCustomSelects running');
     const wrappers = document.querySelectorAll('[data-custom-select]');
-    console.log('[custom-select] found wrappers:', wrappers.length);
     wrappers.forEach((wrapper) => {
         const trigger = wrapper.querySelector('.custom-select-trigger');
         const dropdown = wrapper.querySelector('.custom-select-dropdown');
@@ -48,8 +46,6 @@ function initCustomSelects() {
         const hiddenInput = wrapper.querySelector('input[type="hidden"]');
         const valueDisplay = wrapper.querySelector('.custom-select-value');
         const arrow = wrapper.querySelector('.custom-select-arrow');
-
-        console.log('[custom-select] wrapper found', { trigger: !!trigger, dropdown: !!dropdown, hiddenInput: !!hiddenInput, options: options.length });
 
         if (!trigger || !dropdown || !hiddenInput) return;
 

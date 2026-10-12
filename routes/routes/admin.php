@@ -63,6 +63,9 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::post('card-requests/{cardRequest}/approve', [\App\Http\Controllers\Admin\CardRequestController::class, 'approve'])->name('card-requests.approve');
     Route::post('card-requests/{cardRequest}/reject', [\App\Http\Controllers\Admin\CardRequestController::class, 'reject'])->name('card-requests.reject');
 
+    Route::post('accounts/{account}/debit', [CreditDebitController::class, 'debit'])->name('accounts.debit');
+    Route::post('accounts/{account}/credit', [CreditDebitController::class, 'credit'])->name('accounts.credit');
+
     Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('transactions/create/{user?}', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('transactions', [TransactionController::class, 'store'])->name('transactions.store');

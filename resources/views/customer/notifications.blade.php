@@ -28,7 +28,7 @@
                 };
                 $isUnread = is_null($notification->read_at);
             @endphp
-            <a href="#" class="flex items-start gap-3 p-4 bg-white dark:bg-[var(--surface)] border rounded-2xl transition-all {{ $isUnread ? 'border-[var(--accent)]/40 shadow-sm' : 'border-[var(--line)] hover:border-[var(--accent)]' }}">
+            <button type="button" class="flex items-start gap-3 p-4 bg-white dark:bg-[var(--surface)] border rounded-2xl transition-all {{ $isUnread ? 'border-[var(--accent)]/40 shadow-sm' : 'border-[var(--line)] hover:border-[var(--accent)]' }}">
                 <span class="txn-icon w-10 h-10" style="{{ $toneStyle }}">
                     <x-icon name="{{ $notification->icon() }}" class="w-4 h-4" />
                 </span>
@@ -42,7 +42,7 @@
                     <p class="text-sm text-[var(--text-muted)] mt-0.5">{{ $notification->body }}</p>
                     <p class="text-xs text-[var(--text-muted)] mt-1.5">{{ $notification->created_at->diffForHumans() }}</p>
                 </div>
-            </a>
+            </button>
         @empty
             <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
                 <x-icon name="bell" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />

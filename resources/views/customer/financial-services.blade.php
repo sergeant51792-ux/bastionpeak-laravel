@@ -17,11 +17,11 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
         @foreach($services as $service)
             @php
-                $iconColor = '#6366f1';
-                $bgColor = '#e0e7ff';
-                if ($service->type === 'loan') { $iconColor = '#f59e0b'; $bgColor = '#fef3c7'; }
-                if ($service->type === 'grant') { $iconColor = '#059669'; $bgColor = '#dcfce7'; }
-                if ($service->type === 'refund') { $iconColor = '#0891b2'; $bgColor = '#cffaffe'; }
+                $iconColor = 'var(--accent)';
+                $bgColor = 'var(--accent-subtle)';
+                if ($service->type === 'loan') { $iconColor = 'var(--warning)'; $bgColor = 'var(--warning-bg)'; }
+                if ($service->type === 'grant') { $iconColor = 'var(--success)'; $bgColor = 'var(--success-bg)'; }
+                if ($service->type === 'refund') { $iconColor = 'var(--primary)'; $bgColor = 'var(--accent-subtle)'; }
             @endphp
             <a href="{{ route('financial-service.apply', $service->id) }}" class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 text-center transition-all hover:border-[var(--accent)] hover:shadow-md group">
                 <div class="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background-color: {{ $bgColor }}; color: {{ $iconColor }};">

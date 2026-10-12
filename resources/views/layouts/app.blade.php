@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
     <meta name="color-scheme" content="dark light">
     <title>@yield('title', 'Bastion Peak') - Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
