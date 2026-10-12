@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       run_migrations:
-        description: "Run `deploy.php?action=all` on the server after deploy"
+        description: "Run deploy.php?action=all on the server after deploy"
         type: boolean
         default: false
 
@@ -16,98 +16,31 @@ concurrency:
 
 jobs:
   deploy:
-    name: Build and FTP deploy
+    name: Notify cPanel webhook
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          extensions: mbstring, bcmath, ctype, curl, dom, fileinfo, gd, intl, json, openssl, pdo, pdo_mysql, tokenizer, xml, zip
-          coverage: none
-
-      - name: Install Composer dependencies
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-
-      - name: Build frontend assets
+      - name: Trigger cPanel pull deployment webhook
+        if: github.event_name == 'push'
+        env:
+          DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
-          npm ci
-          npm run build
+          if [ -n "$DEPLOY_URL" ] && [ -n "$DEPLOY_KEY" ]; then
+            curl -fsS --max-time 300 "$DEPLOY_URL?key=$DEPLOY_KEY&action=pull"
+          else
+            echo "DEPLOY_URL / DEPLOY_KEY not set; skipping webhook."
+          fi
 
-      # ---------------------------------------------------------------------
-      # 1) Application code -> /home/USER/bastionpeak-laravel (outside web root)
-      #    Requires secret: APP_DIR (e.g. /home/bastionpeaks/bastionpeak-laravel)
-      # ---------------------------------------------------------------------
-      - name: Deploy application
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          server-dir: ${{ secrets.APP_DIR }}/
-          local-dir: ./
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            **/.env
-            **/.env.*
-            **/tests/**
-            **/public_html/**
-            **/database/*.sqlite
-            **/storage/framework/cache/**
-            **/storage/framework/views/**
-            **/storage/logs/**
-            **/storage/*.key
-
-      # ---------------------------------------------------------------------
-      # 2) Public entry files -> web root (public_html)
-      #    Requires secret: PUBLIC_DIR (e.g. /home/bastionpeaks/public_html)
-      #    index.php and .htaccess are NOT overwritten (your cPanel shim owns them).
-      # ---------------------------------------------------------------------
-      - name: Deploy public assets
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          server-dir: ${{ secrets.PUBLIC_DIR }}/
-          local-dir: ./public/
-          exclude: |
-            index.php
-            .htaccess
-            hot
-            storage/**
-
-      # ---------------------------------------------------------------------
-      # 3) Optional: trigger migrations/caches via the token-protected helper.
-      #    Requires secrets: DEPLOY_URL (https://bastionpeaks.com/deploy.php)
-      #                      DEPLOY_KEY (same value as DEPLOY_KEY in .env)
-      # ---------------------------------------------------------------------
-      - name: Run migrations on server
+      - name: Run migrations on server (manual dispatch only)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_migrations }}
         env:
           DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
           if [ -n "$DEPLOY_URL" ] && [ -n "$DEPLOY_KEY" ]; then
-            curl -fsS --max-time 300 "$DEPLOY_URL?key=$DEPLOY_KEY&action=migrate"
+            curl -fsS --max-time 300 "$DEPLOY_URL?key=$DEPLOY_KEY&action=all"
           else
             echo "DEPLOY_URL / DEPLOY_KEY not set; skipping migrations."
           fi

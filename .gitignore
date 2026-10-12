@@ -28,7 +28,6 @@ Thumbs.db
 !storage/logs/.gitignore
 /public/css/app.css.map
 /public/js/app.js.map
-/tests
 .php-cs-fixer.cache
 
 # cPanel / local deploy + debug scratch (deploy.php and cpanel/ are the supported path)

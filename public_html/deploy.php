@@ -255,6 +255,38 @@ if ($kernel && $bootError === null) {
             bp_out("view:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
             break;
 
+        case 'pull':
+            $output = [];
+            $exitCode = 0;
+            // Try 'git pull' in the application directory
+            $command = 'cd ' . escapeshellarg($appDir) . ' && git pull 2>&1';
+            exec($command, $output, $exitCode);
+            bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
+            if ($exitCode === 0) {
+                // Clear caches after pull
+                foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
+                    $r = runArtisan($kernel, $cmd);
+                    bp_out("$cmd (exit {$r['code']})");
+                }
+                // Re-cache optimized
+                $r = runArtisan($kernel, 'config:cache');
+                bp_out("config:cache (exit {$r['code']})");
+                $r = runArtisan($kernel, 'route:cache');
+                bp_out("route:cache (exit {$r['code']})");
+                $r = runArtisan($kernel, 'view:cache');
+                bp_out("view:cache (exit {$r['code']})");
+                // Copy build assets if they changed
+                $srcBuild = $appDir . '/public/build';
+                $dstBuild = $publicDir . '/build';
+                if (is_dir($srcBuild) && realpath($srcBuild) !== realpath($dstBuild)) {
+                    bp_copy_dir($srcBuild, $dstBuild);
+                    bp_out("assets: copied build to $dstBuild");
+                }
+            } else {
+                $ok = false;
+            }
+            break;
+
         case 'info':
         default:
             break;
@@ -358,6 +390,7 @@ $link = fn(string $a) => htmlspecialchars($base . $q . '&action=' . $a, ENT_QUOT
     <a class="btn" href="<?= $link('routecache') ?>">6 · Cache routes</a>
     <a class="btn" href="<?= $link('viewcache') ?>">7 · Cache views</a>
     <p style="margin-top:14px"></p>
+    <a class="btn alt" href="<?= $link('pull') ?>">Git pull (webhook)</a>
     <a class="btn alt" href="<?= $link('all') ?>">Run everything</a>
     <a class="btn alt" href="<?= $link('clearcache') ?>">Clear caches</a>
     <a class="btn alt" href="<?= $link('info') ?>">Refresh</a>
