@@ -20,7 +20,7 @@ declare(strict_types=1);
 // Bootstrap: locate the application and the public directory.
 // ---------------------------------------------------------------------------
 $appDir = null;
-foreach ([__DIR__, dirname(__DIR__), __DIR__ . '/../bastionpeak-laravel', __DIR__ . '/bastionpeak-laravel', dirname(__DIR__) . '/bastionpeak-laravel'] as $candidate) {
+foreach ([__DIR__ . '/../bastionpeak-laravel', __DIR__ . '/bastionpeak-laravel', dirname(__DIR__) . '/bastionpeak-laravel', __DIR__, dirname(__DIR__)] as $candidate) {
     if (is_file($candidate . '/bootstrap/app.php') && is_file($candidate . '/vendor/autoload.php')) {
         $appDir = realpath($candidate);
         break;
