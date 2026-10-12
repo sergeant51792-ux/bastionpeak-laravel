@@ -20,10 +20,18 @@ declare(strict_types=1);
 // Bootstrap: locate the application and the public directory.
 // ---------------------------------------------------------------------------
 $appDir = null;
-foreach ([__DIR__ . '/../bastionpeak-laravel', __DIR__ . '/bastionpeak-laravel', dirname(__DIR__) . '/bastionpeak-laravel', __DIR__, dirname(__DIR__)] as $candidate) {
-    if (is_file($candidate . '/bootstrap/app.php') && is_file($candidate . '/vendor/autoload.php')) {
+foreach ([__DIR__ . '/../bastionpeak-laravel', __DIR__ . '/bastionpeak-laravel', dirname(__DIR__) . '/bastionpeak-laravel'] as $candidate) {
+    if (is_file($candidate . '/bootstrap/app.php') && (is_file($candidate . '/vendor/autoload.php') || is_file($candidate . '/composer.json'))) {
         $appDir = realpath($candidate);
         break;
+    }
+}
+if ($appDir === null) {
+    foreach ([__DIR__, dirname(__DIR__)] as $candidate) {
+        if (is_file($candidate . '/bootstrap/app.php') && (is_file($candidate . '/vendor/autoload.php') || is_file($candidate . '/composer.json'))) {
+            $appDir = realpath($candidate);
+            break;
+        }
     }
 }
 
@@ -266,7 +274,7 @@ if ($kernel && $bootError === null) {
                 // Install/update composer dependencies
                 $composerOutput = [];
                 $composerCode = 0;
-                $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && composer install --no-dev --optimize-autoloader 2>&1';
+                $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && (composer install --no-dev --optimize-autoloader 2>&1 || /usr/local/bin/composer install --no-dev --optimize-autoloader 2>&1 || php composer.phar install --no-dev --optimize-autoloader 2>&1)';
                 exec($composerCmd, $composerOutput, $composerCode);
                 bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
 
