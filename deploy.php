@@ -259,7 +259,7 @@ if ($kernel && $bootError === null) {
             $output = [];
             $exitCode = 0;
             // Try 'git pull' in the application directory
-            $command = 'cd ' . escapeshellarg($appDir) . ' && git pull 2>&1';
+            $command = 'cd ' . escapeshellarg($appDir) . ' && git reset --hard HEAD && git pull 2>&1';
             exec($command, $output, $exitCode);
             bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
             if ($exitCode === 0) {
