@@ -321,7 +321,7 @@ if ($kernel && in_array($dbConn, ['mysql', 'mariadb'], true)) {
 }
 
 $base = basename(__FILE__);
-$q = '?key=' . rawurlencode(DEPLOY_KEY);
+$q = '?key=' . rawurlencode($deployKey);
 $link = fn(string $a) => htmlspecialchars($base . $q . '&action=' . $a, ENT_QUOTES);
 
 ?>
