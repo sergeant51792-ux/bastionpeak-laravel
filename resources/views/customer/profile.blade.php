@@ -328,9 +328,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         'Accept': 'application/json',
                     },
                     body: formData
-                }).then(function(r) {
+                 }).then(function(r) {
                     if (!r.ok) {
-                        throw new Error(r.status + ': ' + r.statusText);
+                        return r.json().then(function(err) {
+                            var msg = err.error || err.message || (r.status + ': ' + r.statusText);
+                            throw new Error(msg);
+                        }).catch(function() {
+                            throw new Error(r.status + ': ' + r.statusText);
+                        });
                     }
                     return r.json();
                 }).then(function(data) {

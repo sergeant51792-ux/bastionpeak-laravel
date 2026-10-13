@@ -62,8 +62,18 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $request->validate([
-            'picture' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'],
+            'picture' => ['required', 'max:2048'],
         ]);
+
+        $file = $request->file('picture');
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $allowedExtensions)) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'The file must be an image (JPEG, PNG, GIF, or WebP).'], 422);
+            }
+            return back()->with('error', 'The file must be an image (JPEG, PNG, GIF, or WebP).');
+        }
 
         if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
             Storage::disk('public')->delete($user->profile_picture);
