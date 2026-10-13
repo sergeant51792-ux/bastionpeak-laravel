@@ -27,6 +27,10 @@ class Approvals extends Page
     public ?string $activeTab = 'deposits';
     public ?int $openTransactionId = null;
 
+    public function refreshQueue(): void
+    {
+    }
+
     protected function getHeaderWidgets(): array
     {
         return [];
@@ -72,7 +76,7 @@ class Approvals extends Page
         }
 
         $this->openTransactionId = null;
-        $this->dispatch('transaction-updated')->to('self');
+        $this->dispatch('transaction-updated');
     }
 
     public function reject(int $transactionId): void
@@ -87,6 +91,6 @@ class Approvals extends Page
         }
 
         $this->openTransactionId = null;
-        $this->dispatch('transaction-updated')->to('self');
+        $this->dispatch('transaction-updated');
     }
 }

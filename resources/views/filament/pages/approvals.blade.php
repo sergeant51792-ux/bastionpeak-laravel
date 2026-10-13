@@ -13,14 +13,16 @@
             </div>
         </div>
 
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 min-h-0">
-            <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 min-h-0" wire:poll="refreshQueue">
+            <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                     <h2 class="font-semibold">Queue</h2>
+                    <span class="text-xs text-gray-400">{{ \Carbon\Carbon::now()->format('H:i') }}</span>
+                </div>
                 </div>
                 <div class="flex-1 overflow-y-auto">
                     @forelse($queue as $item)
-                        <a href="{{ route('admin.approvals', array_merge(request()->query(), ['open' => $item->id])) }}"
+                        <a href="{{ request()->url() }}?tab={{ $activeTab }}&open={{ $item->id }}"
                            @class(['block p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors', 'bg-primary-50 dark:bg-primary-900/20' => $openTransaction?->id === $item->id])>
                             <div class="flex items-center justify-between">
                                 <div>
