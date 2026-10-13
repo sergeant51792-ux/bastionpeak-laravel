@@ -136,6 +136,9 @@ $kernel = null;
 $bootError = null;
 try {
     require $appDir . '/vendor/autoload.php';
+    // Set minimal cache config to avoid "valid cache path" error during bootstrap
+    putenv('CACHE_DRIVER=array');
+    putenv('CACHE_STORE=array');
     $app = require $appDir . '/bootstrap/app.php';
     $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
     $kernel->bootstrap();
@@ -209,14 +212,17 @@ if ($preAction === 'pull' || $preAction === 'all') {
                     $composerCode = 1;
                     bp_out("composer: could not locate or download composer");
                 }
-        if ($composerCode !== 0) {
-            $ok = false;
-        } else {
+                if ($composerCode !== 0) {
+                    $ok = false;
+                } else {
             // Re-bootstrap Laravel to clear caches
             $bootError2 = null;
             $kernel2 = null;
             try {
                 require $appDir . '/vendor/autoload.php';
+                // Set minimal cache config to avoid "valid cache path" error
+                putenv('CACHE_DRIVER=array');
+                putenv('CACHE_STORE=array');
                 $app2 = require $appDir . '/bootstrap/app.php';
                 $kernel2 = $app2->make(Illuminate\Contracts\Console\Kernel::class);
                 $kernel2->bootstrap();
@@ -243,6 +249,11 @@ if ($preAction === 'pull' || $preAction === 'all') {
                 }
             } else {
                 bp_out("Laravel re-bootstrap failed: " . ($bootError2 ?: 'unknown'));
+                // Fallback: manually clear cache files
+                bp_out("Manual cache clearing fallback:");
+                @unlink($appDir . '/bootstrap/cache/config.php');
+                @unlink($appDir . '/bootstrap/cache/routes-v2.php');
+                bp_out("  Cleared config.php and routes-v2.php");
             }
         }
     } else {
