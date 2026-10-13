@@ -283,31 +283,56 @@ if ($kernel && $bootError === null) {
             exec($command, $output, $exitCode);
             bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
             if ($exitCode === 0) {
-                // Install/update composer dependencies
+                // Install/update composer dependencies (before Laravel boots)
                 $composerOutput = [];
                 $composerCode = 0;
                 $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && (php /home/bastionpeaks/composer-stable.phar install --no-dev --optimize-autoloader 2>&1 || php /home/bastionpeaks/composer-setup.phar install --no-dev --optimize-autoloader 2>&1 || /usr/local/bin/composer install --no-dev --optimize-autoloader 2>&1 || composer install --no-dev --optimize-autoloader 2>&1)';
                 exec($composerCmd, $composerOutput, $composerCode);
                 bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
+                if ($composerCode !== 0) {
+                    $ok = false;
+                } else {
+                    // Re-bootstrap Laravel to clear caches
+                    $bootError2 = null;
+                    $kernel2 = null;
+                    try {
+                        require $appDir . '/vendor/autoload.php';
+                        $app2 = require $appDir . '/bootstrap/app.php';
+                        $kernel2 = $app2->make(Illuminate\Contracts\Console\Kernel::class);
+                        $kernel2->bootstrap();
+                    } catch (\Throwable $e) {
+                        $bootError2 = get_class($e) . ': ' . $e->getMessage();
+                    }
 
-                // Clear caches after pull
-                foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
-                    $r = runArtisan($kernel, $cmd);
-                    bp_out("$cmd (exit {$r['code']})");
-                }
-                // Re-cache optimized
-                $r = runArtisan($kernel, 'config:cache');
-                bp_out("config:cache (exit {$r['code']})");
-                $r = runArtisan($kernel, 'route:cache');
-                bp_out("route:cache (exit {$r['code']})");
-                $r = runArtisan($kernel, 'view:cache');
-                bp_out("view:cache (exit {$r['code']})");
-                // Copy build assets if they changed
-                $srcBuild = $appDir . '/public/build';
-                $dstBuild = $publicDir . '/build';
-                if (is_dir($srcBuild) && realpath($srcBuild) !== realpath($dstBuild)) {
-                    bp_copy_dir($srcBuild, $dstBuild);
-                    bp_out("assets: copied build to $dstBuild");
+                    if ($kernel2 !== null && $bootError2 === null) {
+                        // Clear caches after pull
+                        foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
+                            $r = runArtisan($kernel2, $cmd);
+                            bp_out("$cmd (exit {$r['code']})");
+                        }
+                        // Re-cache optimized
+                        $r = runArtisan($kernel2, 'config:cache');
+                        bp_out("config:cache (exit {$r['code']})");
+                        $r = runArtisan($kernel2, 'route:cache');
+                        bp_out("route:cache (exit {$r['code']})");
+                        $r = runArtisan($kernel2, 'view:cache');
+                        bp_out("view:cache (exit {$r['code']})");
+                    } else {
+                        bp_out("Laravel re-bootstrap failed: " . ($bootError2 ?: 'unknown'));
+                        // Fallback: manually clear cache files
+                        bp_out("Manual cache clearing fallback:");
+                        @unlink($appDir . '/bootstrap/cache/config.php');
+                        @unlink($appDir . '/bootstrap/cache/routes-v2.php');
+                        bp_out("  Cleared config.php and routes-v2.php");
+                    }
+
+                    // Copy build assets if they changed
+                    $srcBuild = $appDir . '/public/build';
+                    $dstBuild = $publicDir . '/build';
+                    if (is_dir($srcBuild) && realpath($srcBuild) !== realpath($dstBuild)) {
+                        bp_copy_dir($srcBuild, $dstBuild);
+                        bp_out("assets: copied build to $dstBuild");
+                    }
                 }
             } else {
                 $ok = false;
