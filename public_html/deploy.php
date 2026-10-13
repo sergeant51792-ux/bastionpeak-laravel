@@ -233,6 +233,10 @@ if ($preAction === 'pull' || $preAction === 'all') {
         if ($composerCode !== 0) {
             $ok = false;
         } else {
+            // Clear cached config BEFORE re-bootstrap (stale cached config can cause cache path errors)
+            @unlink($appDir . '/bootstrap/cache/config.php');
+            @unlink($appDir . '/bootstrap/cache/routes-v2.php');
+            bp_out("Cleared cached config and routes before re-bootstrap");
             // Re-bootstrap Laravel to clear caches
             $bootError2 = null;
             $kernel2 = null;
