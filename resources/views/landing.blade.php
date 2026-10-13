@@ -5,101 +5,99 @@
 
 @section('content')
     {{-- Hero --}}
-    <section class="relative overflow-hidden pt-20 lg:pt-28 pb-16 lg:pb-24">
-        <div class="absolute inset-0 bg-[var(--primary)] overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-80 h-80 bg-[var(--accent-light)]/20 rounded-full mix-blend-multiply filter blur-3xl"></div>
-            <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-600/10 rounded-full mix-blend-multiply filter blur-3xl"></div>
+    <section class="relative pt-20 lg:pt-28 pb-16 lg:pb-24">
+        <div class="absolute inset-0 bg-[var(--card-navy)] overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?fm=jpg&q=80&w=2000&auto=format&fit=crop" alt="" class="w-full h-full object-cover" loading="eager">
+                <div class="absolute inset-0 bg-black/55"></div>
+            </div>
+            <div class="absolute top-1/4 right-0 w-2/3 h-1 bg-gradient-to-r from-[var(--accent-light)]/40 to-transparent"></div>
+            <div class="absolute bottom-1/3 left-0 w-1/3 h-1 bg-gradient-to-r to-[var(--accent-light)]/30 from-transparent"></div>
         </div>
         <div class="relative max-w-7xl mx-auto px-6">
-            <div class="max-w-3xl">
-                <h1 class="text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.05]">
-                    Secure banking infrastructure for modern teams
+            <div class="max-w-2xl">
+                <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-medium text-blue-100 mb-6">
+                    <span class="w-2 h-2 bg-[var(--accent-light)] rounded-full"></span>
+                    Banking infrastructure for modern teams
+                </span>
+                <h1 class="text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.05] mb-6">
+                    Move money. Manage risk. Scale globally.
                 </h1>
-                <p class="mt-6 text-lg text-blue-100 leading-relaxed max-w-2xl">
-                    Account management, instant transfers, and complete financial visibility — all in one platform built for scale and compliance.
+                <p class="text-lg text-blue-100 leading-relaxed mb-8 max-w-xl">
+                    A banking platform built for scale — with approval flows, ledger integrity, and real-time visibility across accounts, cards, and merchants.
                 </p>
-                <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-[var(--primary)] bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-[var(--card-navy)] bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                         Get started
                         <x-icon name="arrow-right" class="ml-2 w-4 h-4" />
                     </a>
                     <a href="#section-features" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-white bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl transition-colors">
-                        Learn more
+                        Watch demo
                     </a>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- Trust indicators --}}
-    <section class="py-12 border-t border-[var(--line)]">
+    {{-- Trust bar --}}
+    <section class="py-10 border-t border-[var(--line)] bg-white">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                <div>
-                    <p class="text-3xl lg:text-4xl font-bold text-[var(--primary)] tracking-tight">99.9%</p>
-                    <p class="text-sm text-[var(--text-muted)] mt-1">Uptime SLA</p>
-                </div>
-                <div>
-                    <p class="text-3xl lg:text-4xl font-bold text-[var(--primary)] tracking-tight">256-bit</p>
-                    <p class="text-sm text-[var(--text-muted)] mt-1">Encryption</p>
-                </div>
-                <div>
-                    <p class="text-3xl lg:text-4xl font-bold text-[var(--primary)] tracking-tight">&lt;2s</p>
-                    <p class="text-sm text-[var(--text-muted)] mt-1">Transfer speed</p>
-                </div>
-                <div>
-                    <p class="text-3xl lg:text-4xl font-bold text-[var(--primary)] tracking-tight">SOC 2</p>
-                    <p class="text-sm text-[var(--text-muted)] mt-1">Certified</p>
-                </div>
+            <p class="text-center text-sm text-[var(--text-muted)] mb-6">Trusted by teams at</p>
+            <div class="flex flex-wrap items-center justify-center gap-6 md:gap-8">
+                <span class="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">SOC 2 Type II</span>
+                <span class="text-xs font-medium text-[var(--text-muted)]">·</span>
+                <span class="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">256-bit encryption</span>
+                <span class="text-xs font-medium text-[var(--text-muted)]">·</span>
+                <span class="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">99.9% uptime</span>
             </div>
         </div>
     </section>
 
     {{-- Features --}}
-    <section id="section-features" class="py-20 lg:py-28">
+    <section id="section-features" class="py-20 lg:py-28 bg-[var(--bg)]">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-[var(--text)] tracking-tight">Everything you need to manage money</h2>
                 <p class="mt-4 text-lg text-[var(--text-muted)] max-w-2xl mx-auto">Powerful tools for accounts, payments, cards, and reporting — designed for security and speed.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all group">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5 group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5">
                         <x-icon name="layout" class="w-5 h-5" />
                     </div>
                     <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Account management</h3>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">Open and manage multiple account types with full transaction history and balance tracking.</p>
                 </div>
-                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all group">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5 group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5">
                         <x-icon name="send" class="w-5 h-5" />
                     </div>
                     <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Instant transfers</h3>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">Move money between accounts or pay merchants with real-time processing and approval flows.</p>
                 </div>
-                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all group">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5 group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5">
                         <x-icon name="credit-card" class="w-5 h-5" />
                     </div>
                     <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Virtual cards</h3>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">Issue virtual cards instantly, set spending limits, and freeze or replace cards in one click.</p>
                 </div>
-                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all group">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5 group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5">
                         <x-icon name="list" class="w-5 h-5" />
                     </div>
                     <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Reporting &amp; insights</h3>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">Generate statements, review audit logs, and monitor system health with live dashboards.</p>
                 </div>
-                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all group">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5 group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5">
                         <x-icon name="shield-check" class="w-5 h-5" />
                     </div>
                     <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Enterprise security</h3>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">Role-based access, audit trails, and encrypted transactions protect every operation.</p>
                 </div>
-                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all group">
-                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5 group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <div class="bg-white border border-[var(--line)] p-8 rounded-2xl hover:border-[var(--accent)] hover:shadow-lg transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-5">
                         <x-icon name="settings" class="w-5 h-5" />
                     </div>
                     <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Automated controls</h3>
@@ -110,7 +108,7 @@
     </section>
 
     {{-- Customer testimonials --}}
-    <section class="py-20 bg-[var(--bg)] border-t border-[var(--line)]">
+    <section class="py-20 bg-white border-t border-[var(--line)]">
         <div class="max-w-4xl mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="text-2xl lg:text-3xl font-bold text-[var(--text)] tracking-tight">What our customers say</h2>
@@ -154,7 +152,7 @@
     </section>
 
     {{-- Key benefits --}}
-    <section class="py-20 lg:py-28">
+    <section class="py-20 lg:py-28 bg-[var(--bg)]">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-[var(--text)] tracking-tight">Built for operations, not just optics</h2>
@@ -242,11 +240,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var track = document.getElementById('review-track');
     var counter = document.getElementById('review-counter');
 
+    function starSvg() {
+        return '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 4 9.27l4.91-1.01L12 2z"/></svg>';
+    }
+
     function renderReview(index) {
         var r = reviews[index];
         var stars = '';
         for (var i = 0; i < r.rating; i++) {
-            stars += '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 4 9.27l4.91-1.01L12 2z"/></svg>';
+            stars += starSvg();
         }
         track.innerHTML =
             '<div class="bg-[var(--line-soft)] rounded-2xl p-8">' +
