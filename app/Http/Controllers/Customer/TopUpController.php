@@ -55,6 +55,6 @@ class TopUpController extends Controller
             depositMethod: $validated['payment_method'] ?? null,
         );
 
-        return redirect()->route('transfer')->with('status', 'Deposit request submitted. It will be reviewed before crediting your account.');
+        return redirect()->route('top-up', ['status' => 'submitted'])->with('status', 'Deposit request submitted. It will be reviewed before crediting your account.');
     }
 }

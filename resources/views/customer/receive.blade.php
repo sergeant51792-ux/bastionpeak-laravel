@@ -59,7 +59,7 @@
 {{-- Deposit Modal --}}
 <div id="deposit-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+         <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-5">
                     <h2 id="modal-title" class="text-lg font-semibold text-[var(--text)]">Receive via Bank Transfer</h2>
@@ -127,21 +127,23 @@
                     </button>
                 </div>
 
-                {{-- Step 3: Processing (green state) --}}
-                <div id="modal-step-processing" class="hidden text-center py-8">
-                    <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-                        <div class="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                    <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Processing</h3>
-                    <p class="text-sm text-[var(--text-muted)] mb-5">We're verifying your payment. This may take up to 10 minutes.</p>
-                    <div class="w-full bg-[var(--line-soft)] rounded-full h-1.5">
-                        <div class="bg-green-500 h-1.5 rounded-full animate-pulse" style="width: 70%"></div>
-                    </div>
-                    <p class="text-xs text-[var(--text-muted)] mt-3">Progress: 0%</p>
-                    <button onclick="closeDepositModal()" class="mt-5 text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">
-                        Close
-                    </button>
-                </div>
+                 {{-- Step 3: Processing (success green state) --}}
+                 <div id="modal-step-processing" class="hidden text-center py-8">
+                     <div class="w-24 h-24 mx-auto bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6 border-4 border-green-100 dark:border-green-900/30">
+                         <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                             <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
+                         </svg>
+                     </div>
+                     <h3 class="text-xl font-semibold text-[var(--text)] mb-2">Request submitted</h3>
+                     <p class="text-sm text-[var(--text-muted)] mb-5">Your deposit request has been sent for admin approval. Your balance will update once it is processed.</p>
+                     <div class="w-full bg-[var(--line-soft)] rounded-full h-1.5 mb-2">
+                         <div class="bg-green-500 h-1.5 rounded-full" style="width: 100%"></div>
+                     </div>
+                     <p class="text-xs text-[var(--text-muted)]">Progress: 100%</p>
+                     <button onclick="closeDepositModal()" class="mt-5 text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">
+                         Close
+                     </button>
+                 </div>
             </div>
         </div>
     </div>

@@ -12,15 +12,22 @@
     </header>
 
     @if(request('status') === 'submitted')
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div class="bg-white dark:bg-[var(--surface)] rounded-2xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
-                <div class="w-20 h-20 mx-auto bg-amber-100 rounded-full flex items-center justify-center mb-4">
-                    <x-icon name="clock" class="w-10 h-10 text-amber-500" />
+        <div id="success-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <div class="bg-white dark:bg-[var(--surface)] rounded-3xl shadow-2xl w-full max-w-md mx-4 p-8 text-center animate-scale-in border border-[var(--line)]">
+                <div class="w-24 h-24 mx-auto bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6 border-4 border-green-100 dark:border-green-900/30">
+                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
+                    </svg>
                 </div>
-                <h2 class="text-xl font-semibold text-[var(--text)] mb-2">Transfer processing</h2>
-                <p class="text-[var(--text-muted)] mb-6">Your transfer request has been submitted and is being reviewed. You will be notified once it is processed.</p>
-                <a href="{{ route('activity') }}" class="inline-block w-full px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">View activity</a>
-                <button onclick="window.location.href='{{ route('home') }}'" class="mt-3 text-xs text-[var(--text-muted)] hover:text-[var(--text)]">← Back to dashboard</button>
+                <h2 class="text-2xl font-bold text-[var(--text)] mb-3">Request submitted</h2>
+                <p class="text-[var(--text-muted)] mb-6">Your transfer request has been sent for admin approval. You will be notified once it is processed.</p>
+                <a href="{{ route('activity') }}" class="inline-flex items-center justify-center w-full px-6 py-3 bg-[var(--accent)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+                    <x-icon name="activity" class="w-4 h-4 mr-2" />
+                    View activity
+                </a>
+                <button onclick="window.location.href='{{ route('home') }}'" class="mt-4 text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
+                    ← Back to dashboard
+                </button>
             </div>
         </div>
     @else
