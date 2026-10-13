@@ -224,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    prefsBtn = document.getElementById('save-preferences-btn');
     var savePrefBtn = document.getElementById('save-preferences-btn');
     var hideToggle = document.getElementById('hide-balance-toggle');
     var themeOptions = document.querySelectorAll('.theme-option');
@@ -315,7 +314,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-(function() {
     var input = document.getElementById('picture-input');
     if (input) {
         input.addEventListener('change', function(e) {
@@ -339,20 +337,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     var statusDiv = document.createElement('div');
                     statusDiv.className = 'mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border';
                     statusDiv.style.cssText = 'background: var(--success-bg); color: var(--success); border-color: rgba(5,150,105,.2);';
-                    statusDiv.textContent = 'Profile picture updated.';
+                    statusDiv.textContent = '{{ __('Profile picture updated.') }}';
                     document.querySelector('#profile-page').prepend(statusDiv);
                     setTimeout(function() { location.reload(); }, 1500);
                 }).catch(function(err) {
                     var statusDiv = document.createElement('div');
                     statusDiv.className = 'mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border';
                     statusDiv.style.cssText = 'background: var(--danger-bg); color: var(--danger); border-color: rgba(220,38,38,.2);';
-                    statusDiv.textContent = 'Upload failed: ' + err.message;
+                    statusDiv.textContent = '{{ __('Upload failed:') }} ' + err.message;
                     document.querySelector('#profile-page').prepend(statusDiv);
                 });
                 this.value = '';
             }
         });
     }
-})();
+});
 </script>
 @endsection

@@ -51,5 +51,11 @@
     "No messages yet. Send a message and our support team will respond shortly.": "No messages yet. Send a message and our support team will respond shortly.",
     "Type a message...": "Type a message...",
     "Send": "Send",
-    "Open messages": "Open messages"
+    "Open messages": "Open messages",
+    "Profile picture updated.": "Profile picture updated.",
+    "Upload failed:": "Upload failed:",
+    "Cancel": "Cancel",
+    "Address": "Address",
+    "Reference (optional)": "Reference (optional)",
+    "Payment reference or note": "Payment reference or note"
 }
