@@ -205,7 +205,8 @@ if ($preAction === 'pull' || $preAction === 'all') {
 
                 if ($composerPhar !== '' && is_file($composerPhar)) {
                     // Try with platform requirements, fall back to ignoring missing extensions
-                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-intl 2>&1';
+                    // Use --no-scripts to skip package:discover (which fails due to missing cache path before config is cached)
+                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' CACHE_DRIVER=array CACHE_STORE=array php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader --no-scripts --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-intl 2>&1';
                     exec($composerCmd, $composerOutput, $composerCode);
                     bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
                 } else {
@@ -230,10 +231,20 @@ if ($preAction === 'pull' || $preAction === 'all') {
                 $bootError2 = get_class($e) . ': ' . $e->getMessage();
             }
             if ($kernel2 !== null && $bootError2 === null) {
+                // Ensure storage framework dirs exist for package:discover
+                foreach (['storage/framework/views', 'storage/framework/cache/data', 'storage/framework/sessions', 'bootstrap/cache'] as $d) {
+                    $path = $appDir . '/' . $d;
+                    if (!is_dir($path)) {
+                        @mkdir($path, 0755, true);
+                        bp_out("  Created dir: $d");
+                    }
+                }
                 foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
                     $r = runArtisan($kernel2, $cmd);
                     bp_out("$cmd (exit {$r['code']})");
                 }
+                $r = runArtisan($kernel2, 'package:discover');
+                bp_out("package:discover (exit {$r['code']})");
                 $r = runArtisan($kernel2, 'config:cache');
                 bp_out("config:cache (exit {$r['code']})");
                 $r = runArtisan($kernel2, 'route:cache');
