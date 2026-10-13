@@ -134,8 +134,8 @@
                              <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
                          </svg>
                      </div>
-                     <h3 class="text-xl font-semibold text-[var(--text)] mb-2">Request submitted</h3>
-                     <p class="text-sm text-[var(--text-muted)] mb-5">Your deposit request has been sent for admin approval. Your balance will update once it is processed.</p>
+                     <h3 class="text-xl font-semibold text-[var(--text)] mb-2">{{ __('Request submitted') }}</h3>
+                     <p class="text-sm text-[var(--text-muted)] mb-5">{{ __('Your deposit request has been sent for admin approval. Your balance will update once it is processed.') }}</p>
                      <div class="w-full bg-[var(--line-soft)] rounded-full h-1.5 mb-2">
                          <div class="bg-green-500 h-1.5 rounded-full" style="width: 100%"></div>
                      </div>

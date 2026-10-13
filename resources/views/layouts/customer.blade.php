@@ -60,39 +60,39 @@
                 <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
                     <a href="{{ route('home') }}" class="sidebar-link @if(request()->routeIs('home')) active @endif flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
                         <x-icon name="layout-dashboard" class="w-5 h-5" />
-                        Overview
+                        {{ __('Dashboard') }}
                     </a>
                     <a href="{{ route('transfer') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('transfer')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="send" class="w-5 h-5" />
-                        Payments
+                        {{ __('Send money') }}
                     </a>
                     <a href="{{ route('activity') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('activity')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="list-tree" class="w-5 h-5" />
-                        Transactions
+                        {{ __('Transactions') }}
                     </a>
                     <a href="{{ route('receive') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('receive')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="download" class="w-5 h-5" />
-                        Receive
+                        {{ __('Receive') }}
                     </a>
                     <a href="{{ route('deposit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('deposit')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="wallet" class="w-5 h-5" />
-                        Add money
+                        {{ __('Add money') }}
                     </a>
                     <a href="{{ route('cards') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('cards')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="credit-card" class="w-5 h-5" />
-                        Cards
+                        {{ __('Cards') }}
                     </a>
                     <a href="{{ route('financial-services') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('financial-services')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="trending-up" class="w-5 h-5" />
-                        Financial Services
+                        {{ __('Financial Services') }}
                     </a>
                     <a href="{{ route('messages') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('messages')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="message-square" class="w-5 h-5" />
-                        Messages
+                        {{ __('Messages') }}
                     </a>
                     <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('profile')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="user" class="w-5 h-5" />
-                        Profile
+                        {{ __('Profile') }}
                     </a>
                 </nav>
             </aside>
@@ -141,19 +141,19 @@
             <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-[var(--surface)] border-t border-[var(--line)] flex items-center justify-around py-2.5 lg:hidden z-50 bottom-nav" style="bottom: 0; left: 0; right: 0;">
                 <a href="{{ route('home') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('home')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
                     <x-icon name="layout-dashboard" class="w-5 h-5 mb-0.5" />
-                    Overview
+                    {{ __('Dashboard') }}
                 </a>
                 <a href="{{ route('profile') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('profile')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
                     <x-icon name="user" class="w-5 h-5 mb-0.5" />
-                    Profile
+                    {{ __('Profile') }}
                 </a>
                 <a href="{{ route('deposit') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('deposit')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
                     <x-icon name="wallet" class="w-5 h-5 mb-0.5" />
-                    Add money
+                    {{ __('Add money') }}
                 </a>
                 <button id="mobile-menu-btn-bottom" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium text-[var(--text-muted)]">
                     <x-icon name="menu" class="w-5 h-5 mb-0.5" />
-                    Menu
+                    {{ __('Menu') }}
                 </button>
             </nav>
         @endif
@@ -206,7 +206,7 @@
                 <div class="bg-[var(--primary)] text-white p-4 flex items-center justify-between cursor-pointer" onclick="toggleSupportChat()">
                 <div class="flex items-center gap-3">
                     <x-icon name="message-circle" class="w-5 h-5" />
-                    <span>Support</span>
+                    <span>{{ __('Support') }}</span>
                 </div>
                 <x-icon name="chevron-up" class="w-5 h-5" />
             </div>
@@ -227,20 +227,20 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-xs text-[var(--text-muted)] text-center py-4">No messages yet. Send a message and our support team will respond shortly.</p>
+                    <p class="text-xs text-[var(--text-muted)] text-center py-4">{{ __('No messages yet. Send a message and our support team will respond shortly.') }}</p>
                 @endforelse
             </div>
             <form method="POST" action="{{ route('messages.send') }}" class="p-3 border-t border-[var(--line)]">
                 @csrf
                 <div class="flex gap-2">
-                    <textarea name="body" required placeholder="Type a message..." rows="2" class="flex-1 px-3 py-2 bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl text-sm resize-none"></textarea>
-                    <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--primary-dark)] transition-colors">Send</button>
+                    <textarea name="body" required placeholder="{{ __('Type a message...') }}" rows="2" class="flex-1 px-3 py-2 bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl text-sm resize-none"></textarea>
+                    <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--primary-dark)] transition-colors">{{ __('Send') }}</button>
                 </div>
             </form>
         </div>
 
         <div id="support-chat-collapsed" class="p-3 border-t border-[var(--line)]">
-            <a href="{{ route('messages') }}" class="text-xs text-[var(--accent)] hover:text-[var(--accent-dark)] font-medium">Open messages</a>
+            <a href="{{ route('messages') }}" class="text-xs text-[var(--accent)] hover:text-[var(--accent-dark)] font-medium">{{ __('Open messages') }}</a>
             <a href="mailto:support@bastionpeaks.com" class="text-xs text-[var(--text-muted)] hover:text-[var(--text)] block mt-1">support@bastionpeaks.com</a>
         </div>
     </div>

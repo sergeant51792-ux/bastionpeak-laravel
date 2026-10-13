@@ -58,18 +58,20 @@ class PaymentService
             $this->validatePayment($fromAccountId, $toMerchantId, $amount);
         }
 
-        $idempotencyKey = 'pay-req-' . $userId . '-' . $fromAccountId . '-' . ($toMerchantId ?? 'external') . '-' . md5((string)time());
+        $idempotencyKey = 'pay-req-' . $userId . '-' . $fromAccountId . '-' . ($toMerchantId ?? 'external') . '-' . md5(uniqid((string)mt_rand(), true));
 
         $memo = $purpose;
         if ($recipientName || $recipientDetail || $paymentMethod) {
             $memo = trim(($paymentMethod ? '[' . $paymentMethod . '] ' : '') . ($recipientName ? $recipientName . ' - ' : '') . ($recipientDetail ?? ''));
         }
 
-        return DB::transaction(function () use ($account, $merchant, $amount, $memo, $proofFile, $idempotencyKey, $toMerchantId, $metadata) {
+        return DB::transaction(function () use ($account, $merchant, $amount, $memo, $proofFile, $idempotencyKey, $toMerchantId, $metadata, $userId) {
             $transaction = Transaction::create([
                 'transaction_id'    => 'TXN-' . strtoupper(uniqid()),
                 'from_account_id'   => $account->id,
                 'to_account_id'     => $account->id,
+                'from_user_id'      => $userId,
+                'to_user_id'        => $userId,
                 'merchant_id'       => $toMerchantId,
                 'type'              => 'payment_debit',
                 'amount'            => $amount,

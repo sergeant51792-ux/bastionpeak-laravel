@@ -18,14 +18,14 @@
                         <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-bold text-[var(--text)] mb-3">Request submitted</h2>
-                <p class="text-[var(--text-muted)] mb-6">Your deposit request has been sent for admin approval. Your balance will update once it is processed.</p>
+                <h2 class="text-2xl font-bold text-[var(--text)] mb-3">{{ __('Request submitted') }}</h2>
+                <p class="text-[var(--text-muted)] mb-6">{{ __('Your deposit request has been sent for admin approval. Your balance will update once it is processed.') }}</p>
                 <a href="{{ route('activity') }}" class="inline-flex items-center justify-center w-full px-6 py-3 bg-[var(--accent)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
                     <x-icon name="activity" class="w-4 h-4 mr-2" />
-                    View activity
+                    {{ __('View activity') }}
                 </a>
                 <button onclick="window.location.href='{{ route('home') }}'" class="mt-4 text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
-                    ← Back to dashboard
+                    ← {{ __('Back to dashboard') }}
                 </button>
             </div>
         </div>

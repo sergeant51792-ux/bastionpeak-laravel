@@ -20,7 +20,7 @@
 
     {{-- Profile Picture & Info --}}
     <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
-        <h2 class="text-base font-bold text-[var(--text)] mb-4">Profile</h2>
+        <h2 class="text-base font-bold text-[var(--text)] mb-4">{{ __('Profile') }}</h2>
 
         <div class="flex items-center gap-5">
             <div class="relative">
@@ -59,39 +59,33 @@
     {{-- Personal Information Form --}}
     <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-bold text-[var(--text)]">Personal Information</h2>
+            <h2 class="text-base font-bold text-[var(--text)]">{{ __('Personal Information') }}</h2>
             <div class="flex gap-2">
-                <button type="button" id="cancel-edit" class="hidden px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text)] transition-colors min-h-[44px]">
-                    Cancel
-                </button>
-                <button type="submit" id="save-profile" form="profile-form" class="hidden px-6 py-2.5 btn-primary text-sm font-medium justify-center min-h-[44px]">
-                    Save Changes
-                </button>
-                <button type="button" id="edit-profile-btn" class="px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:bg-[var(--accent-dark)] transition-colors min-h-[44px]">
-                    Edit Profile
-                </button>
+                <button type="button" id="cancel-edit" class="hidden px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text)] transition-colors min-h-[44px]">{{ __('Cancel') }}</button>
+                <button type="submit" id="save-profile" form="profile-form" class="hidden px-6 py-2.5 btn-primary text-sm font-medium justify-center min-h-[44px]">{{ __('Save Changes') }}</button>
+                <button type="button" id="edit-profile-btn" class="px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:bg-[var(--accent-dark)] transition-colors min-h-[44px]">{{ __('Edit Profile') }}</button>
             </div>
         </div>
 
         <form id="profile-form" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
-                <label for="name" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Full Name</label>
+                <label for="name" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Full Name') }}</label>
                 <input type="text" id="name" name="name" value="{{ $user->name }}" required
                        class="input-field" placeholder="Enter your name" disabled>
             </div>
             <div>
-                <label for="email" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Email Address</label>
+                <label for="email" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Email Address') }}</label>
                 <input type="email" id="email" name="email" value="{{ $user->email }}" required
                        class="input-field" placeholder="Enter your email" readonly>
             </div>
             <div>
-                <label for="phone" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Phone Number</label>
+                <label for="phone" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Phone Number') }}</label>
                 <input type="tel" id="phone" name="phone" value="{{ $user->phone ?? '' }}"
                        class="input-field" placeholder="Enter your phone number" disabled>
             </div>
             <div>
-                <label for="address" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Address</label>
+                <label for="address" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Address') }}</label>
                 <input type="text" id="address" name="address" value="{{ $user->address ?? '' }}"
                        class="input-field" placeholder="Enter your address" disabled>
             </div>
@@ -100,25 +94,25 @@
 
     {{-- Security --}}
     <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-5">
-        <h2 class="text-base font-bold text-[var(--text)]">Security</h2>
+        <h2 class="text-base font-bold text-[var(--text)]">{{ __('Security') }}</h2>
 
         <form id="password-form" method="POST" action="{{ route('password.change') }}" class="space-y-4">
             @csrf
             <div>
-                <label for="current_password" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Current Password</label>
+                <label for="current_password" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Current Password') }}</label>
                 <input type="password" id="current_password" name="current_password" required
                        class="input-field" placeholder="Enter current password">
             </div>
 
             <div>
-                <label for="password" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">New Password</label>
+                <label for="password" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('New Password') }}</label>
                 <input type="password" id="password" name="password" required
                        class="input-field" placeholder="Enter new password">
                 <p class="text-xs text-[var(--text-muted)] mt-1.5">Must be at least 8 characters with letters, numbers, and symbols.</p>
             </div>
 
             <div>
-                <label for="password_confirmation" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Confirm New Password</label>
+                <label for="password_confirmation" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Confirm New Password') }}</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" required
                        class="input-field" placeholder="Re-enter new password">
             </div>
@@ -135,7 +129,7 @@
     {{-- Preferences --}}
     <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-bold text-[var(--text)]">Preferences</h2>
+            <h2 class="text-base font-bold text-[var(--text)]">{{ __('Preferences') }}</h2>
             <button type="button" id="save-preferences-btn" class="hidden px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium min-h-[44px]">
                 Save Settings
             </button>
@@ -144,8 +138,8 @@
             @csrf
             <div class="flex items-center justify-between py-2">
                 <div>
-                    <p class="text-sm font-semibold text-[var(--text)]">Hide Balances</p>
-                    <p class="text-xs text-[var(--text-muted)]">Hide amounts on home and cards</p>
+                <p class="text-sm font-semibold text-[var(--text)]">{{ __('Hide Balances') }}</p>
+                <p class="text-xs text-[var(--text-muted)]">{{ __('Hide amounts on home and cards') }}</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="hidden" name="hide_balance" value="0">
@@ -156,8 +150,8 @@
 
             <div class="flex items-center justify-between py-2">
                 <div>
-                    <p class="text-sm font-semibold text-[var(--text)]">Display Mode</p>
-                    <p class="text-xs text-[var(--text-muted)]">Choose your preferred appearance</p>
+                <p class="text-sm font-semibold text-[var(--text)]">{{ __('Display Mode') }}</p>
+                <p class="text-xs text-[var(--text-muted)]">{{ __('Choose your preferred appearance') }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="flex items-center gap-1 bg-[var(--line-soft)] rounded-lg p-1 text-sm">
@@ -177,8 +171,8 @@
 
             <div class="flex items-center justify-between py-2">
                 <div>
-                    <p class="text-sm font-semibold text-[var(--text)]">Language</p>
-                    <p class="text-xs text-[var(--text-muted)]">Select your display language</p>
+                <p class="text-sm font-semibold text-[var(--text)]">{{ __('Language') }}</p>
+                <p class="text-xs text-[var(--text-muted)]">{{ __('Select your display language') }}</p>
                 </div>
                 <select name="language" id="language-select" class="input-field w-40">
                     <option value="en" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'en' ? 'selected' : '' }}>English</option>

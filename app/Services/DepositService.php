@@ -37,15 +37,17 @@ class DepositService
             ->where('user_id', $userId)
             ->firstOrFail();
 
-        $idempotencyKey = 'dep-req-' . $userId . '-' . $accountId . '-' . md5((string)time());
+        $idempotencyKey = 'dep-req-' . $userId . '-' . $accountId . '-' . md5(uniqid((string)mt_rand(), true));
 
         $memo = $note ?: 'Deposit';
 
-        return DB::transaction(function () use ($account, $amount, $memo, $proofFile, $idempotencyKey, $depositMethod, $metadata) {
+        return DB::transaction(function () use ($account, $amount, $memo, $proofFile, $idempotencyKey, $depositMethod, $metadata, $userId) {
             $transaction = Transaction::create([
                 'transaction_id'    => 'TXN-' . strtoupper(uniqid()),
                 'from_account_id'   => $account->id,
                 'to_account_id'     => $account->id,
+                'from_user_id'      => $userId,
+                'to_user_id'        => $userId,
                 'type'              => 'deposit_credit',
                 'amount'            => $amount,
                 'currency_id'       => $account->currency_id,
