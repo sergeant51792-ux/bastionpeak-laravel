@@ -130,13 +130,20 @@ function bp_env(string $appDir, string $name, ?string $default = null): ?string
     return $default;
 }
 
+// ---------------------------------------------------------------------------
+// Clear cached config before bootstrap to avoid stale cache causing errors.
+// This is a deploy helper, so it's safe to clear config cache here.
+// ---------------------------------------------------------------------------
+@unlink($appDir . '/bootstrap/cache/config.php');
+@unlink($appDir . '/bootstrap/cache/routes-v2.php');
+
 $action = (string) ($_GET['action'] ?? 'info');
 
 $kernel = null;
 $bootError = null;
 try {
     require $appDir . '/vendor/autoload.php';
-    // Set minimal cache config to avoid "valid cache path" error during bootstrap
+    // Set cache driver to array to avoid "valid cache path" error during bootstrap
     putenv('CACHE_DRIVER=array');
     putenv('CACHE_STORE=array');
     $app = require $appDir . '/bootstrap/app.php';
