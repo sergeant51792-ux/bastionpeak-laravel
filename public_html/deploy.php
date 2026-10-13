@@ -201,7 +201,8 @@ if ($preAction === 'pull' || $preAction === 'all') {
                 }
 
                 if ($composerPhar !== '' && is_file($composerPhar)) {
-                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader 2>&1';
+                    // Try with platform requirements, fall back to ignoring missing extensions
+                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-intl 2>&1';
                     exec($composerCmd, $composerOutput, $composerCode);
                     bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
                 } else {
