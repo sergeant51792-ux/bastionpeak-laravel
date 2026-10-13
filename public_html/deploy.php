@@ -64,6 +64,18 @@ if (!$deployKey) {
 
 $key = (string) ($_GET['key'] ?? ($_POST['key'] ?? ''));
 if (!hash_equals($deployKey, $key)) {
+    // Debug info for troubleshooting
+    if (isset($_GET['debug']) && $_GET['debug'] === 'keymatch') {
+        header('Content-Type: text/plain');
+        echo "deployKey (from .env): " . ($deployKey ?? 'NULL') . "\n";
+        echo "deployKey length: " . strlen($deployKey ?? '') . "\n";
+        echo "deployKey hex: " . bin2hex($deployKey ?? '') . "\n";
+        echo "urlKey: " . $key . "\n";
+        echo "urlKey length: " . strlen($key) . "\n";
+        echo "urlKey hex: " . bin2hex($key) . "\n";
+        echo "usingDefaultKey: " . ($usingDefaultKey ? 'yes' : 'no') . "\n";
+        exit;
+    }
     http_response_code(403);
     header('Content-Type: text/plain');
     exit("Forbidden. Add ?key=YOUR_KEY to the URL.\n");
