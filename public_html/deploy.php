@@ -169,11 +169,45 @@ if ($preAction === 'pull' || $preAction === 'all') {
     exec($command, $output, $exitCode);
     bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
     if ($exitCode === 0) {
-        $composerOutput = [];
-        $composerCode = 0;
-        $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && (php /home/bastionpeaks/composer-stable.phar install --no-dev --optimize-autoloader 2>&1 || php /home/bastionpeaks/composer-setup.phar install --no-dev --optimize-autoloader 2>&1 || /usr/local/bin/composer install --no-dev --optimize-autoloader 2>&1 || composer install --no-dev --optimize-autoloader 2>&1)';
-        exec($composerCmd, $composerOutput, $composerCode);
-        bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
+                $composerOutput = [];
+                $composerCode = 0;
+                // Find or download composer
+                $composerPhar = '';
+                foreach (['/home/bastionpeaks/composer.phar', '/home/bastionpeaks/composer-stable.phar', '/home/bastionpeaks/composer-setup.phar', '/usr/local/bin/composer', $appDir . '/composer.phar'] as $path) {
+                    if (is_file($path)) {
+                        $composerPhar = $path;
+                        break;
+                    }
+                }
+
+                if ($composerPhar === '' || !is_file($composerPhar)) {
+                    // Download composer.phar
+                    $dlOutput = [];
+                    $dlCode = 0;
+                    $dlCmd = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/installer\\", \\"composer-setup.phar\\");" 2>&1';
+                    exec($dlCmd, $dlOutput, $dlCode);
+                    bp_out("composer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+                    if ($dlCode === 0 && file_exists($appDir . '/composer-setup.phar')) {
+                        $composerPhar = $appDir . '/composer-setup.phar';
+                    } else {
+                        // Fallback: try downloading the phar directly
+                        $dlCmd2 = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/composer-stable.phar\\", \\"composer.phar\\");" 2>&1';
+                        exec($dlCmd2, $dlOutput, $dlCode);
+                        bp_out("composer phar download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+                        if (file_exists($appDir . '/composer.phar')) {
+                            $composerPhar = $appDir . '/composer.phar';
+                        }
+                    }
+                }
+
+                if ($composerPhar !== '' && is_file($composerPhar)) {
+                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader 2>&1';
+                    exec($composerCmd, $composerOutput, $composerCode);
+                    bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
+                } else {
+                    $composerCode = 1;
+                    bp_out("composer: could not locate or download composer");
+                }
         if ($composerCode !== 0) {
             $ok = false;
         } else {
