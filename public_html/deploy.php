@@ -181,27 +181,27 @@ if ($preAction === 'pull' || $preAction === 'all') {
                 }
 
                 if ($composerPhar === '' || !is_file($composerPhar)) {
-                    // Download composer.phar
+                    // Download composer.phar directly (more reliable than the installer)
                     $dlOutput = [];
                     $dlCode = 0;
-                    $dlCmd = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/installer\\", \\"composer-setup.phar\\");" 2>&1';
+                    $dlCmd = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/composer-stable.phar\\", \\"composer.phar\\");" 2>&1';
                     exec($dlCmd, $dlOutput, $dlCode);
                     bp_out("composer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
-                    if ($dlCode === 0 && file_exists($appDir . '/composer-setup.phar')) {
-                        $composerPhar = $appDir . '/composer-setup.phar';
+                    if ($dlCode === 0 && file_exists($appDir . '/composer.phar')) {
+                        $composerPhar = $appDir . '/composer.phar';
                     } else {
-                        // Fallback: try downloading the phar directly
-                        $dlCmd2 = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/composer-stable.phar\\", \\"composer.phar\\");" 2>&1';
+                        // Fallback: try the installer
+                        $dlCmd2 = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/installer\\", \\"composer-setup.phar\\");" 2>&1';
                         exec($dlCmd2, $dlOutput, $dlCode);
-                        bp_out("composer phar download (exit {$dlCode})\n" . implode("\n", $dlOutput));
-                        if (file_exists($appDir . '/composer.phar')) {
-                            $composerPhar = $appDir . '/composer.phar';
+                        bp_out("composer installer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+                        if (file_exists($appDir . '/composer-setup.phar')) {
+                            $composerPhar = $appDir . '/composer-setup.phar';
                         }
                     }
                 }
 
                 if ($composerPhar !== '' && is_file($composerPhar)) {
-                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader 2>&1';
+                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader 2>&1';
                     exec($composerCmd, $composerOutput, $composerCode);
                     bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
                 } else {
