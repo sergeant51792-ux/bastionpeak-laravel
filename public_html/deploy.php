@@ -137,6 +137,14 @@ function bp_env(string $appDir, string $name, ?string $default = null): ?string
 @unlink($appDir . '/bootstrap/cache/config.php');
 @unlink($appDir . '/bootstrap/cache/routes-v2.php');
 
+// Ensure storage/framework subdirectories exist (Laravel needs these for views cache)
+foreach (['storage/framework/views', 'storage/framework/cache/data', 'storage/framework/sessions'] as $d) {
+    $path = $appDir . '/' . $d;
+    if (!is_dir($path)) {
+        @mkdir($path, 0755, true);
+    }
+}
+
 $action = (string) ($_GET['action'] ?? 'info');
 
 $kernel = null;
