@@ -21,16 +21,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="{{ route('landing') }}" class="flex items-center gap-2.5">
                 <x-bp-logo :width="28" :height="28" />
-                <span class="font-bold text-[var(--primary-dark)] tracking-tight text-xl">Bastion Peak</span>
+                <span class="font-bold text-[var(--primary)] tracking-tight text-xl">Bastion Peak</span>
             </a>
             <div class="hidden lg:flex items-center gap-8">
-                <a href="#fp-features" class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Features</a>
-                <a href="#fp-security" class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Security</a>
-                <a href="#fp-cta" class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">See it in action</a>
+                <a href="#fp-features" class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Features</a>
+                <a href="#fp-security" class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Security</a>
+                <a href="#fp-cta" class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">See it in action</a>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('signin') }}" class="px-4 py-2 text-sm font-medium text-[var(--text)] hover:text-[var(--primary-dark)] transition-colors">Log in</a>
-                <a href="{{ route('register') }}" class="px-5 py-2.5 text-sm font-semibold text-white bg-[var(--primary-dark)] hover:bg-[var(--primary)] rounded-md transition-colors shadow-sm">
+                <a href="{{ route('signin') }}" class="px-4 py-2 text-sm font-medium text-[var(--text)] hover:text-[var(--primary)] transition-colors">Log in</a>
+                <a href="{{ route('register') }}" class="px-5 py-2.5 text-sm font-semibold text-white bg-[var(--primary)] hover:bg-[var(--primary-dark)] rounded-lg transition-colors shadow-sm">
                     Get started
                 </a>
             </div>
@@ -41,7 +41,7 @@
     <section class="relative h-screen flex items-center pt-16">
         <div class="absolute inset-0">
             <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?fm=jpg&q=80&w=2000&auto=format&fit=crop" alt="Banking infrastructure" class="w-full h-full object-cover" loading="eager">
-            <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-black/40"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/35"></div>
         </div>
         <div class="relative max-w-7xl mx-auto px-6 w-full">
             <div class="max-w-2xl">
@@ -56,11 +56,11 @@
                     A banking platform built for scale — with approval flows, double-entry ledger integrity, and real-time visibility across accounts, cards, and merchants.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-[var(--primary-dark)] bg-white rounded-md shadow-lg hover:shadow-xl transition-shadow">
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-[var(--primary-dark)] bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                         Get started
                         <x-icon name="arrow-right" class="ml-2 w-4 h-4" />
                     </a>
-                    <a href="#fp-features" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-white bg-white/10 hover:bg-white/15 border border-white/20 rounded-md transition-colors">
+                    <a href="#fp-features" class="inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium text-white bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg transition-colors">
                         Learn more
                     </a>
                 </div>
@@ -73,19 +73,19 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div>
-                    <p class="text-3xl font-bold text-[var(--primary-dark)] mb-1">99.9%</p>
+                    <p class="text-3xl font-bold text-[var(--primary)] mb-1">99.9%</p>
                     <p class="text-sm text-[var(--text-muted)]">Uptime SLA</p>
                 </div>
                 <div>
-                    <p class="text-3xl font-bold text-[var(--primary-dark)] mb-1">256-bit</p>
+                    <p class="text-3xl font-bold text-[var(--primary)] mb-1">256-bit</p>
                     <p class="text-sm text-[var(--text-muted)]">Encryption</p>
                 </div>
                 <div>
-                    <p class="text-3xl font-bold text-[var(--primary-dark)] mb-1">&lt;2s</p>
+                    <p class="text-3xl font-bold text-[var(--primary)] mb-1">&lt;2s</p>
                     <p class="text-sm text-[var(--text-muted)]">Transfer speed</p>
                 </div>
                 <div>
-                    <p class="text-3xl font-bold text-[var(--primary-dark)] mb-1">SOC 2</p>
+                    <p class="text-3xl font-bold text-[var(--primary)] mb-1">SOC 2</p>
                     <p class="text-sm text-[var(--text-muted)]">Certified</p>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                 <p class="mt-4 text-lg text-[var(--text-muted)]">Everything your finance team needs to move money safely, with proper controls and full visibility.</p>
             </div>
 
-            <div class="space-y-16">
+            <div class="space-y-20">
                 {{-- Feature 1: Ledger --}}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="order-2 lg:order-1">
@@ -117,7 +117,7 @@
                     </div>
                     <div class="order-1 lg:order-2">
                         <div class="bg-[var(--accent-subtle)] rounded-xl p-2">
-                            <img src="https://images.unsplash.com/photo-1551285788-a3146e8efb9f?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="" class="w-full h-auto rounded-lg" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1551285788-a3146e8efc9f?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="" class="w-full h-auto rounded-lg" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -168,47 +168,45 @@
     </section>
 
     {{-- Security section --}}
-    <section id="fp-security" class="py-20 bg-[var(--primary-dark)] text-white">
+    <section id="fp-security" class="py-20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div>
-                    <h2 class="text-3xl lg:text-4xl font-bold tracking-tight mb-4">Security and compliance built in</h2>
-                    <p class="text-lg text-blue-100 mb-8">Bastion Peak is SOC 2 Type II certified and built with security at every layer — from 256-bit encryption to role-based access controls.</p>
+                    <h2 class="text-3xl lg:text-4xl font-bold text-[var(--text)] tracking-tight mb-4">Security and compliance built in</h2>
+                    <p class="text-lg text-[var(--text-muted)] mb-8">Bastion Peak is SOC 2 Type II certified and built with security at every layer — from 256-bit encryption to role-based access controls.</p>
                     <div class="grid grid-cols-2 gap-6">
                         <div class="flex items-start gap-3">
-                            <x-icon name="lock" class="w-5 h-5 text-blue-300 mt-0.5 flex-shrink-0" />
+                            <x-icon name="lock" class="w-5 h-5 text-[var(--primary)] mt-0.5 flex-shrink-0" />
                             <div>
-                                <p class="font-semibold mb-1">256-bit encryption</p>
-                                <p class="text-sm text-blue-200">All data encrypted at rest and in transit</p>
+                                <p class="font-semibold text-[var(--text)] mb-1">256-bit encryption</p>
+                                <p class="text-sm text-[var(--text-muted)]">All data encrypted at rest and in transit</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
-                            <x-icon name="shield" class="w-5 h-5 text-blue-300 mt-0.5 flex-shrink-0" />
+                            <x-icon name="shield" class="w-5 h-5 text-[var(--primary)] mt-0.5 flex-shrink-0" />
                             <div>
-                                <p class="font-semibold mb-1">SOC 2 Type II</p>
-                                <p class="text-sm text-blue-200">Third-party verified compliance</p>
+                                <p class="font-semibold text-[var(--text)] mb-1">SOC 2 Type II</p>
+                                <p class="text-sm text-[var(--text-muted)]">Third-party verified compliance</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
-                            <x-icon name="users" class="w-5 h-5 text-blue-300 mt-0.5 flex-shrink-0" />
+                            <x-icon name="users" class="w-5 h-5 text-[var(--primary)] mt-0.5 flex-shrink-0" />
                             <div>
-                                <p class="font-semibold mb-1">Role-based access</p>
-                                <p class="text-sm text-blue-200">Granular permissions per team</p>
+                                <p class="font-semibold text-[var(--text)] mb-1">Role-based access</p>
+                                <p class="text-sm text-[var(--text-muted)]">Granular permissions per team</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
-                            <x-icon name="clipboard-check" class="w-5 h-5 text-blue-300 mt-0.5 flex-shrink-0" />
+                            <x-icon name="clipboard-check" class="w-5 h-5 text-[var(--primary)] mt-0.5 flex-shrink-0" />
                             <div>
-                                <p class="font-semibold mb-1">Audit trail</p>
-                                <p class="text-sm text-blue-200">Every action logged and traceable</p>
+                                <p class="font-semibold text-[var(--text)] mb-1">Audit trail</p>
+                                <p class="text-sm text-[var(--text-muted)]">Every action logged and traceable</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="lg:justify-end">
-                    <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1454165804600-be344094a608?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="Secure banking dashboard" class="w-full h-auto">
-                    </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1454165804600-be344094a608?fm=jpg&q=80&w=800&auto=format&fit=crop" alt="Secure banking dashboard" class="w-full h-auto rounded-xl border border-[var(--line)]">
                 </div>
             </div>
         </div>
@@ -261,14 +259,14 @@
     {{-- CTA with image background --}}
     <section id="fp-cta" class="relative py-24 lg:py-32">
         <div class="absolute inset-0">
-            <img src="https://images.unsplash.com/photo-1496170804224-8f49c8ef5e8c?fm=jpg&q=80&w=1800&auto=format&fit=crop" alt="Finance team collaboration" class="w-full h-full object-cover" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/30"></div>
+            <img src="https://images.unsplash.com/photo-1496170804224-8f49c558efc0?fm=jpg&q=80&w=1800&auto=format&fit=crop" alt="Finance team collaboration" class="w-full h-full object-cover" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/35 to-black/25"></div>
         </div>
         <div class="relative max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-3xl lg:text-4xl font-bold text-white tracking-tight mb-4">Ready to modernize your banking infrastructure?</h2>
             <p class="mt-4 text-lg text-blue-100">Join finance teams that trust Bastion Peak for secure, compliant financial operations.</p>
             <div class="mt-10">
-                <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-[var(--primary-dark)] bg-white rounded-md shadow-lg hover:shadow-xl transition-all">
+                <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-[var(--primary-dark)] bg-white rounded-lg shadow-lg hover:shadow-xl transition-all">
                     Get started
                     <x-icon name="arrow-right" class="ml-2 w-4 h-4" />
                 </a>
@@ -283,31 +281,31 @@
                 <div class="md:col-span-2">
                     <div class="flex items-center gap-2.5 mb-4">
                         <x-bp-logo :width="24" :height="24" />
-                        <span class="text-lg font-bold text-[var(--primary-dark)]">Bastion Peak</span>
+                        <span class="text-lg font-bold text-[var(--primary)]">Bastion Peak</span>
                     </div>
                     <p class="text-sm text-[var(--text-muted)] max-w-xs">Secure banking infrastructure for modern teams.</p>
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-[var(--text)] uppercase tracking-wider mb-4">Product</p>
                     <ul class="space-y-2.5 text-sm">
-                        <li><a href="#fp-features" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Features</a></li>
-                        <li><a href="#fp-security" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Security</a></li>
-                        <li><a href="#fp-testimonials" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Customers</a></li>
+                        <li><a href="#fp-features" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Features</a></li>
+                        <li><a href="#fp-security" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Security</a></li>
+                        <li><a href="#fp-testimonials" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Customers</a></li>
                     </ul>
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-[var(--text)] uppercase tracking-wider mb-4">Company</p>
                     <ul class="space-y-2.5 text-sm">
-                        <li><a href="{{ route('support') }}" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Support</a></li>
-                        <li><a href="{{ route('learn') }}" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Learn</a></li>
-                        <li><a href="{{ route('policies') }}" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Policies</a></li>
+                        <li><a href="{{ route('support') }}" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Support</a></li>
+                        <li><a href="{{ route('learn') }}" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Learn</a></li>
+                        <li><a href="{{ route('policies') }}" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Policies</a></li>
                     </ul>
                 </div>
                 <div>
                     <p class="text-xs font-semibold text-[var(--text)] uppercase tracking-wider mb-4">Legal</p>
                     <ul class="space-y-2.5 text-sm">
-                        <li><a href="{{ route('terms') }}" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Terms of Service</a></li>
-                        <li><a href="{{ route('privacy') }}" class="text-[var(--text-muted)] hover:text-[var(--primary-dark)] transition-colors">Privacy Policy</a></li>
+                        <li><a href="{{ route('terms') }}" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Terms of Service</a></li>
+                        <li><a href="{{ route('privacy') }}" class="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>

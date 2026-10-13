@@ -1,17 +1,17 @@
 :root {
-    --bg: #F8FAFC;
+    --bg: #F1F5F9;
     --surface: #FFFFFF;
-    --surface-raised: #F1F5F9;
+    --surface-raised: #F8FAFC;
     --line: #E2E8F0;
     --line-soft: #F1F5F9;
     --text: #0F172A;
     --text-muted: #64748B;
     --text-inverse: #FFFFFF;
-    --focus: #2563EB;
+    --focus: #3B82F6;
     --primary: #1E3A8A;
-    --primary-light: #3B82F6;
-    --primary-dark: #1E40AF;
-    --accent: #2563EB;
+    --primary-light: #2563EB;
+    --primary-dark: #0F2557;
+    --accent: #3B82F6;
     --accent-light: #60A5FA;
     --accent-dark: #1D4ED8;
     --accent-subtle: #EFF6FF;
@@ -21,7 +21,7 @@
     --warning-bg: #FFFBEB;
     --danger: #DC2626;
     --danger-bg: #FEF2F2;
-    --card-navy: #0F172A;
+    --card-navy: #0F2557;
     --card-blue: #1E3A8A;
     --card-sky: #075985;
 }
