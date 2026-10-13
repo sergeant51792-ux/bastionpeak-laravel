@@ -147,6 +147,12 @@ foreach (['storage/framework/views', 'storage/framework/cache/data', 'storage/fr
 
 $action = (string) ($_GET['action'] ?? 'info');
 
+// Determine if we need to run pre-action (git pull + composer install)
+$preAction = null;
+if ($action === 'pull' || $action === 'all') {
+    $preAction = $action === 'all' ? 'all' : 'pull';
+}
+
 $kernel = null;
 $bootError = null;
 try {
@@ -170,6 +176,9 @@ function runArtisan(&$kernel, string $command, array $params = []): array
         return ['code' => 1, 'output' => get_class($e) . ': ' . $e->getMessage()];
     }
 }
+
+// Determine if we need composer install (vendor missing)
+$needsComposerInstall = ($kernel === null || $bootError !== null || !file_exists($appDir . '/vendor/autoload.php'));
 
 // Run pre-action block (always pull when requested)
 if (!empty($preAction)) {
