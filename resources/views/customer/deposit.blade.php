@@ -29,12 +29,12 @@
     </header>
 
     @if(request('status') === 'submitted')
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div id="success-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div class="bg-white dark:bg-[var(--surface)] rounded-2xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
-                <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <div class="w-20 h-20 mx-auto bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
                     <x-icon name="circle-check" class="w-10 h-10 text-green-500" />
                 </div>
-                <h2 class="text-xl font-semibold text-[var(--text)] mb-2">Processing</h2>
+                <h2 class="text-xl font-semibold text-[var(--text)] mb-2">Add money request received</h2>
                 <p class="text-[var(--text-muted)] mb-6">Your add money request has been received and is being processed. Your balance will update once it is complete.</p>
                 <a href="{{ route('activity') }}" class="inline-block w-full px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">View activity</a>
                 <button onclick="window.location.href='{{ route('home') }}'" class="mt-3 text-xs text-[var(--text-muted)] hover:text-[var(--text)]">← Back to dashboard</button>
@@ -175,9 +175,9 @@
                     </div>
                 @endif
 
-                <button type="submit" class="w-full py-3.5 btn-primary">Continue</button>
-            </form>
-        </div>
+                    <button type="submit" class="w-full py-3.5 btn-primary">Continue</button>
+                </form>
+            </div>
     @endif
 </div>
 
