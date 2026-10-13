@@ -54,9 +54,9 @@
                             </p>
                         </div>
                         <span class="text-xs px-2.5 py-1 rounded-full
-                            @if($app->status === 'approved') bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400
-                            @elseif($app->status === 'rejected') bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400
-                            @else bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 @endif">
+                            @if($app->status === 'approved') bg-[var(--success-bg)] text-[var(--success)]
+                            @elseif($app->status === 'rejected') bg-[var(--danger-bg)] text-[var(--danger)]
+                            @else bg-[var(--warning-bg)] text-[var(--warning)] @endif">
                             {{ ucfirst($app->status) }}
                         </span>
                     </div>

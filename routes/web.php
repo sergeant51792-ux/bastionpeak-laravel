@@ -45,6 +45,8 @@ Route::middleware('web')->group(function () {
     Route::post('/signin', [SignInController::class, 'signIn'])->name('signin.post');
     Route::get('/signin/otp', [SignInController::class, 'showVerifyOtp'])->name('signin.otp');
     Route::post('/signin/otp', [SignInController::class, 'verifyOtp'])->name('signin.otp.post');
+    Route::get('/signin/pin', [SignInController::class, 'showVerifyPin'])->name('signin.pin');
+    Route::post('/signin/pin', [SignInController::class, 'verifyPin'])->name('signin.pin.post');
     Route::post('/signout', [SignInController::class, 'signOut'])->name('signout');
 
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -75,6 +77,7 @@ Route::middleware('web')->group(function () {
         Route::post('/profile/picture/upload', [ProfileController::class, 'uploadPicture'])->name('profile.picture.upload');
         Route::post('/profile/picture/remove', [ProfileController::class, 'removePicture'])->name('profile.picture.remove');
         Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences');
+        Route::post('/language', [ProfileController::class, 'setLanguage'])->name('language.set');
         Route::get('/cards', [CardController::class, '__invoke'])->name('cards');
         Route::post('/cards/request', [CardController::class, 'requestCard'])->name('cards.request');
         Route::get('/cards/{card}/pin', [CardController::class, 'showPin'])->name('card.pin');

@@ -70,7 +70,7 @@
         </div>
 
         <footer class="pb-8 text-center text-xs text-[var(--text-muted)]">
-            <span>&copy; {{ date('Y') }} Bastion Peak. All rights reserved.</span>
+            <span>&copy; 1998–2026 Bastion Peak. All rights reserved.</span>
         </footer>
     </div>
 </body>

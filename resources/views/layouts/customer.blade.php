@@ -143,9 +143,9 @@
                     <x-icon name="layout-dashboard" class="w-5 h-5 mb-0.5" />
                     Overview
                 </a>
-                <a href="{{ route('receive') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('receive')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
-                    <x-icon name="download" class="w-5 h-5 mb-0.5" />
-                    Receive
+                <a href="{{ route('profile') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('profile')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
+                    <x-icon name="user" class="w-5 h-5 mb-0.5" />
+                    Profile
                 </a>
                 <a href="{{ route('deposit') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('deposit')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
                     <x-icon name="wallet" class="w-5 h-5 mb-0.5" />

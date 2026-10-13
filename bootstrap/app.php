@@ -20,6 +20,7 @@ use Illuminate\Http\Middleware\TrustHosts;
 use App\Http\Middleware\RequireRole;
 use App\Http\Middleware\CheckAccountStatus;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use App\Http\Middleware\HandleLocale;
 use App\Http\Middleware\NoCache;
 use App\Http\Middleware\Authenticate;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Web middleware group
         $middleware->web([
+            HandleLocale::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
@@ -66,6 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => Authenticate::class,
             'role' => RequireRole::class,
             'account.status' => CheckAccountStatus::class,
+            'locale' => HandleLocale::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

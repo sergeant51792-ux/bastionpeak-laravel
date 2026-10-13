@@ -119,10 +119,32 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'theme_preference' => ['nullable', 'in:system,light,dark'],
             'hide_balance'     => ['sometimes', 'boolean'],
+            'language'         => ['nullable', 'in:en,es,fr,de,zh,ja,pt,ru,ar,hi'],
         ]);
 
         $user->update($validated);
 
+        if (isset($validated['language'])) {
+            session(['locale' => $validated['language']]);
+        }
+
         return back()->with('status', 'Preferences saved.');
+    }
+
+    public function setLanguage(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'language' => ['required', 'in:en,es,fr,de,zh,ja,pt,ru,ar,hi'],
+        ]);
+
+        $user->update([
+            'language' => $request->language,
+        ]);
+
+        session(['locale' => $request->language]);
+
+        return back()->with('status', 'Language updated.');
     }
 }

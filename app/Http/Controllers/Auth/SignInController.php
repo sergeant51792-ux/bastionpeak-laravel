@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\LoginOtp;
 use App\Services\TotpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +57,76 @@ class SignInController extends Controller
             return redirect()->route('signin.otp');
         }
 
+        if ($user->otp_enabled) {
+            $activeOtp = LoginOtp::where('user_id', $user->id)
+                ->whereNull('used_at')
+                ->where('expires_at', '>', now())
+                ->latest('created_at')
+                ->first();
+
+            if (! $activeOtp) {
+                return back()->withErrors([
+                    'email' => 'A 4-digit login PIN has not been generated. Contact support to request one.',
+                ])->onlyInput('email');
+            }
+
+            $request->session()->put('auth.pending_id', $user->id);
+            $request->session()->put('auth.remember', $request->filled('remember'));
+            $request->session()->put('auth.otp_type', 'pin');
+
+            return redirect()->route('signin.pin');
+        }
+
         return $this->completeLogin($request, $user, $request->filled('remember'));
+    }
+
+    public function showVerifyPin(Request $request): \Illuminate\View|Illuminate\Http\RedirectResponse
+    {
+        $userId = $request->session()->get('auth.pending_id');
+
+        if (! $userId) {
+            return redirect()->route('signin');
+        }
+
+        return view('auth.verify-login-pin', [
+            'email' => User::find($userId)?->email,
+            'secondsRemaining' => 40,
+        ]);
+    }
+
+    public function verifyPin(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'code' => ['required', 'digits:4'],
+        ]);
+
+        $userId = $request->session()->get('auth.pending_id');
+        $user = $userId ? User::find($userId) : null;
+
+        if (! $user || ! $user->otp_enabled) {
+            $request->session()->forget(['auth.pending_id', 'auth.remember', 'auth.otp_type']);
+
+            return redirect()->route('signin');
+        }
+
+        $otp = LoginOtp::where('user_id', $user->id)
+            ->whereNull('used_at')
+            ->where('expires_at', '>', now())
+            ->latest('created_at')
+            ->first();
+
+        if (! $otp || ! $otp->isValid((string) $request->input('code'))) {
+            return back()->withErrors([
+                'code' => 'That PIN is not valid or has expired. Request a new one from support.',
+            ]);
+        }
+
+        $otp->markAsUsed();
+
+        $remember = (bool) $request->session()->pull('auth.remember', false);
+        $request->session()->forget(['auth.pending_id', 'auth.otp_type']);
+
+        return $this->completeLogin($request, $user, $remember);
     }
 
     public function showVerifyOtp(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\View\View

@@ -209,6 +209,31 @@
                         </form>
                     @endif
                 </div>
+
+                <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-3">
+                    <h2 class="text-sm font-semibold text-[var(--text-muted)]">Login PIN (4-digit)</h2>
+
+                    @if(session('otp_code'))
+                        <div class="p-3 bg-[var(--accent-subtle)] border border-[var(--accent)]/20 rounded-xl">
+                            <p class="text-xs text-[var(--text-muted)] mb-1">PIN generated. Share this PIN with the customer (valid for 40 seconds):</p>
+                            <p class="font-mono text-2xl font-bold text-[var(--accent)] break-all">{{ session('otp_code') }}</p>
+                        </div>
+                    @endif
+
+                    @if($user->otp_enabled)
+                        <p class="text-xs text-[var(--text-muted)]">Login PIN is <strong>enabled</strong>. The customer must enter a 4-digit PIN to sign in. Generate a new PIN below.</p>
+                        <form method="POST" action="{{ route('admin.users.pin', $user) }}" onsubmit="return confirm('Generate a new 4-digit PIN for this user?')" class="pt-1">
+                            @csrf
+                            <button type="submit" class="px-3 py-2 bg-[var(--primary)] text-white rounded-lg text-xs font-medium hover:opacity-90 transition-opacity">Generate new PIN</button>
+                        </form>
+                    @else
+                        <p class="text-xs text-[var(--text-muted)]">Login PIN is not enabled. Enable it to require a 4-digit PIN on sign-in.</p>
+                        <form method="POST" action="{{ route('admin.users.pin', $user) }}" class="pt-1">
+                            @csrf
+                            <button type="submit" class="px-3 py-2 bg-[var(--primary)] text-white rounded-lg text-xs font-medium hover:opacity-90 transition-opacity">Enable &amp; generate PIN</button>
+                        </form>
+                    @endif
+                </div>
             </div>
         </div>
     @endif

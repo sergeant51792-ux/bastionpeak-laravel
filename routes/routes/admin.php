@@ -39,6 +39,7 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::post('users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
     Route::post('users/{user}/authenticator', [UserController::class, 'generateAuthenticator'])->name('users.authenticator');
     Route::delete('users/{user}/authenticator', [UserController::class, 'disableAuthenticator'])->name('users.authenticator.destroy');
+    Route::post('users/{user}/pin', [UserController::class, 'generateLoginPin'])->name('users.pin');
 
     Route::get('accounts/{account}/deposit-methods', [\App\Http\Controllers\Admin\AccountDepositMethodController::class, 'index'])->name('accounts.deposit-methods.index');
     Route::post('accounts/{account}/deposit-methods', [\App\Http\Controllers\Admin\AccountDepositMethodController::class, 'store'])->name('accounts.deposit-methods.store');

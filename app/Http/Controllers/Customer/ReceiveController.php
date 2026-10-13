@@ -32,9 +32,38 @@ class ReceiveController extends Controller
             $selectedAccount = $accounts->first();
         }
 
+        if ($selectedAccount) {
+            $selectedAccount->load('depositMethods');
+        }
+
+        $depositMethodsData = collect();
+        foreach ($accounts as $account) {
+            $methods = $account->depositMethods()
+                ->wherePivot('is_active', true)
+                ->get()
+                ->map(function ($method) use ($account) {
+                    return [
+                        'id' => $method->id,
+                        'code' => $method->code,
+                        'name' => $method->name,
+                        'type' => $method->type,
+                        'account_id' => $account->id,
+                        'account_name' => $account->name,
+                        'currency_symbol' => $account->currency->symbol ?? '$',
+                        'currency_code' => $account->currency->code ?? 'USD',
+                        'address' => $method->pivot->address ?? '',
+                        'instructions' => $method->pivot->instructions ?? '',
+                        'qr_path' => $method->pivot->qr_path ?? '',
+                    ];
+                });
+            $depositMethodsData = $depositMethodsData->merge($methods);
+        }
+        $depositMethodsData = $depositMethodsData->unique('id')->values();
+
         return view('customer.receive', [
-            'accounts'        => $accounts,
-            'selectedAccount' => $selectedAccount,
+            'accounts'             => $accounts,
+            'selectedAccount'      => $selectedAccount,
+            'depositMethodsData'   => $depositMethodsData,
         ]);
     }
 }

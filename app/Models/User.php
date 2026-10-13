@@ -46,6 +46,7 @@ class User extends Authenticatable implements FilamentUser
         'totp_enabled',
         'approved_at',
         'approved_by',
+        'language',
     ];
 
     protected function casts(): array

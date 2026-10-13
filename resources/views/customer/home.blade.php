@@ -20,8 +20,16 @@
         </a>
     </div>
 
-    {{-- Wallet Balance --}}
+     {{-- Wallet Balance --}}
     <div>
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-[var(--text-muted)]">Total portfolio value</span>
+            <button id="toggle-balance" onclick="toggleHideBalance()" class="text-xs text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
+                <span id="toggle-balance-text" class="{{ $hideBalance ? '' : 'hidden' }}">Show</span>
+                <span id="toggle-balance-text-hidden" class="{{ $hideBalance ? 'hidden' : '' }}">Hide</span>
+                <x-icon name="eye" class="w-3.5 h-3.5" />
+            </button>
+        </div>
         @if(count($walletBalances) > 0)
             <div id="wallet-slider" class="relative overflow-hidden">
                 <div id="wallet-track" class="flex transition-transform duration-500 ease-out">
@@ -34,13 +42,14 @@
                                             <p class="text-xs font-medium uppercase tracking-wider text-white/60">Wallet</p>
                                             <p class="font-semibold text-white">{{ $wallet['name'] }}</p>
                                         </div>
-                                        <span class="text-sm font-bold text-white/90 bg-white/10 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $wallet['symbol'] }}</span>
                                     </div>
                                     <div>
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
                                         <p class="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance" data-balance-sensitive>
-                                            {{ number_format((float) $wallet['balance'], $wallet['decimals']) }}
-                                            <span class="text-sm text-white/60 block mt-1 font-medium">{{ $wallet['symbol'] }}</span>
+                                            <span class="inline-flex items-baseline gap-1.5">
+                                                <span class="text-sm font-bold text-white/90 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $wallet['symbol'] }}</span>
+                                                {{ number_format((float) $wallet['balance'], $wallet['decimals']) }}
+                                            </span>
                                         </p>
                                         <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">••••••</p>
                                     </div>
@@ -69,13 +78,14 @@
                                             <p class="text-xs font-medium uppercase tracking-wider text-white/60">Account</p>
                                             <p class="font-semibold text-white">{{ $account->name }}</p>
                                         </div>
-                                        <span class="text-sm font-bold text-white/90 bg-white/10 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $account->currency->symbol }}</span>
                                     </div>
                                     <div>
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
                                         <p class="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance" data-balance-sensitive>
-                                            {{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }}
-                                            <span class="text-sm text-white/60 block mt-1 font-medium">{{ $account->currency->symbol }}</span>
+                                            <span class="inline-flex items-baseline gap-1.5">
+                                                <span class="text-sm font-bold text-white/90 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $account->currency->symbol }}</span>
+                                                {{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }}
+                                            </span>
                                         </p>
                                         <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">••••••</p>
                                     </div>
@@ -95,7 +105,7 @@
         @endif
     </div>
 
-    {{-- Quick Actions --}}
+     {{-- Quick Actions --}}
     <div>
         <h2 class="section-title">Quick actions</h2>
         <div class="grid grid-cols-4 gap-2 sm:gap-3">
@@ -282,5 +292,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateDots();
 });
+
+function toggleHideBalance() {
+    var isHidden = document.body.getAttribute('data-hide-balance') === 'true';
+    if (isHidden) {
+        document.body.removeAttribute('data-hide-balance');
+        fetch('{{ route('profile.preferences') }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+            body: new FormData()
+        });
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route('profile.preferences') }}';
+        var token = document.createElement('input');
+        token.type = 'hidden';
+        token.name = '_token';
+        token.value = '{{ csrf_token() }}';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'hide_balance';
+        input.value = '0';
+        var themeInput = document.createElement('input');
+        themeInput.type = 'hidden';
+        themeInput.name = 'theme_preference';
+        themeInput.value = '{{ $user->theme_preference ?: "system" }}';
+        form.appendChild(token);
+        form.appendChild(input);
+        form.appendChild(themeInput);
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        document.body.setAttribute('data-hide-balance', 'true');
+        var form2 = document.createElement('form');
+        form2.method = 'POST';
+        form2.action = '{{ route('profile.preferences') }}';
+        var token = document.createElement('input');
+        token.type = 'hidden';
+        token.name = '_token';
+        token.value = '{{ csrf_token() }}';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'hide_balance';
+        input.value = '1';
+        var themeInput = document.createElement('input');
+        themeInput.type = 'hidden';
+        themeInput.name = 'theme_preference';
+        themeInput.value = '{{ $user->theme_preference ?: "system" }}';
+        form2.appendChild(token);
+        form2.appendChild(input);
+        form2.appendChild(themeInput);
+        document.body.appendChild(form2);
+        form2.submit();
+    }
+}
 </script>
 @endsection

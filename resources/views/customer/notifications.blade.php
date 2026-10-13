@@ -20,16 +20,16 @@
         @forelse($notifications as $notification)
             @php
                 $tone = $notification->tone();
-                $toneStyle = match ($tone) {
-                    'success' => 'background: var(--success-bg); color: var(--success);',
-                    'danger' => 'background: var(--danger-bg); color: var(--danger);',
-                    'warning' => 'background: var(--warning-bg); color: var(--warning);',
-                    default => 'background: var(--accent-subtle); color: var(--accent);',
+                $toneClass = match ($tone) {
+                    'success' => 'bg-[var(--success-bg)] text-[var(--success)] border-[var(--success)]',
+                    'danger' => 'bg-[var(--danger-bg)] text-[var(--danger)] border-[var(--danger)]',
+                    'warning' => 'bg-[var(--warning-bg)] text-[var(--warning)] border-[var(--warning)]',
+                    default => 'bg-[var(--accent-subtle)] text-[var(--accent)] border-[var(--accent)]',
                 };
                 $isUnread = is_null($notification->read_at);
             @endphp
             <button type="button" class="flex items-start gap-3 p-4 bg-white dark:bg-[var(--surface)] border rounded-2xl transition-all {{ $isUnread ? 'border-[var(--accent)]/40 shadow-sm' : 'border-[var(--line)] hover:border-[var(--accent)]' }}">
-                <span class="txn-icon w-10 h-10" style="{{ $toneStyle }}">
+                <span class="txn-icon w-10 h-10 {{ $toneClass }}" style="border-color: rgba(5, 150, 105, 0.15);">
                     <x-icon name="{{ $notification->icon() }}" class="w-4 h-4" />
                 </span>
                 <div class="flex-1 min-w-0">

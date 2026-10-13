@@ -71,7 +71,7 @@
                 </div>
             </div>
             <div class="mt-10 pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p class="text-xs text-[var(--text-muted)]">&copy; {{ date('Y') }} Bastion Peak. All rights reserved.</p>
+                <p class="text-xs text-[var(--text-muted)]">&copy; 1998–2026 Bastion Peak. All rights reserved.</p>
                 <p class="text-xs text-[var(--text-muted)]">Banking infrastructure for modern teams.</p>
             </div>
         </div>
