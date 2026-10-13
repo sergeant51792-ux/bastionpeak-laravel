@@ -19,6 +19,11 @@ class Approvals extends Page
 
     protected static string $view = 'filament.pages.approvals';
 
+    public static function canAccess(array $parameters = array()): bool
+    {
+        return auth()->check() && auth()->user()->hasRole('Super Admin');
+    }
+
     public ?string $activeTab = 'deposits';
     public ?int $openTransactionId = null;
 
@@ -59,11 +64,15 @@ class Approvals extends Page
     public function approve(int $transactionId): void
     {
         $transaction = Transaction::findOrFail($transactionId);
+
         if ($transaction->type === TransactionType::DepositCredit) {
             app(\App\Services\DepositService::class)->approve($transactionId, auth()->id());
         } elseif ($transaction->type === TransactionType::PaymentDebit) {
             app(\App\Services\PaymentService::class)->approve($transactionId, auth()->id());
         }
+
+        $this->openTransactionId = null;
+        $this->dispatch('transaction-updated')->to('self');
     }
 
     public function reject(int $transactionId): void
@@ -76,5 +85,8 @@ class Approvals extends Page
         } elseif ($transaction->type === TransactionType::PaymentDebit) {
             app(\App\Services\PaymentService::class)->reject($transactionId, auth()->id(), $reason);
         }
+
+        $this->openTransactionId = null;
+        $this->dispatch('transaction-updated')->to('self');
     }
 }

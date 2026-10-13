@@ -66,19 +66,22 @@
                             @endif
                         </div>
                         <div class="flex items-center gap-3 pt-4">
-                            <form method="POST" action="{{ route('admin.approvals.reject', $openTransaction) }}" class="flex-1" wire:submit="reject({{ $openTransaction->id }})">
+                            <form wire:submit="reject({{ $openTransaction->id }})" class="flex-1">
                                 @csrf
-                                <input type="hidden" name="reason" value="Rejected during review">
                                 <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
                                     Reject
                                 </button>
                             </form>
-                            <form method="POST" action="{{ route('admin.approvals.approve', $openTransaction) }}" class="flex-1" wire:submit="approve({{ $openTransaction->id }})">
-                                @csrf
-                                <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                        <form wire:submit="approve({{ $openTransaction->id }})" class="flex-1">
+                            @csrf
+                            <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                                @if($openTransaction->type === \App\Enums\TransactionType::DepositCredit)
                                     Approve and credit {{ $openTransaction->amount }}
-                                </button>
-                            </form>
+                                @else
+                                    Approve {{ $openTransaction->amount }}
+                                @endif
+                            </button>
+                        </form>
                         </div>
                     </div>
                 @else
