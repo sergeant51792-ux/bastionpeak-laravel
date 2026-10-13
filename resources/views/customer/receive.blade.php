@@ -72,10 +72,10 @@
                 <div id="modal-step-amount" class="space-y-5">
                     <div>
                         <label for="modal-amount" class="block text-sm font-semibold text-[var(--text)] mb-2">Amount</label>
-                        <div class="relative">
-                            <span id="modal-symbol" class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm font-medium">$</span>
+                        <div class="input-symbol-prefix">
+                            <span id="modal-symbol" class="symbol font-medium">$</span>
                             <input type="text" inputmode="decimal" id="modal-amount" name="amount"
-                                   class="input-field pl-8 pr-4 py-3" placeholder="0.00">
+                                   class="input-field pr-4 py-3" placeholder="0.00">
                         </div>
                     </div>
 

@@ -26,10 +26,10 @@
 
         <div>
             <label for="amount" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Amount</label>
-            <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm">$</span>
+            <div class="input-symbol-prefix">
+                <span class="symbol">$</span>
                 <input type="text" inputmode="decimal" id="amount" name="amount" required
-                       class="input-field pl-8 pr-4 py-3"
+                       class="input-field pr-4 py-3"
                        placeholder="0.00">
             </div>
         </div>
