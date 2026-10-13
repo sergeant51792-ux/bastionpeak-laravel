@@ -161,61 +161,78 @@ function runArtisan(&$kernel, string $command, array $params = []): array
 // which must run BEFORE Laravel can boot because vendor/ may be missing)
 // ---------------------------------------------------------------------------
 $preAction = null;
-if (($action === 'pull' || $action === 'all') && (!$kernel || $bootError !== null)) {
-    $preAction = $action;
+if ($action === 'pull' || $action === 'all') {
+    // Check if we need to run git pull + composer install first
+    $needsBootstrap = ($kernel === null || $bootError !== null || !file_exists($appDir . '/vendor/autoload.php'));
+    if ($needsBootstrap) {
+        $preAction = $action === 'all' ? 'all' : 'pull';
+    }
 }
 
 if ($preAction === 'pull' || $preAction === 'all') {
+    // Save a copy of this script before git reset (which would overwrite any local changes)
+    $selfBackup = $publicDir . '/.deploy_backup_' . time() . '.php';
+    copy(__FILE__, $selfBackup);
     $output = [];
     $exitCode = 0;
     $command = 'cd ' . escapeshellarg($appDir) . ' && git reset --hard HEAD && git pull 2>&1';
     exec($command, $output, $exitCode);
     bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
+    // Restore this script if git overwrote it with an older version
+    if (is_file($selfBackup) && file_exists(__FILE__)) {
+        $backupMd5 = md5_file($selfBackup);
+        $currentMd5 = md5_file(__FILE__);
+        if ($backupMd5 !== $currentMd5) {
+            copy($selfBackup, __FILE__);
+            bp_out("Restored deploy.php from backup (preserved newer version over git pull)");
+        }
+    }
+    @unlink($selfBackup);
     if ($exitCode === 0) {
-                $composerOutput = [];
-                $composerCode = 0;
-                // Find or download composer
-                $composerPhar = '';
-                foreach (['/home/bastionpeaks/composer.phar', '/home/bastionpeaks/composer-stable.phar', '/home/bastionpeaks/composer-setup.phar', '/usr/local/bin/composer', $appDir . '/composer.phar'] as $path) {
-                    if (is_file($path)) {
-                        $composerPhar = $path;
-                        break;
-                    }
-                }
+        $composerOutput = [];
+        $composerCode = 0;
+        // Find or download composer
+        $composerPhar = '';
+        foreach (['/home/bastionpeaks/composer.phar', '/home/bastionpeaks/composer-stable.phar', '/home/bastionpeaks/composer-setup.phar', '/usr/local/bin/composer', $appDir . '/composer.phar'] as $path) {
+            if (is_file($path)) {
+                $composerPhar = $path;
+                break;
+            }
+        }
 
-                if ($composerPhar === '' || !is_file($composerPhar)) {
-                    // Download composer.phar directly (more reliable than the installer)
-                    $dlOutput = [];
-                    $dlCode = 0;
-                    $dlCmd = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/composer-stable.phar\\", \\"composer.phar\\");" 2>&1';
-                    exec($dlCmd, $dlOutput, $dlCode);
-                    bp_out("composer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
-                    if ($dlCode === 0 && file_exists($appDir . '/composer.phar')) {
-                        $composerPhar = $appDir . '/composer.phar';
-                    } else {
-                        // Fallback: try the installer
-                        $dlCmd2 = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/installer\\", \\"composer-setup.phar\\");" 2>&1';
-                        exec($dlCmd2, $dlOutput, $dlCode);
-                        bp_out("composer installer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
-                        if (file_exists($appDir . '/composer-setup.phar')) {
-                            $composerPhar = $appDir . '/composer-setup.phar';
-                        }
-                    }
+        if ($composerPhar === '' || !is_file($composerPhar)) {
+            // Download composer.phar directly (more reliable than the installer)
+            $dlOutput = [];
+            $dlCode = 0;
+            $dlCmd = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/composer-stable.phar\\", \\"composer.phar\\");" 2>&1';
+            exec($dlCmd, $dlOutput, $dlCode);
+            bp_out("composer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+            if ($dlCode === 0 && file_exists($appDir . '/composer.phar')) {
+                $composerPhar = $appDir . '/composer.phar';
+            } else {
+                // Fallback: try the installer
+                $dlCmd2 = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/installer\\", \\"composer-setup.phar\\");" 2>&1';
+                exec($dlCmd2, $dlOutput, $dlCode);
+                bp_out("composer installer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+                if (file_exists($appDir . '/composer-setup.phar')) {
+                    $composerPhar = $appDir . '/composer-setup.phar';
                 }
+            }
+        }
 
-                if ($composerPhar !== '' && is_file($composerPhar)) {
-                    // Try with platform requirements, fall back to ignoring missing extensions
-                    // Use --no-scripts to skip package:discover (which fails due to missing cache path before config is cached)
-                    $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' CACHE_DRIVER=array CACHE_STORE=array php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader --no-scripts --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-intl 2>&1';
-                    exec($composerCmd, $composerOutput, $composerCode);
-                    bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
-                } else {
-                    $composerCode = 1;
-                    bp_out("composer: could not locate or download composer");
-                }
-                if ($composerCode !== 0) {
-                    $ok = false;
-                } else {
+        if ($composerPhar !== '' && is_file($composerPhar)) {
+            // Use --no-scripts to skip package:discover (runs after bootstrap below)
+            // Set CACHE_DRIVER=array in env to prevent cache path errors during package:discover
+            $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' CACHE_DRIVER=array CACHE_STORE=array php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader --no-scripts --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-intl 2>&1';
+            exec($composerCmd, $composerOutput, $composerCode);
+            bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
+        } else {
+            $composerCode = 1;
+            bp_out("composer: could not locate or download composer");
+        }
+        if ($composerCode !== 0) {
+            $ok = false;
+        } else {
             // Re-bootstrap Laravel to clear caches
             $bootError2 = null;
             $kernel2 = null;
