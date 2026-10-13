@@ -64,6 +64,18 @@ if (!$deployKey) {
 
 $key = (string) ($_GET['key'] ?? ($_POST['key'] ?? ''));
 if (!hash_equals($deployKey, $key)) {
+    // Debug info for troubleshooting
+    if (isset($_GET['debug']) && $_GET['debug'] === 'keymatch') {
+        header('Content-Type: text/plain');
+        echo "deployKey (from .env): " . ($deployKey ?? 'NULL') . "\n";
+        echo "deployKey length: " . strlen($deployKey ?? '') . "\n";
+        echo "deployKey hex: " . bin2hex($deployKey ?? '') . "\n";
+        echo "urlKey: " . $key . "\n";
+        echo "urlKey length: " . strlen($key) . "\n";
+        echo "urlKey hex: " . bin2hex($key) . "\n";
+        echo "usingDefaultKey: " . ($usingDefaultKey ? 'yes' : 'no') . "\n";
+        exit;
+    }
     http_response_code(403);
     header('Content-Type: text/plain');
     exit("Forbidden. Add ?key=YOUR_KEY to the URL.\n");
@@ -118,12 +130,30 @@ function bp_env(string $appDir, string $name, ?string $default = null): ?string
     return $default;
 }
 
+// ---------------------------------------------------------------------------
+// Clear cached config before bootstrap to avoid stale cache causing errors.
+// This is a deploy helper, so it's safe to clear config cache here.
+// ---------------------------------------------------------------------------
+@unlink($appDir . '/bootstrap/cache/config.php');
+@unlink($appDir . '/bootstrap/cache/routes-v2.php');
+
+// Ensure storage/framework subdirectories exist (Laravel needs these for views cache)
+foreach (['storage/framework/views', 'storage/framework/cache/data', 'storage/framework/sessions'] as $d) {
+    $path = $appDir . '/' . $d;
+    if (!is_dir($path)) {
+        @mkdir($path, 0755, true);
+    }
+}
+
 $action = (string) ($_GET['action'] ?? 'info');
 
 $kernel = null;
 $bootError = null;
 try {
     require $appDir . '/vendor/autoload.php';
+    // Set cache driver to array to avoid "valid cache path" error during bootstrap
+    putenv('CACHE_DRIVER=array');
+    putenv('CACHE_STORE=array');
     $app = require $appDir . '/bootstrap/app.php';
     $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
     $kernel->bootstrap();
@@ -138,6 +168,170 @@ function runArtisan(&$kernel, string $command, array $params = []): array
         return ['code' => $code, 'output' => trim($kernel->output())];
     } catch (\Throwable $e) {
         return ['code' => 1, 'output' => get_class($e) . ': ' . $e->getMessage()];
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Actions that do NOT require Laravel to be booted (e.g. pull + composer install
+// which must run BEFORE Laravel can boot because vendor/ may be missing)
+// ---------------------------------------------------------------------------
+$preAction = null;
+if ($action === 'pull' || $action === 'all') {
+    // Check if we need to run git pull + composer install first
+    $needsBootstrap = ($kernel === null || $bootError !== null || !file_exists($appDir . '/vendor/autoload.php'));
+    if ($needsBootstrap) {
+        $preAction = $action === 'all' ? 'all' : 'pull';
+    }
+}
+
+if ($preAction === 'pull' || $preAction === 'all') {
+    // Save a copy of this script before git reset (which would overwrite any local changes)
+    $selfBackup = $publicDir . '/.deploy_backup_' . time() . '.php';
+    copy(__FILE__, $selfBackup);
+    $output = [];
+    $exitCode = 0;
+    $command = 'cd ' . escapeshellarg($appDir) . ' && git reset --hard HEAD && git pull 2>&1';
+    exec($command, $output, $exitCode);
+    bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
+    // Restore this script if git overwrote it with an older version
+    if (is_file($selfBackup) && file_exists(__FILE__)) {
+        $backupMd5 = md5_file($selfBackup);
+        $currentMd5 = md5_file(__FILE__);
+        if ($backupMd5 !== $currentMd5) {
+            copy($selfBackup, __FILE__);
+            bp_out("Restored deploy.php from backup (preserved newer version over git pull)");
+        }
+    }
+    @unlink($selfBackup);
+    if ($exitCode === 0) {
+        $composerOutput = [];
+        $composerCode = 0;
+        // Find or download composer
+        $composerPhar = '';
+        foreach (['/home/bastionpeaks/composer.phar', '/home/bastionpeaks/composer-stable.phar', '/home/bastionpeaks/composer-setup.phar', '/usr/local/bin/composer', $appDir . '/composer.phar'] as $path) {
+            if (is_file($path)) {
+                $composerPhar = $path;
+                break;
+            }
+        }
+
+        if ($composerPhar === '' || !is_file($composerPhar)) {
+            // Download composer.phar directly (more reliable than the installer)
+            $dlOutput = [];
+            $dlCode = 0;
+            $dlCmd = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/composer-stable.phar\\", \\"composer.phar\\");" 2>&1';
+            exec($dlCmd, $dlOutput, $dlCode);
+            bp_out("composer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+            if ($dlCode === 0 && file_exists($appDir . '/composer.phar')) {
+                $composerPhar = $appDir . '/composer.phar';
+            } else {
+                // Fallback: try the installer
+                $dlCmd2 = 'cd ' . escapeshellarg($appDir) . ' && php -r "copy(\\"https://getcomposer.org/installer\\", \\"composer-setup.phar\\");" 2>&1';
+                exec($dlCmd2, $dlOutput, $dlCode);
+                bp_out("composer installer download (exit {$dlCode})\n" . implode("\n", $dlOutput));
+                if (file_exists($appDir . '/composer-setup.phar')) {
+                    $composerPhar = $appDir . '/composer-setup.phar';
+                }
+            }
+        }
+
+        if ($composerPhar !== '' && is_file($composerPhar)) {
+            // Use --no-scripts to skip package:discover (runs after bootstrap below)
+            // Set CACHE_DRIVER=array in env to prevent cache path errors during package:discover
+            $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && COMPOSER_HOME=' . escapeshellarg($appDir . '/.composer') . ' HOME=' . escapeshellarg($appDir) . ' CACHE_DRIVER=array CACHE_STORE=array php ' . escapeshellarg($composerPhar) . ' install --no-dev --optimize-autoloader --no-scripts --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-intl 2>&1';
+            exec($composerCmd, $composerOutput, $composerCode);
+            bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
+        } else {
+            $composerCode = 1;
+            bp_out("composer: could not locate or download composer");
+        }
+        if ($composerCode !== 0) {
+            $ok = false;
+        } else {
+            // Clear cached config BEFORE re-bootstrap (stale cached config can cause cache path errors)
+            @unlink($appDir . '/bootstrap/cache/config.php');
+            @unlink($appDir . '/bootstrap/cache/routes-v2.php');
+            bp_out("Cleared cached config and routes before re-bootstrap");
+            // Re-bootstrap Laravel to clear caches
+            $bootError2 = null;
+            $kernel2 = null;
+            try {
+                require $appDir . '/vendor/autoload.php';
+                // Set minimal cache config to avoid "valid cache path" error
+                putenv('CACHE_DRIVER=array');
+                putenv('CACHE_STORE=array');
+                $app2 = require $appDir . '/bootstrap/app.php';
+                $kernel2 = $app2->make(Illuminate\Contracts\Console\Kernel::class);
+                $kernel2->bootstrap();
+            } catch (\Throwable $e) {
+                $bootError2 = get_class($e) . ': ' . $e->getMessage();
+            }
+            if ($kernel2 !== null && $bootError2 === null) {
+                // Ensure storage framework dirs exist for package:discover
+                foreach (['storage/framework/views', 'storage/framework/cache/data', 'storage/framework/sessions', 'bootstrap/cache'] as $d) {
+                    $path = $appDir . '/' . $d;
+                    if (!is_dir($path)) {
+                        @mkdir($path, 0755, true);
+                        bp_out("  Created dir: $d");
+                    }
+                }
+                foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
+                    $r = runArtisan($kernel2, $cmd);
+                    bp_out("$cmd (exit {$r['code']})");
+                }
+                $r = runArtisan($kernel2, 'package:discover');
+                bp_out("package:discover (exit {$r['code']})");
+                $r = runArtisan($kernel2, 'config:cache');
+                bp_out("config:cache (exit {$r['code']})");
+                $r = runArtisan($kernel2, 'route:cache');
+                bp_out("route:cache (exit {$r['code']})");
+                $r = runArtisan($kernel2, 'view:cache');
+                bp_out("view:cache (exit {$r['code']})");
+                // Copy build assets if they changed
+                $srcBuild = $appDir . '/public/build';
+                $dstBuild = $publicDir . '/build';
+                if (is_dir($srcBuild) && realpath($srcBuild) !== realpath($dstBuild)) {
+                    bp_copy_dir($srcBuild, $dstBuild);
+                    bp_out("assets: copied build to $dstBuild");
+                }
+            } else {
+                bp_out("Laravel re-bootstrap failed: " . ($bootError2 ?: 'unknown'));
+                // Fallback: manually clear cache files
+                bp_out("Manual cache clearing fallback:");
+                @unlink($appDir . '/bootstrap/cache/config.php');
+                @unlink($appDir . '/bootstrap/cache/routes-v2.php');
+                bp_out("  Cleared config.php and routes-v2.php");
+            }
+        }
+    } else {
+        $ok = false;
+    }
+    // Refresh kernel state so the info page reflects the new state
+    $kernel = $kernel2 ?? null;
+    $bootError = $bootError2 ?? null;
+
+    // If action was 'all', continue with migrate/seed/storage/assets using the new kernel
+    if ($preAction === 'all' && $kernel !== null && $bootError === null) {
+        $r = runArtisan($kernel, 'migrate', ['--force' => true]);
+        bp_out("migrate (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
+        $ok = $r['code'] === 0;
+
+        $r = runArtisan($kernel, 'db:seed', ['--force' => true]);
+        bp_out("db:seed (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
+        $ok = $ok && $r['code'] === 0;
+
+        $target = $publicDir . '/storage';
+        $source = $appDir . '/storage/app/public';
+        if (is_link($target)) {
+            bp_out("storage: symlink already present");
+        } elseif (is_dir($source) && @symlink($source, $target)) {
+            bp_out("storage: symlink created");
+        } elseif (is_dir($source)) {
+            bp_copy_dir($source, $target);
+            bp_out("storage: copied (symlink unavailable)");
+        }
+    } else {
+        // Just 'pull' completed — re-cache is already done above
     }
 }
 
@@ -261,45 +455,6 @@ if ($kernel && $bootError === null) {
             bp_out("route:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
             $r = runArtisan($kernel, 'view:cache');
             bp_out("view:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
-            break;
-
-        case 'pull':
-            $output = [];
-            $exitCode = 0;
-            // Try 'git pull' in the application directory
-            $command = 'cd ' . escapeshellarg($appDir) . ' && git reset --hard HEAD && git pull 2>&1';
-            exec($command, $output, $exitCode);
-            bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
-            if ($exitCode === 0) {
-                // Install/update composer dependencies
-                $composerOutput = [];
-                $composerCode = 0;
-                $composerCmd = 'cd ' . escapeshellarg($appDir) . ' && (php /home/bastionpeaks/composer-stable.phar install --no-dev --optimize-autoloader 2>&1 || php /home/bastionpeaks/composer-setup.phar install --no-dev --optimize-autoloader 2>&1 || /usr/local/bin/composer install --no-dev --optimize-autoloader 2>&1 || composer install --no-dev --optimize-autoloader 2>&1)';
-                exec($composerCmd, $composerOutput, $composerCode);
-                bp_out("composer install (exit {$composerCode})\n" . implode("\n", $composerOutput));
-
-                // Clear caches after pull
-                foreach (['config:clear', 'route:clear', 'view:clear', 'event:clear'] as $cmd) {
-                    $r = runArtisan($kernel, $cmd);
-                    bp_out("$cmd (exit {$r['code']})");
-                }
-                // Re-cache optimized
-                $r = runArtisan($kernel, 'config:cache');
-                bp_out("config:cache (exit {$r['code']})");
-                $r = runArtisan($kernel, 'route:cache');
-                bp_out("route:cache (exit {$r['code']})");
-                $r = runArtisan($kernel, 'view:cache');
-                bp_out("view:cache (exit {$r['code']})");
-                // Copy build assets if they changed
-                $srcBuild = $appDir . '/public/build';
-                $dstBuild = $publicDir . '/build';
-                if (is_dir($srcBuild) && realpath($srcBuild) !== realpath($dstBuild)) {
-                    bp_copy_dir($srcBuild, $dstBuild);
-                    bp_out("assets: copied build to $dstBuild");
-                }
-            } else {
-                $ok = false;
-            }
             break;
 
         case 'info':
