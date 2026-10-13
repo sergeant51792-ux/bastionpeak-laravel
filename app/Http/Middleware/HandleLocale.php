@@ -15,15 +15,20 @@ class HandleLocale
         $supportedLocales = ['en', 'es', 'fr', 'de', 'zh', 'ja', 'pt', 'ru', 'ar', 'hi'];
 
         $locale = $request->segment(1);
-        if (in_array($locale, $supportedLocales)) {
-            App::setLocale($locale);
-        } else {
-            $locale = session('locale', config('app.locale', 'en'));
+        if (!in_array($locale, $supportedLocales)) {
+            $locale = session('locale');
             if (!in_array($locale, $supportedLocales)) {
-                $locale = 'en';
+                if (Auth::check()) {
+                    $locale = Auth::user()->language ?? 'en';
+                } else {
+                    $locale = config('app.locale', 'en');
+                }
             }
-            App::setLocale($locale);
         }
+        if (!in_array($locale, $supportedLocales)) {
+            $locale = 'en';
+        }
+        App::setLocale($locale);
 
         return $next($request);
     }

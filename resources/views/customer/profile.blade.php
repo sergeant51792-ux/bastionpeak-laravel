@@ -181,16 +181,16 @@
                     <p class="text-xs text-[var(--text-muted)]">Select your display language</p>
                 </div>
                 <select name="language" id="language-select" class="input-field w-40">
-                    <option value="en" {{ app()->getLocale() === 'en' ? 'selected' : '' }}>English</option>
-                    <option value="es" {{ app()->getLocale() === 'es' ? 'selected' : '' }}>Español</option>
-                    <option value="fr" {{ app()->getLocale() === 'fr' ? 'selected' : '' }}>Français</option>
-                    <option value="de" {{ app()->getLocale() === 'de' ? 'selected' : '' }}>Deutsch</option>
-                    <option value="zh" {{ app()->getLocale() === 'zh' ? 'selected' : '' }}>中文</option>
-                    <option value="ja" {{ app()->getLocale() === 'ja' ? 'selected' : '' }}>日本語</option>
-                    <option value="pt" {{ app()->getLocale() === 'pt' ? 'selected' : '' }}>Português</option>
-                    <option value="ru" {{ app()->getLocale() === 'ru' ? 'selected' : '' }}>Русский</option>
-                    <option value="ar" {{ app()->getLocale() === 'ar' ? 'selected' : '' }}>العربية</option>
-                    <option value="hi" {{ app()->getLocale() === 'hi' ? 'selected' : '' }}>हिन्दी</option>
+                    <option value="en" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'en' ? 'selected' : '' }}>English</option>
+                    <option value="es" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'es' ? 'selected' : '' }}>Español</option>
+                    <option value="fr" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'fr' ? 'selected' : '' }}>Français</option>
+                    <option value="de" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'de' ? 'selected' : '' }}>Deutsch</option>
+                    <option value="zh" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'zh' ? 'selected' : '' }}>中文</option>
+                    <option value="ja" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'ja' ? 'selected' : '' }}>日本語</option>
+                    <option value="pt" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'pt' ? 'selected' : '' }}>Português</option>
+                    <option value="ru" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'ru' ? 'selected' : '' }}>Русский</option>
+                    <option value="ar" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'ar' ? 'selected' : '' }}>العربية</option>
+                    <option value="hi" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'hi' ? 'selected' : '' }}>हिन्दी</option>
                 </select>
             </div>
         </form>
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var prefsForm = document.getElementById('preferences-form');
 
     function showPrefBtn() {
-        if (prefBtn) prefBtn.classList.remove('hidden');
+        if (savePrefBtn) savePrefBtn.classList.remove('hidden');
     }
 
     if (hideToggle) {
