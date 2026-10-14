@@ -312,7 +312,7 @@
             var r = reviews[index];
             var stars = '';
             for (var i = 0; i < r.rating; i++) {
-                stars += '<x-icon name="star" class="w-4 h-4 fill-current" />';
+                stars += '<svg class="w-4 h-4 fill-current text-[var(--warning)]" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 17.944l-7.416 3.967 1.48-8.279L3.332 9.706z"/></svg>';
             }
             track.innerHTML =
                 '<div class="bg-[var(--line-soft)] rounded-2xl p-8">' +
