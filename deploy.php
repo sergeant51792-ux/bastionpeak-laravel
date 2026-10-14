@@ -444,6 +444,12 @@ if ($kernel && $bootError === null) {
                 bp_out("assets: copied build to $dstBuild");
             }
 
+            $srcFonts = $appDir . '/public/fonts';
+            if (is_dir($srcFonts)) {
+                bp_copy_dir($srcFonts, $publicDir . '/fonts');
+                bp_out("assets: copied fonts to $publicDir/fonts");
+            }
+
             $r = runArtisan($kernel, 'config:cache');
             bp_out("config:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
             $r = runArtisan($kernel, 'route:cache');
