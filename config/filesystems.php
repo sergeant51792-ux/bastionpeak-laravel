@@ -42,7 +42,6 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
-            'mimeTypeDetector' => null,
         ],
 
         's3' => [

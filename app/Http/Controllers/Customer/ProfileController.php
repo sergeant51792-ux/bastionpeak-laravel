@@ -75,22 +75,41 @@ class ProfileController extends Controller
             return back()->with('error', 'The file must be an image (JPEG, PNG, GIF, or WebP).');
         }
 
-        if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
-            Storage::disk('public')->delete($user->profile_picture);
+        $storageRoot = storage_path('app/public');
+        $storagePath = $storageRoot . '/' . $user->profile_picture;
+
+        if ($user->profile_picture && @file_exists($storagePath)) {
+            @unlink($storagePath);
         }
 
-        try {
-            $path = $request->file('picture')->store('profile-pictures', 'public');
-        } catch (\Throwable $e) {
+        $dir = $storageRoot . '/profile-pictures';
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+
+        $filename = uniqid('pp_') . '.' . $extension;
+        $destPath = $dir . '/' . $filename;
+
+        if (!move_uploaded_file($file->getRealPath(), $destPath)) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Upload failed. Please try again.'], 500);
             }
             return back()->with('error', 'Upload failed. Please try again.');
         }
 
-        $user->update([
-            'profile_picture' => $path,
-        ]);
+        $path = 'profile-pictures/' . $filename;
+
+        try {
+            $user->update([
+                'profile_picture' => $path,
+            ]);
+        } catch (\Throwable $e) {
+            @unlink($destPath);
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Upload failed. Please try again.'], 500);
+            }
+            return back()->with('error', 'Upload failed. Please try again.');
+        }
 
         if ($request->expectsJson()) {
             return response()->json([
