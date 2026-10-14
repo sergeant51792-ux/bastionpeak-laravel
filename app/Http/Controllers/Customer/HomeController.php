@@ -78,7 +78,7 @@ class HomeController extends Controller
             'user'             => $user,
             'accounts'         => $accounts,
             'activeAccountIdx' => (int) $request->cookie('bp_active_account', 0),
-            'hideBalance'      => (bool) $request->cookie('bp_hide_balance', false),
+            'hideBalance'      => (bool) ($user->hide_balance ?? $request->cookie('bp_hide_balance', false)),
             'walletBalances'   => $walletBalances,
             'walletCurrency'   => $request->cookie('bp_wallet_currency', $baseCode),
             'activeCard'       => $user->cards()->where('status', 'active')->latest('created_at')->first(),

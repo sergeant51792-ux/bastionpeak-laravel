@@ -59,26 +59,26 @@
             background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
         }
 
-        /* Transaction leading icon - blue background */
+        /* Transaction leading icon - neutral background */
         .txn-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             border-radius: 9999px;
-            background: var(--accent-subtle);
-            color: var(--accent-dark);
-            border: 1px solid rgba(59, 130, 246, 0.15);
+            background: var(--line-soft);
+            color: var(--text-muted);
+            border: 1px solid var(--line);
         }
         .txn-icon-in {
-            background: var(--accent-subtle);
-            color: var(--accent-dark);
-            border-color: rgba(59, 130, 246, 0.15);
+            background: var(--line-soft);
+            color: var(--text-muted);
+            border-color: var(--line);
         }
         .txn-icon-out {
-            background: var(--accent-subtle);
-            color: var(--accent-dark);
-            border-color: rgba(59, 130, 246, 0.15);
+            background: var(--line-soft);
+            color: var(--text-muted);
+            border-color: var(--line);
         }
 
         @media (max-width: 640px) {

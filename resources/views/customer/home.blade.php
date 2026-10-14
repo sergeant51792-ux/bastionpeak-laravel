@@ -29,7 +29,7 @@
                         <div class="w-full flex-shrink-0" data-currency="{{ $code }}">
                             <div class="card-balance h-44 sm:h-48">
                                 <button id="toggle-balance" onclick="toggleHideBalance()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all z-10" aria-label="Toggle balance visibility">
-                                    <x-icon name="eye" class="w-4 h-4" />
+                                    <x-icon name="{{ $hideBalance ? 'eye-off' : 'eye' }}" class="w-4 h-4" id="toggle-eye-icon" />
                                 </button>
                                 <div class="relative z-10 flex h-full flex-col justify-between pt-10">
                                     <div>
@@ -40,7 +40,7 @@
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
                                         <p class="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance" data-balance-sensitive>
                                             <span class="inline-flex items-baseline gap-1.5">
-                                                <span class="text-sm font-bold text-white/90 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $wallet['symbol'] }}</span>
+                                                <span class="text-sm font-bold text-white/60">{{ $wallet['symbol'] }}</span>
                                                 {{ number_format((float) $wallet['balance'], $wallet['decimals']) }}
                                             </span>
                                         </p>
@@ -76,7 +76,7 @@
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
                                         <p class="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance" data-balance-sensitive>
                                             <span class="inline-flex items-baseline gap-1.5">
-                                                <span class="text-sm font-bold text-white/90 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-sm border border-white/10">{{ $account->currency->symbol }}</span>
+                                                <span class="text-sm font-bold text-white/60">{{ $account->currency->symbol }}</span>
                                                 {{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }}
                                             </span>
                                         </p>
@@ -101,15 +101,15 @@
      {{-- Quick Actions --}}
     <div>
         <h2 class="section-title">Quick actions</h2>
-        <div class="grid grid-cols-4 gap-2 sm:gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             @foreach([
                 ['route' => 'transfer', 'icon' => 'send', 'label' => 'Send'],
                 ['route' => 'receive', 'icon' => 'download', 'label' => 'Receive'],
                 ['route' => 'cards', 'icon' => 'credit-card', 'label' => 'Cards'],
                 ['route' => 'deposit', 'icon' => 'wallet', 'label' => 'Add money'],
             ] as $action)
-                <a href="{{ route($action['route']) }}" class="flex flex-col items-center gap-2 p-3 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
-                    <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
+                <a href="{{ route($action['route']) }}" class="flex flex-col items-center gap-2 p-3 border border-[var(--line)] rounded-xl hover:border-[var(--accent)] hover:shadow-sm transition-all group">
+                    <span class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-[var(--text-muted)] group-hover:bg-[var(--accent-subtle)] group-hover:text-[var(--accent)] transition-all">
                         <x-icon name="{{ $action['icon'] }}" class="w-5 h-5" />
                     </span>
                     <span class="text-xs font-semibold text-[var(--text)] text-center leading-tight">{{ $action['label'] }}</span>
@@ -125,7 +125,7 @@
                 <h2 class="section-title mb-0">Pending</h2>
                 <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
             </div>
-            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
+            <div class="border border-[var(--line)] rounded-xl divide-y divide-[var(--line)] overflow-hidden">
                 @foreach($inProgress as $txn)
                     <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
                         <span class="txn-icon w-10 h-10">
@@ -151,7 +151,7 @@
             <h2 class="section-title mb-0">Recent transactions</h2>
             <a href="{{ route('activity') }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
         </div>
-        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
+        <div class="border border-[var(--line)] rounded-xl divide-y divide-[var(--line)] overflow-hidden">
             @forelse($recentActivity as $txn)
                 <x-txn-row :transaction="$txn" variant="mobile" />
             @empty
@@ -166,8 +166,8 @@
     {{-- Financial Services --}}
     <section>
         <h2 class="section-title">Financial services</h2>
-        <a href="{{ route('financial-services') }}" class="flex items-center gap-3 p-4 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
-            <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] flex-shrink-0">
+        <a href="{{ route('financial-services') }}" class="flex items-center gap-3 p-4 border border-[var(--line)] rounded-xl hover:border-[var(--accent)] hover:shadow-sm transition-all">
+            <span class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-[var(--text-muted)] flex-shrink-0">
                 <x-icon name="trending-up" class="w-5 h-5" />
             </span>
             <div class="min-w-0 flex-1">
@@ -188,8 +188,8 @@
                 ['route' => 'recommendations', 'icon' => 'sparkles', 'title' => 'Recommendations', 'desc' => 'Tailored financial services'],
                 ['route' => 'policies', 'icon' => 'shield-check', 'title' => 'Policies & terms', 'desc' => 'Legal and privacy information'],
             ] as $item)
-                <a href="{{ route($item['route']) }}" class="flex items-center gap-3 p-4 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
-                    <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] flex-shrink-0">
+                <a href="{{ route($item['route']) }}" class="flex items-center gap-3 p-4 border border-[var(--line)] rounded-xl hover:border-[var(--accent)] hover:shadow-sm transition-all">
+                    <span class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-[var(--text-muted)] flex-shrink-0">
                         <x-icon name="{{ $item['icon'] }}" class="w-5 h-5" />
                     </span>
                     <div class="min-w-0">
@@ -288,34 +288,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function toggleHideBalance() {
     var isHidden = document.body.getAttribute('data-hide-balance') === 'true';
-    var eyeIcon = document.querySelector('#toggle-balance svg');
+    var newValue = isHidden ? '0' : '1';
+    var eyeIcon = document.getElementById('toggle-eye-icon');
+    if (eyeIcon) {
+        eyeIcon.setAttribute('data-icon', isHidden ? 'eye' : 'eye-off');
+    }
+
     if (isHidden) {
         document.body.removeAttribute('data-hide-balance');
-        if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye');
     } else {
         document.body.setAttribute('data-hide-balance', 'true');
-        if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye-off');
     }
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '{{ route('profile.preferences') }}';
-    var token = document.createElement('input');
-    token.type = 'hidden';
-    token.name = '_token';
-    token.value = '{{ csrf_token() }}';
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'hide_balance';
-    input.value = isHidden ? '0' : '1';
-    var themeInput = document.createElement('input');
-    themeInput.type = 'hidden';
-    themeInput.name = 'theme_preference';
-    themeInput.value = '{{ $user->theme_preference ?: "system" }}';
-    form.appendChild(token);
-    form.appendChild(input);
-    form.appendChild(themeInput);
-    document.body.appendChild(form);
-    form.submit();
+
+    fetch('{{ route('profile.preferences') }}', {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: '_token={{ csrf_token() }}&hide_balance=' + newValue + '&theme_preference={{ $user->theme_preference ?: "system" }}'
+    }).catch(function() {
+        // Revert on error
+        if (isHidden) {
+            document.body.setAttribute('data-hide-balance', 'true');
+            if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye-off');
+        } else {
+            document.body.removeAttribute('data-hide-balance');
+            if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye');
+        }
+    });
 }
 </script>
 @endsection

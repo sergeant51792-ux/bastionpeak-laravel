@@ -20,8 +20,8 @@
 @endphp
 
 @if($isMobile)
-<a href="{{ route('activity') }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
-    <span class="{{ $iconClass }} w-10 h-10">
+<a href="{{ route('activity') }}" class="flex items-center gap-3 p-4 border-b border-[var(--line)] last:border-0 transition-colors">
+    <span class="txn-icon w-10 h-10">
         <x-icon name="{{ $iconName }}" class="w-4 h-4" />
     </span>
     <div class="flex-1 min-w-0">
@@ -36,7 +36,7 @@
     </div>
 </a>
 @else
-<a href="{{ route('activity') }}" class="flex items-center gap-4 p-4 hover:bg-[var(--line-soft)] transition-colors">
+<a href="{{ route('activity') }}" class="flex items-center gap-4 p-4 border-b border-[var(--line)] last:border-0 transition-colors">
     <span class="{{ $iconClass }} w-10 h-10">
         <x-icon name="{{ $iconName }}" class="w-4 h-4" />
     </span>

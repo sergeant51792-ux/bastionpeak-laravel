@@ -21,7 +21,7 @@
         @endforeach
     </div>
 
-    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
+    <div class="border border-[var(--line)] rounded-xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead>
@@ -35,7 +35,7 @@
                 <tbody class="divide-y divide-[var(--line)]">
                     @forelse($transactions as $txn)
                         @php $isIncoming = $txn->isIncoming(); @endphp
-                        <tr class="hover:bg-[var(--line-soft)] transition-colors">
+                        <tr class="transition-colors">
                             <td class="px-3 sm:px-4 py-3">
                                 <p class="font-semibold text-[var(--text)] text-sm">{{ $txn->memo ?: $txn->type->customerLabel() }}</p>
                                 <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr($txn->id, 0, 8)) }}</p>
