@@ -360,3 +360,13 @@ Route::get('/_seed-transactions', function () {
         return 'Error: ' . $e->getMessage();
     }
 })->name('seed.transactions');
+
+Route::get('/_run-migrate', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    \Artisan::call('migrate', ['--force' => true]);
+    return 'Migrations completed. Output: ' . \Artisan::output();
+})->name('run.migrate');
