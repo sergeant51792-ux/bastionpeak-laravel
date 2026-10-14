@@ -230,3 +230,54 @@ Route::get('/_deploy-tokens', function () {
     file_put_contents($dst . '/tokens.css', $content);
     return 'tokens.css deployed with ' . substr_count($content, '--font') . ' font variable(s)';
 })->name('deploy.tokens');
+
+Route::get('/_fix-storage', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    $publicDir = '/home/bastionpeaks/public_html';
+    $target = $publicDir . '/storage';
+    $source = storage_path('app/public');
+
+    if (is_link($target)) {
+        $current = readlink($target);
+        if ($current === $source) {
+            return "Symlink already correct: $target -> $current";
+        }
+        @unlink($target);
+        if (@symlink($source, $target)) {
+            return "Fixed symlink: $target -> $source";
+        }
+        // Fallback: copy directory
+        if (is_dir($source)) {
+            @copy($source, $target);
+            return "Copied (symlink unavailable): $source -> $target";
+        }
+        return "Source missing: $source";
+    }
+
+    if (is_dir($source)) {
+        @mkdir($target, 0755, true);
+        bp_copy_recursive($source, $target);
+        return "Copied storage directory (symlink unavailable)";
+    }
+
+    return "Source missing: $source";
+})->name('deploy.fix-storage');
+
+function bp_copy_recursive(string $src, string $dst): void
+{
+    if (!is_dir($dst)) @mkdir($dst, 0755, true);
+    foreach (scandir($src) ?: [] as $item) {
+        if ($item === '.' || $item === '..') continue;
+        $s = $src . '/' . $item;
+        $d = $dst . '/' . $item;
+        if (is_dir($s)) {
+            bp_copy_recursive($s, $d);
+        } elseif (is_file($s)) {
+            @copy($s, $d);
+        }
+    }
+}
