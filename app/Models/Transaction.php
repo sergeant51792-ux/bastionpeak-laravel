@@ -184,6 +184,10 @@ class Transaction extends Model
 
     public function isReversible(): bool
     {
-        return in_array($this->status, ['approved', 'credited']) && is_null($this->reversal_of_id);
+        $status = $this->status instanceof TransactionStatus
+            ? $this->status
+            : TransactionStatus::from((string) $this->status);
+
+        return in_array($status, [TransactionStatus::Approved, TransactionStatus::Credited]) && is_null($this->reversal_of_id);
     }
 }

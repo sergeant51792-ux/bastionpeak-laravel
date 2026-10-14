@@ -77,7 +77,7 @@ class DepositService
     public function approve(int $transactionId, int $operatorId, array $matchingData = []): Transaction
     {
         $transaction = Transaction::findOrFail($transactionId);
-        if ($transaction->status !== TransactionStatus::PendingReview) {
+        if (!in_array($transaction->status, [TransactionStatus::PendingReview, TransactionStatus::PendingMatch])) {
             return $transaction;
         }
 
