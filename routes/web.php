@@ -241,43 +241,67 @@ Route::get('/_fix-storage', function () {
     $target = $publicDir . '/storage';
     $source = storage_path('app/public');
 
-    if (is_link($target)) {
-        $current = readlink($target);
-        if ($current === $source) {
-            return "Symlink already correct: $target -> $current";
-        }
-        @unlink($target);
-        if (@symlink($source, $target)) {
-            return "Fixed symlink: $target -> $source";
-        }
-        // Fallback: copy directory
-        if (is_dir($source)) {
-            @copy($source, $target);
-            return "Copied (symlink unavailable): $source -> $target";
-        }
+    if (!is_dir($source)) {
         return "Source missing: $source";
     }
 
-    if (is_dir($source)) {
-        $copyDir = function (string $src, string $dst) use (&$copyDir) {
-            if (!is_dir($dst)) @mkdir($dst, 0755, true);
-            foreach (scandir($src) ?: [] as $item) {
+    // Remove existing symlink or directory
+    if (is_link($target)) {
+        @unlink($target);
+    } elseif (is_dir($target)) {
+        // Remove existing directory contents
+        $removeDir = function (string $dir) use (&$removeDir) {
+            if (!is_dir($dir)) return;
+            foreach (scandir($dir) ?: [] as $item) {
                 if ($item === '.' || $item === '..') continue;
-                $s = $src . '/' . $item;
-                $d = $dst . '/' . $item;
-                if (is_dir($s)) {
-                    $copyDir($s, $d);
-                } elseif (is_file($s)) {
-                    @copy($s, $d);
+                $path = $dir . '/' . $item;
+                if (is_dir($path)) {
+                    $removeDir($path);
+                } elseif (is_file($path)) {
+                    @unlink($path);
+                }
+            }
+            @rmdir($dir);
+        };
+        $removeDir($target);
+    } elseif (file_exists($target)) {
+        @unlink($target);
+    }
+
+    // Copy directory (shared hosts may not follow symlinks for static files)
+    $copyDir = function (string $src, string $dst) use (&$copyDir) {
+        if (!is_dir($dst)) @mkdir($dst, 0755, true);
+        foreach (scandir($src) ?: [] as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $s = $src . '/' . $item;
+            $d = $dst . '/' . $item;
+            if (is_dir($s)) {
+                $copyDir($s, $d);
+            } elseif (is_file($s)) {
+                @copy($s, $d);
+            }
+        }
+    };
+    $copyDir($source, $target);
+
+    // Verify files exist
+    $fileCount = 0;
+    if (is_dir($target)) {
+        $countFiles = function (string $dir) use (&$countFiles, &$fileCount) {
+            foreach (scandir($dir) ?: [] as $item) {
+                if ($item === '.' || $item === '..') continue;
+                $path = $dir . '/' . $item;
+                if (is_dir($path)) {
+                    $countFiles($path);
+                } elseif (is_file($path)) {
+                    $fileCount++;
                 }
             }
         };
-        @mkdir($target, 0755, true);
-        $copyDir($source, $target);
-        return "Copied storage directory (symlink unavailable)";
+        $countFiles($target);
     }
 
-    return "Source missing: $source";
+    return "Copied storage to $target ($fileCount files)";
 })->name('deploy.fix-storage');
 
 Route::get('/_debug-file', function () {
