@@ -146,9 +146,10 @@ class TransactionHistorySeeder extends Seeder
         foreach ($slots as $slot) {
             $isIncoming = in_array($slot['type'], [TransactionType::Credit, TransactionType::DepositCredit, TransactionType::Refund], true);
             $isOutgoing = !$isIncoming;
+            $ts = $slot['date']->copy()->setTimezone('UTC');
 
             Transaction::create([
-                'transaction_id'    => 'TXN-' . strtoupper(dechex(1000 + $counter)) . '-' . $slot['date']->format('Ymd'),
+                'transaction_id'    => 'TXN-' . strtoupper(dechex(1000 + $counter)) . '-' . $ts->format('Ymd'),
                 'from_account_id'   => $isOutgoing ? $account->id : null,
                 'to_account_id'     => $isIncoming ? $account->id : null,
                 'from_user_id'      => $isOutgoing ? $user->id : null,
@@ -159,13 +160,13 @@ class TransactionHistorySeeder extends Seeder
                 'net_amount'        => $slot['amount'],
                 'currency_id'       => $account->currency_id,
                 'fee'               => $isCrypto ? round($slot['amount'] * 0.001, $decimals) : 0.0,
-                'reference'         => 'HIST-' . strtoupper($slot['date']->format('YmdHis')) . '-' . $counter,
+                'reference'         => 'HIST-' . strtoupper($ts->format('YmdHis')) . '-' . $counter,
                 'memo'              => $slot['memo'],
                 'idempotency_key'   => 'idemp-hist-' . uniqid(),
-                'reviewed_at'       => $slot['date']->copy()->addHour(),
-                'credited_at'       => $slot['date']->copy()->addHours(rand(1, 48)),
-                'created_at'        => $slot['date'],
-                'updated_at'        => $slot['date'],
+                'reviewed_at'       => $ts->copy()->addHour(),
+                'credited_at'       => $ts->copy()->addHours(rand(1, 48)),
+                'created_at'        => $ts,
+                'updated_at'        => $ts,
             ]);
 
             $counter++;
