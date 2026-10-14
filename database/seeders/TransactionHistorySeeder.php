@@ -22,10 +22,11 @@ use Illuminate\Database\Seeder;
  */
 class TransactionHistorySeeder extends Seeder
 {
+    public static bool $reset = false;
+
     public function run(): void
     {
-        $reset = $this->command->hasOption('reset') && $this->command->option('reset');
-        $reset = $reset || request()->query('reset') === '1';
+        $reset = self::$reset;
         $users = User::with('accounts.currency')->get();
         $counter = 1;
 
@@ -52,7 +53,7 @@ class TransactionHistorySeeder extends Seeder
         if ($reset) {
             Transaction::where('from_account_id', $account->id)
                 ->orWhere('to_account_id', $account->id)
-                ->delete();
+                ->forceDelete();
         }
 
         $existingCount = Transaction::where(function ($q) use ($account) {

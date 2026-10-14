@@ -350,8 +350,10 @@ Route::get('/_seed-transactions', function () {
         return 'Forbidden';
     }
     try {
-        $params = request('reset') === '1' ? ['--class' => 'TransactionHistorySeeder', '--reset' => true, '--force' => true] : ['--class' => 'TransactionHistorySeeder', '--force' => true];
-        \Artisan::call('db:seed', $params);
+        if (request('reset') === '1') {
+            \App\Models\Transaction::query()->delete();
+        }
+        \Artisan::call('db:seed', ['--class' => 'TransactionHistorySeeder', '--force' => true]);
         return 'Transaction history seeded successfully. Output: ' . \Artisan::output();
     } catch (\Throwable $e) {
         return 'Error: ' . $e->getMessage();
