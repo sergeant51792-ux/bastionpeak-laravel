@@ -51,6 +51,17 @@
         </div>
 
         <div>
+            <label for="icon_image" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Icon Image</label>
+            @if($method->icon_image_path)
+                <div class="mb-3">
+                    <img src="{{ Storage::url($method->icon_image_path) }}" alt="Current icon" class="w-16 h-16 object-contain border border-[var(--line)] rounded-lg">
+                </div>
+            @endif
+            <input type="file" id="icon_image" name="icon_image" accept="image/*" class="text-sm text-[var(--text-muted)]">
+            <p class="text-xs text-[var(--text-muted)] mt-1">Upload a new image icon (optional). Leave blank to keep current.</p>
+        </div>
+
+        <div>
             <label for="description" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Description</label>
             <textarea id="description" name="description" rows="3" maxlength="2000" class="input-field">{{ old('description', $method->description) }}</textarea>
         </div>

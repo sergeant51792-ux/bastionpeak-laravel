@@ -12,6 +12,7 @@ class DepositMethod extends Model
         'name',
         'type',
         'icon',
+        'icon_image_path',
         'description',
         'template',
         'is_active',

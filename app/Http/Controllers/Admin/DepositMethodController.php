@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DepositMethod;
+use Illuminate\Support\Facades\Storage;
 
 class DepositMethodController extends Controller
 {
@@ -37,6 +38,7 @@ class DepositMethodController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:wire,crypto,swift,sepa,ach,zelle,faster_payments,bacs,chaps,other'],
             'icon' => ['nullable', 'string', 'max:255'],
+            'icon_image' => ['nullable', 'image', 'max:2048'],
             'description' => ['nullable', 'string', 'max:2000'],
             'template' => ['nullable', 'array'],
             'is_active' => ['boolean'],
@@ -45,6 +47,10 @@ class DepositMethodController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
+
+        if ($request->hasFile('icon_image')) {
+            $validated['icon_image_path'] = $request->file('icon_image')->store('deposit-method-icons', 'public');
+        }
 
         DepositMethod::create($validated);
 
@@ -65,6 +71,7 @@ class DepositMethodController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:wire,crypto,swift,sepa,ach,zelle,faster_payments,bacs,chaps,other'],
             'icon' => ['nullable', 'string', 'max:255'],
+            'icon_image' => ['nullable', 'image', 'max:2048'],
             'description' => ['nullable', 'string', 'max:2000'],
             'template' => ['nullable', 'array'],
             'is_active' => ['boolean'],
@@ -73,6 +80,13 @@ class DepositMethodController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
+
+        if ($request->hasFile('icon_image')) {
+            if ($depositMethod->icon_image_path) {
+                Storage::disk('public')->delete($depositMethod->icon_image_path);
+            }
+            $validated['icon_image_path'] = $request->file('icon_image')->store('deposit-method-icons', 'public');
+        }
 
         $depositMethod->update($validated);
 

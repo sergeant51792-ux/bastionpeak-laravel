@@ -183,7 +183,7 @@
         <h2 class="section-title">Support &amp; resources</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             @foreach([
-                ['route' => 'support', 'icon' => 'headphones', 'title' => 'Help & support', 'desc' => 'Get in touch with our team'],
+                ['route' => 'messages', 'icon' => 'message-square', 'title' => 'Support', 'desc' => 'Chat with our support team'],
                 ['route' => 'learn', 'icon' => 'book-open', 'title' => 'Learn banking', 'desc' => 'Guides on money and security'],
                 ['route' => 'recommendations', 'icon' => 'sparkles', 'title' => 'Recommendations', 'desc' => 'Tailored financial services'],
                 ['route' => 'policies', 'icon' => 'shield-check', 'title' => 'Policies & terms', 'desc' => 'Legal and privacy information'],

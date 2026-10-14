@@ -48,6 +48,13 @@
         <div>
             <label for="icon" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Icon</label>
             <input type="text" id="icon" name="icon" maxlength="255" class="input-field" placeholder="SVG path or icon name (optional)">
+            <p class="text-xs text-[var(--text-muted)] mt-1">Icon class name used in the system (optional).</p>
+        </div>
+
+        <div>
+            <label for="icon_image" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Icon Image</label>
+            <input type="file" id="icon_image" name="icon_image" accept="image/*" class="text-sm text-[var(--text-muted)]">
+            <p class="text-xs text-[var(--text-muted)] mt-1">Upload an image icon (PNG, JPG, SVG, max 2MB).</p>
         </div>
 
         <div>
