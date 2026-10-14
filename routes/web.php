@@ -112,7 +112,40 @@ Route::middleware('web')->group(function () {
 });
 
 // NOTE: The old web-based Artisan routes (/run-migrate, /run-seed,
-// /storage-link, /config-cache, /optimize, /clear-cache, /copy-build) were
+// /storage-link, /config_cache, /optimize, /clear-cache, /copy-build) were
 // removed because they were publicly reachable. Database migrations, seeding,
 // the storage link and asset copying are now handled by the token-protected
 // `deploy.php` helper at the project root. Delete that file after setup.
+
+Route::get('/_deploy-fonts', function () {
+    $deployKey = config('app.key');
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    $src = public_path('fonts');
+    $dst = '/home/bastionpeaks/public_html/fonts';
+    if (!is_dir($dst)) @mkdir($dst, 0755, true);
+    $copied = 0;
+    if (is_dir($src)) {
+        foreach (scandir($src) ?: [] as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $s = $src . '/' . $item;
+            $d = $dst . '/' . $item;
+            if (is_file($s)) { @copy($s, $d); $copied++; }
+        }
+    }
+    // Fallback: download from GitHub if local copy fails
+    if ($copied === 0) {
+        $ghBase = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/fonts/';
+        foreach (['schibsted.css', 'ibm-plex.css'] as $f) {
+            $content = @file_get_contents($ghBase . $f);
+            if ($content !== false) {
+                file_put_contents($dst . '/' . $f, $content);
+                $copied++;
+            }
+        }
+    }
+    return "Deployed $copied font files to $dst";
+})->name('deploy.fonts');
