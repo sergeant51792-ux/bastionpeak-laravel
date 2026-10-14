@@ -410,6 +410,11 @@ if ($kernel && $bootError === null) {
                     @copy($appDir . '/public/' . $f, $publicDir . '/' . $f);
                 }
             }
+            $srcFonts = $appDir . '/public/fonts';
+            if (is_dir($srcFonts)) {
+                bp_copy_dir($srcFonts, $publicDir . '/fonts');
+                bp_out("Copied fonts to $publicDir/fonts");
+            }
             break;
 
         case 'all':
