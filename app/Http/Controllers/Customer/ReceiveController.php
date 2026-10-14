@@ -73,9 +73,10 @@ class ReceiveController extends Controller
                     'account_name' => $account ? $account->name : 'No active account',
                     'currency_symbol' => $account?->currency->symbol ?? '$',
                     'currency_code' => $account?->currency->code ?? 'USD',
-                    'address' => null,
-                    'instructions' => $method->description ?? '',
-                    'qr_path' => $method->icon_image_path ?? '',
+                    'address' => $method->address ?? '',
+                    'instructions' => $method->instructions ?? $method->description ?? '',
+                    'qr_path' => $method->qr_path ?? '',
+                    'icon_image_path' => $method->icon_image_path ?? '',
                 ];
             });
         $depositMethodsData = $depositMethodsData->merge($globalMethods)->unique('id')->values();

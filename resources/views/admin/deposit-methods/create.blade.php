@@ -10,17 +10,18 @@
         <h1 class="text-xl font-semibold">Add Deposit Method</h1>
     </header>
 
-    <form method="POST" action="{{ route('admin.deposit-methods.store') }}" class="space-y-5">
+    <form method="POST" action="{{ route('admin.deposit-methods.store') }}" enctype="multipart/form-data" class="space-y-5">
         @csrf
+
+        <div>
+            <label for="name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Display Name</label>
+            <input type="text" id="name" name="name" required maxlength="255" class="input-field" placeholder="e.g. Wire Transfer (USD), Bitcoin (USDT)">
+        </div>
+
         <div>
             <label for="code" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Code</label>
             <input type="text" id="code" name="code" required maxlength="50" class="input-field" placeholder="e.g. wire_usd, crypto_usdt">
             <p class="text-xs text-[var(--text-muted)] mt-1">Unique identifier used in the system.</p>
-        </div>
-
-        <div>
-            <label for="name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Display Name</label>
-            <input type="text" id="name" name="name" required maxlength="255" class="input-field" placeholder="e.g. Wire Transfer (USD)">
         </div>
 
         <div>
@@ -45,16 +46,37 @@
             />
         </div>
 
-        <div>
-            <label for="icon" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Icon</label>
-            <input type="text" id="icon" name="icon" maxlength="255" class="input-field" placeholder="SVG path or icon name (optional)">
-            <p class="text-xs text-[var(--text-muted)] mt-1">Icon class name used in the system (optional).</p>
-        </div>
+        <div class="bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl p-4">
+            <h3 class="text-sm font-semibold text-[var(--text-muted)] mb-3">Global Deposit Details</h3>
+            <p class="text-xs text-[var(--text-muted)] mb-3">These details will appear for ALL accounts when users add money.</p>
 
-        <div>
-            <label for="icon_image" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Icon Image</label>
-            <input type="file" id="icon_image" name="icon_image" accept="image/*" class="text-sm text-[var(--text-muted)]">
-            <p class="text-xs text-[var(--text-muted)] mt-1">Upload an image icon (PNG, JPG, SVG, max 2MB).</p>
+            <div>
+                <label for="icon" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Icon</label>
+                <input type="text" id="icon" name="icon" maxlength="255" class="input-field" placeholder="Icon name (optional)">
+            </div>
+
+            <div class="mt-3">
+                <label for="icon_image" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Icon Image</label>
+                <input type="file" id="icon_image" name="icon_image" accept="image/*" class="text-sm text-[var(--text-muted)]">
+                <p class="text-xs text-[var(--text-muted)] mt-1">Upload an icon image (optional).</p>
+            </div>
+
+            <div class="mt-3">
+                <label for="address" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Deposit Address</label>
+                <textarea id="address" name="address" rows="2" maxlength="1000" class="input-field" placeholder="Bank account, crypto wallet address, etc."></textarea>
+                <p class="text-xs text-[var(--text-muted)] mt-1">The address users will send money to.</p>
+            </div>
+
+            <div class="mt-3">
+                <label for="instructions" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Instructions</label>
+                <textarea id="instructions" name="instructions" rows="3" maxlength="2000" class="input-field" placeholder="Step-by-step instructions for depositing..."></textarea>
+            </div>
+
+            <div class="mt-3">
+                <label for="qr_image" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">QR Code Image</label>
+                <input type="file" id="qr_image" name="qr_image" accept="image/*" class="text-sm text-[var(--text-muted)]">
+                <p class="text-xs text-[var(--text-muted)] mt-1">Upload a QR code image (optional).</p>
+            </div>
         </div>
 
         <div>
@@ -64,11 +86,15 @@
 
         <div class="flex items-center gap-6">
             <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="is_global" value="1" checked class="w-4 h-4 rounded border-[var(--line)] text-[var(--primary)] focus:ring-[var(--accent)]">
+                <span class="text-sm font-medium text-[var(--text)]">Global (applies to all accounts)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_active" value="1" checked class="w-4 h-4 rounded border-[var(--line)] text-[var(--primary)] focus:ring-[var(--accent)]">
                 <span class="text-sm font-medium text-[var(--text)]">Active</span>
             </label>
             <div>
-                <label for="sort_order" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Sort Order</label>
+                <label for="sort_order" class="block text-xs font-semibold text-[var(--text-muted)] uppercase">Sort Order</label>
                 <input type="number" id="sort_order" name="sort_order" value="0" min="0" class="input-field w-24">
             </div>
         </div>

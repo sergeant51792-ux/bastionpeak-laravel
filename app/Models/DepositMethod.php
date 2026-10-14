@@ -17,6 +17,10 @@ class DepositMethod extends Model
         'template',
         'is_active',
         'sort_order',
+        'address',
+        'instructions',
+        'qr_path',
+        'is_global',
     ];
 
     protected function casts(): array
@@ -24,6 +28,7 @@ class DepositMethod extends Model
         return [
             'template' => 'array',
             'is_active' => 'boolean',
+            'is_global' => 'boolean',
         ];
     }
 

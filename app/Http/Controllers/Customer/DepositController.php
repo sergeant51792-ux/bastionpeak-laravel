@@ -44,9 +44,9 @@ class DepositController extends Controller
                 $method->currency = $account->currency;
                 $method->category = $this->categoryFor($method->type);
                 $method->pivot = (object) [
-                    'address' => null,
-                    'instructions' => $method->description ?? null,
-                    'qr_path' => null,
+                    'address' => $method->address,
+                    'instructions' => $method->instructions ?? $method->description,
+                    'qr_path' => $method->qr_path,
                     'is_active' => true,
                     'metadata' => null,
                 ];
