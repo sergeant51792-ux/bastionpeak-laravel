@@ -125,14 +125,13 @@ Route::get('/_deploy-assets', function () {
     }
     $dst = '/home/bastionpeaks/public_html';
     $deployed = [];
-    $forceGithub = request('force', false);
 
     // Deploy fonts
     $srcFonts = public_path('fonts');
     $dstFonts = $dst . '/fonts';
     if (!is_dir($dstFonts)) @mkdir($dstFonts, 0755, true);
     $fontCount = 0;
-    if (!$forceGithub && is_dir($srcFonts)) {
+    if (is_dir($srcFonts)) {
         foreach (scandir($srcFonts) ?: [] as $item) {
             if ($item === '.' || $item === '..') continue;
             $s = $srcFonts . '/' . $item;
@@ -157,20 +156,22 @@ Route::get('/_deploy-assets', function () {
     $dstCss = $dst . '/css';
     if (!is_dir($dstCss)) @mkdir($dstCss, 0755, true);
     $cssCount = 0;
-    if (!$forceGithub && is_dir($srcCss)) {
+    if (is_dir($srcCss)) {
         foreach (scandir($srcCss) ?: [] as $item) {
             if ($item === '.' || $item === '..') continue;
             $s = $srcCss . '/' . $item;
             if (is_file($s)) { @copy($s, $dstCss . '/' . $item); $cssCount++; }
         }
     }
-    // Always overwrite from GitHub to ensure latest version
-    $ghCss = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/css/';
-    foreach (['tokens.css'] as $f) {
-        $content = @file_get_contents($ghCss . $f);
-        if ($content !== false) {
-            file_put_contents($dstCss . '/' . $f, $content);
-            $cssCount++;
+    // Fallback: download from GitHub
+    if ($cssCount === 0) {
+        $ghCss = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/css/';
+        foreach (['tokens.css'] as $f) {
+            $content = @file_get_contents($ghCss . $f);
+            if ($content !== false) {
+                file_put_contents($dstCss . '/' . $f, $content);
+                $cssCount++;
+            }
         }
     }
     $deployed[] = "$cssCount CSS files deployed";

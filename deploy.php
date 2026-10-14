@@ -187,7 +187,7 @@ if (!empty($preAction)) {
     copy(__FILE__, $selfBackup);
     $output = [];
     $exitCode = 0;
-    $command = 'cd ' . escapeshellarg($appDir) . ' && git reset --hard HEAD && git pull 2>&1';
+    $command = 'cd ' . escapeshellarg($appDir) . ' && git fetch origin && git reset --hard origin/main 2>&1';
     exec($command, $output, $exitCode);
     bp_out("git pull (exit {$exitCode})\n" . implode("\n", $output));
     // Restore this script if git overwrote it with an older version
