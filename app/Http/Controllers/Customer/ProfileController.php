@@ -143,7 +143,7 @@ class ProfileController extends Controller
         return back()->with('status', 'Profile picture removed.');
     }
 
-    public function updatePreferences(Request $request): RedirectResponse
+    public function updatePreferences(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $user = $request->user();
 
@@ -157,6 +157,10 @@ class ProfileController extends Controller
 
         if (isset($validated['language'])) {
             session(['locale' => $validated['language']]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'hide_balance' => $user->hide_balance], 200);
         }
 
         return back()->with('status', 'Preferences saved.');
