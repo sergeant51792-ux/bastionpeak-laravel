@@ -199,8 +199,13 @@
                     <div class="bg-white border border-[var(--line)] rounded-2xl overflow-hidden h-48">
                         <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?fm=jpg&q=80&w=400&auto=format&fit=crop" alt="Financial insights" class="w-full h-full object-cover">
                     </div>
-                    <div class="bg-white border border-[var(--line)] rounded-2xl overflow-hidden h-48">
-                        <img src="https://images.unsplash.com/photo-1551288326-c0a93f84f3c1?fm=jpg&q=80&w=400&auto=format&fit=crop" alt="Transaction monitoring" class="w-full h-full object-cover">
+                    <div class="bg-[var(--line-soft)] border border-[var(--line)] rounded-2xl overflow-hidden h-48 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-[var(--accent-subtle)] rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <x-icon name="activity" class="w-8 h-8 text-[var(--accent-dark)]" />
+                            </div>
+                            <p class="text-xs text-[var(--text-muted)] font-medium">Real-time monitoring</p>
+                        </div>
                     </div>
                 </div>
 
