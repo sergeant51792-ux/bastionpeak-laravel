@@ -27,6 +27,7 @@ class TransactionHistorySeeder extends Seeder
     public function run(): void
     {
         $reset = self::$reset;
+        \DB::statement("SET time_zone = '+00:00'");
         $users = User::with('accounts.currency')->get();
         $counter = 1;
 
@@ -146,7 +147,7 @@ class TransactionHistorySeeder extends Seeder
         foreach ($slots as $slot) {
             $isIncoming = in_array($slot['type'], [TransactionType::Credit, TransactionType::DepositCredit, TransactionType::Refund], true);
             $isOutgoing = !$isIncoming;
-            $ts = $slot['date']->copy()->setTimezone('UTC');
+            $ts = $slot['date']->copy();
 
             Transaction::create([
                 'transaction_id'    => 'TXN-' . strtoupper(dechex(1000 + $counter)) . '-' . $ts->format('Ymd'),
