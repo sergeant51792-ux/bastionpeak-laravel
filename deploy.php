@@ -419,7 +419,25 @@ if ($kernel && $bootError === null) {
                 bp_copy_dir($srcFonts, $publicDir . '/fonts');
                 bp_out("Copied fonts to $publicDir/fonts (via file check)");
             } else {
-                bp_out("Fonts source not found at $srcFonts — checking if exists on disk");
+                // Fallback: download font CSS files directly from GitHub
+                @mkdir($publicDir . '/fonts', 0755, true);
+                $ghBase = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/fonts/';
+                $fontFiles = ['schibsted.css', 'ibm-plex.css'];
+                $downloaded = true;
+                foreach ($fontFiles as $f) {
+                    $url = $ghBase . $f;
+                    $dst = $publicDir . '/fonts/' . $f;
+                    $content = @file_get_contents($url);
+                    if ($content === false) {
+                        bp_out("Failed to download $f from GitHub");
+                        $downloaded = false;
+                    } else {
+                        file_put_contents($dst, $content);
+                    }
+                }
+                if ($downloaded) {
+                    bp_out("Downloaded fonts CSS from GitHub to $publicDir/fonts");
+                }
             }
             break;
 
@@ -459,7 +477,24 @@ if ($kernel && $bootError === null) {
                 bp_copy_dir($srcFonts, $publicDir . '/fonts');
                 bp_out("assets: copied fonts to $publicDir/fonts (via file check)");
             } else {
-                bp_out("assets: fonts source not found at $srcFonts");
+                // Fallback: download font CSS files directly from GitHub
+                @mkdir($publicDir . '/fonts', 0755, true);
+                $ghBase = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/fonts/';
+                $downloaded = true;
+                foreach (['schibsted.css', 'ibm-plex.css'] as $f) {
+                    $url = $ghBase . $f;
+                    $dst = $publicDir . '/fonts/' . $f;
+                    $content = @file_get_contents($url);
+                    if ($content === false) {
+                        bp_out("assets: Failed to download $f from GitHub");
+                        $downloaded = false;
+                    } else {
+                        file_put_contents($dst, $content);
+                    }
+                }
+                if ($downloaded) {
+                    bp_out("assets: downloaded fonts CSS from GitHub to $publicDir/fonts");
+                }
             }
 
             $r = runArtisan($kernel, 'config:cache');
