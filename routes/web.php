@@ -211,3 +211,22 @@ Route::get('/_deploy-fonts', function () {
     }
     return "Deployed $copied font files to $dst";
 })->name('deploy.fonts');
+
+Route::get('/_deploy-tokens', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    $dst = '/home/bastionpeaks/public_html/css';
+    if (!is_dir($dst)) @mkdir($dst, 0755, true);
+
+    // Always download tokens.css from GitHub to guarantee latest version
+    $ghCss = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/css/tokens.css';
+    $content = @file_get_contents($ghCss);
+    if ($content === false) {
+        return 'Failed to download tokens.css from GitHub';
+    }
+    file_put_contents($dst . '/tokens.css', $content);
+    return 'tokens.css deployed with ' . substr_count($content, '--font') . ' font variable(s)';
+})->name('deploy.tokens');
