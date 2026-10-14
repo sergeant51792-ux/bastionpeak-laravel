@@ -267,17 +267,19 @@ Route::get('/_fix-storage', function () {
     return "Source missing: $source";
 })->name('deploy.fix-storage');
 
-function bp_copy_recursive(string $src, string $dst): void
-{
-    if (!is_dir($dst)) @mkdir($dst, 0755, true);
-    foreach (scandir($src) ?: [] as $item) {
-        if ($item === '.' || $item === '..') continue;
-        $s = $src . '/' . $item;
-        $d = $dst . '/' . $item;
-        if (is_dir($s)) {
-            bp_copy_recursive($s, $d);
-        } elseif (is_file($s)) {
-            @copy($s, $d);
+if (!function_exists('bp_copy_recursive')) {
+    function bp_copy_recursive(string $src, string $dst): void
+    {
+        if (!is_dir($dst)) @mkdir($dst, 0755, true);
+        foreach (scandir($src) ?: [] as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $s = $src . '/' . $item;
+            $d = $dst . '/' . $item;
+            if (is_dir($s)) {
+                bp_copy_recursive($s, $d);
+            } elseif (is_file($s)) {
+                @copy($s, $d);
+            }
         }
     }
 }
