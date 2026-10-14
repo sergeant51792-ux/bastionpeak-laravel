@@ -259,27 +259,23 @@ Route::get('/_fix-storage', function () {
     }
 
     if (is_dir($source)) {
+        $copyDir = function (string $src, string $dst) use (&$copyDir) {
+            if (!is_dir($dst)) @mkdir($dst, 0755, true);
+            foreach (scandir($src) ?: [] as $item) {
+                if ($item === '.' || $item === '..') continue;
+                $s = $src . '/' . $item;
+                $d = $dst . '/' . $item;
+                if (is_dir($s)) {
+                    $copyDir($s, $d);
+                } elseif (is_file($s)) {
+                    @copy($s, $d);
+                }
+            }
+        };
         @mkdir($target, 0755, true);
-        bp_copy_recursive($source, $target);
+        $copyDir($source, $target);
         return "Copied storage directory (symlink unavailable)";
     }
 
     return "Source missing: $source";
 })->name('deploy.fix-storage');
-
-if (!function_exists('bp_copy_recursive')) {
-    function bp_copy_recursive(string $src, string $dst): void
-    {
-        if (!is_dir($dst)) @mkdir($dst, 0755, true);
-        foreach (scandir($src) ?: [] as $item) {
-            if ($item === '.' || $item === '..') continue;
-            $s = $src . '/' . $item;
-            $d = $dst . '/' . $item;
-            if (is_dir($s)) {
-                bp_copy_recursive($s, $d);
-            } elseif (is_file($s)) {
-                @copy($s, $d);
-            }
-        }
-    }
-}
