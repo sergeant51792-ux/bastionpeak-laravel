@@ -350,6 +350,7 @@ Route::get('/_seed-transactions', function () {
         return 'Forbidden';
     }
     try {
+        \Artisan::call('view:clear');
         if (request('reset') === '1') {
             \App\Models\Transaction::query()->delete();
         }

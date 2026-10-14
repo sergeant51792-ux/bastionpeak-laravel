@@ -266,43 +266,13 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var reviews = @json([
-            [
-                'avatar' => 'MJ',
-                'name' => 'Maria Johnson',
-                'title' => 'Finance Lead, Apex Labs',
-                'rating' => 5,
-                'text' => '"Bastion Peak replaced five different tools with a single platform. The approval flows alone saved us 12 hours a week in manual reconciliation. Our finance team loves it."'
-            ],
-            [
-                'avatar' => 'TR',
-                'name' => 'Thomas Rivera',
-                'title' => 'Treasury Manager, Nexus Corp',
-                'rating' => 5,
-                'text' => '"The real-time audit trail gives us confidence in every transaction. We can see exactly who did what and when — no more chasing down emails."'
-            ],
-            [
-                'avatar' => 'SL',
-                'name' => 'Sarah Lin',
-                'title' => 'CTO, Vertex Bank',
-                'rating' => 5,
-                'text' => '"SOC 2 compliance was non-negotiable for us. Bastion Peak handled it out of the box — we were live in two weeks, not two quarters."'
-            ],
-            [
-                'avatar' => 'DK',
-                'name' => 'David Kim',
-                'title' => 'Operations Director, Summit Group',
-                'rating' => 5,
-                'text' => '"The double-entry ledger is rock-solid. After three years on Bastion Peak, we have zero balance mismatches. That\'s worth its weight in gold."'
-            ],
-            [
-                'avatar' => 'AE',
-                'name' => 'Amira El-Sayed',
-                'title' => 'Head of Treasury, Meridian Capital',
-                'rating' => 5,
-                'text' => '"Virtual cards with spending limits have eliminated fraud losses. The API-first approach made integration seamless with our existing stack."'
-            ],
-        ]);
+        var reviews = <?php echo json_encode([
+            ['avatar' => 'MJ', 'name' => 'Maria Johnson', 'title' => 'Finance Lead, Apex Labs', 'rating' => 5, 'text' => '"Bastion Peak replaced five different tools with a single platform. The approval flows alone saved us 12 hours a week in manual reconciliation. Our finance team loves it."'],
+            ['avatar' => 'TR', 'name' => 'Thomas Rivera', 'title' => 'Treasury Manager, Nexus Corp', 'rating' => 5, 'text' => '"The real-time audit trail gives us confidence in every transaction. We can see exactly who did what and when — no more chasing down emails."'],
+            ['avatar' => 'SL', 'name' => 'Sarah Lin', 'title' => 'CTO, Vertex Bank', 'rating' => 5, 'text' => '"SOC 2 compliance was non-negotiable for us. Bastion Peak handled it out of the box — we were live in two weeks, not two quarters."'],
+            ['avatar' => 'DK', 'name' => 'David Kim', 'title' => 'Operations Director, Summit Group', 'rating' => 5, 'text' => '"The double-entry ledger is rock-solid. After three years on Bastion Peak, we have zero balance mismatches. That\'s worth its weight in gold."'],
+            ['avatar' => 'AE', 'name' => 'Amira El-Sayed', 'title' => 'Head of Treasury, Meridian Capital', 'rating' => 5, 'text' => '"Virtual cards with spending limits have eliminated fraud losses. The API-first approach made integration seamless with our existing stack."'],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
 
         var currentReview = 0;
         var track = document.getElementById('review-track');
