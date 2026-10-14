@@ -75,7 +75,7 @@ class ProfileController extends Controller
             return back()->with('error', 'The file must be an image (JPEG, PNG, GIF, or WebP).');
         }
 
-        $storageRoot = storage_path('app/public');
+        $storageRoot = dirname(base_path()) . '/public_html/storage';
         $storagePath = $storageRoot . '/' . $user->profile_picture;
 
         if ($user->profile_picture && @file_exists($storagePath)) {
@@ -125,9 +125,11 @@ class ProfileController extends Controller
     public function removePicture(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $user = $request->user();
+        $storageRoot = dirname(base_path()) . '/public_html/storage';
+        $storagePath = $storageRoot . '/' . $user->profile_picture;
 
-        if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
-            Storage::disk('public')->delete($user->profile_picture);
+        if ($user->profile_picture && @file_exists($storagePath)) {
+            @unlink($storagePath);
         }
 
         $user->update([
