@@ -230,3 +230,40 @@ Route::get('/_deploy-tokens', function () {
     file_put_contents($dst . '/tokens.css', $content);
     return 'tokens.css deployed with ' . substr_count($content, '--font') . ' font variable(s)';
 })->name('deploy.tokens');
+
+Route::get('/_debug-profile-upload', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    ob_start();
+    try {
+        echo "DB: " . config('database.default') . "\n";
+        echo "DB connection test:\n";
+        try {
+            $cols = \DB::select("SHOW COLUMNS FROM users LIKE 'profile_picture'");
+            echo "  profile_picture column: " . (count($cols) > 0 ? 'EXISTS (' . $cols[0]->Type . ')' : 'MISSING') . "\n";
+        } catch (\Throwable $e) {
+            echo "  DB error: " . $e->getMessage() . "\n";
+        }
+
+        echo "\nStorage disk 'public':\n";
+        $disk = Storage::disk('public');
+        $path = $disk->path('');
+        echo "  root: $path\n";
+        echo "  root exists: " . (is_dir($path) ? 'yes' : 'no') . "\n";
+        echo "  root writable: " . (is_writable($path) ? 'yes' : 'no') . "\n";
+
+        echo "\nstorage:link target:\n";
+        $link = public_path('storage');
+        echo "  public/storage symlink: " . (is_link($link) ? readlink($link) : 'not a link') . "\n";
+        echo "  exists: " . (file_exists($link) ? 'yes' : 'no') . "\n";
+    } catch (\Throwable $e) {
+        echo "ERROR: " . $e->getMessage() . "\n";
+        echo "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
+        echo "Trace:\n" . $e->getTraceAsString() . "\n";
+    }
+
+    return '<pre>' . htmlspecialchars(ob_get_clean()) . '</pre>';
+})->name('debug.profile');
