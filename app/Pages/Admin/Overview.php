@@ -42,6 +42,7 @@ class Overview extends Page
     {
         return Transaction::where('type', 'deposit_credit')
             ->whereIn('status', ['pending_review', 'pending_match'])
+            ->with('currency')
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
@@ -51,6 +52,7 @@ class Overview extends Page
     {
         return Transaction::where('type', 'payment_debit')
             ->whereIn('status', ['pending_review'])
+            ->with('currency')
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();

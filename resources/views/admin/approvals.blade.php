@@ -61,11 +61,13 @@
         csrf.name = '_token';
         csrf.value = document.querySelector('meta[name="csrf-token"]').content;
         form.appendChild(csrf);
-        var idsInput = document.createElement('input');
-        idsInput.type = 'hidden';
-        idsInput.name = 'ids[]';
-        idsInput.value = data.ids.join(',');
-        form.appendChild(idsInput);
+        data.ids.forEach(function(id) {
+            var idsInput = document.createElement('input');
+            idsInput.type = 'hidden';
+            idsInput.name = 'ids[]';
+            idsInput.value = id;
+            form.appendChild(idsInput);
+        });
         if (data.type) {
             var typeInput = document.createElement('input');
             typeInput.type = 'hidden';

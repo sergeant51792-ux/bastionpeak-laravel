@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \Illuminate\Support\ViewErrorBag $errors
+ * @var \App\Models\User $user
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -226,7 +232,7 @@
                 @forelse($threads as $msg)
                     <div class="{{ $msg->sender_id === auth()->id() ? 'ml-auto text-right' : '' }}">
                         <div class="{{ $msg->sender_id === auth()->id() ? 'bg-[var(--primary)] text-white' : 'bg-[var(--surface-raised)]' }} p-2.5 rounded-xl inline-block max-w-[80%]">
-                            <p class="text-xs">{{ Str::limit($msg->body, 50) }}</p>
+                            <p class="text-xs">{{ \Illuminate\Support\Str::limit($msg->body, 50) }}</p>
                             <p class="text-[9px] opacity-60 mt-1">{{ $msg->created_at->format('H:i') }}</p>
                         </div>
                     </div>

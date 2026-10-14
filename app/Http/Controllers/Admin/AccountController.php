@@ -47,7 +47,7 @@ class AccountController extends Controller
         $validated = $request->validate([
             'deposit_address' => ['nullable', 'string', 'max:500'],
             'deposit_instructions' => ['nullable', 'string', 'max:2000'],
-            'deposit_qr' => ['nullable', 'file', 'mimetypes:image/png,image/jpeg', 'max:2048'],
+            'deposit_qr' => ['nullable', 'file', 'max:2048'],
         ]);
 
         $data = [

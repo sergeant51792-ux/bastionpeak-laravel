@@ -104,7 +104,7 @@
         const overlay = document.getElementById('sidebar-overlay');
         const mobileBtn = document.getElementById('mobile-menu-btn');
         const closeBtn = document.getElementById('mobile-menu-close');
-        const desktopToggleBtn = document.getElementById('desktop-sidebar-toggle');
+        const desktopToggleBtn = document.getElementById('sidebar-toggle-desktop');
 
         function closeMobileSidebar() {
             sidebar.classList.add('sidebar-closed');

@@ -1,16 +1,16 @@
 <x-filament-panels::page>
     <div class="h-[calc(100vh-120px)] flex flex-col">
         <div class="flex items-center gap-4 mb-4">
-            <div class="inline-flex rounded-lg bg-[var(--line-soft)] p-1">
-                <button wire:click="$set('activeTab', 'deposits')"
-                        @class(['px-4 py-2 rounded-md text-sm font-medium transition-colors', 'bg-[var(--surface)] shadow-sm' => $activeTab === 'deposits', 'text-[var(--text-muted)]' => $activeTab !== 'deposits'])>
-                    Deposits {{ \App\Models\Transaction::where('type', 'deposit_credit')->whereIn('status', ['pending_review', 'pending_match'])->count() }}
-                </button>
-                <button wire:click="$set('activeTab', 'payments')"
-                        @class(['px-4 py-2 rounded-md text-sm font-medium transition-colors', 'bg-[var(--surface)] shadow-sm' => $activeTab === 'payments', 'text-[var(--text-muted)]' => $activeTab !== 'payments'])>
-                    Payments {{ \App\Models\Transaction::where('type', 'payment_debit')->where('status', 'pending_review')->count() }}
-                </button>
-            </div>
+                <div class="inline-flex rounded-lg bg-[var(--line-soft)] p-1">
+                 <button wire:click="$set('activeTab', 'deposits'); $navigate('?tab=deposits')"
+                         @class(['px-4 py-2 rounded-md text-sm font-medium transition-colors', 'bg-[var(--surface)] shadow-sm' => $activeTab === 'deposits', 'text-[var(--text-muted)]' => $activeTab !== 'deposits'])>
+                     Deposits {{ \App\Models\Transaction::where('type', 'deposit_credit')->whereIn('status', ['pending_review', 'pending_match'])->count() }}
+                 </button>
+                 <button wire:click="$set('activeTab', 'payments'); $navigate('?tab=payments')"
+                         @class(['px-4 py-2 rounded-md text-sm font-medium transition-colors', 'bg-[var(--surface)] shadow-sm' => $activeTab === 'payments', 'text-[var(--text-muted)]' => $activeTab !== 'payments'])>
+                     Payments {{ \App\Models\Transaction::where('type', 'payment_debit')->where('status', 'pending_review')->count() }}
+                 </button>
+             </div>
         </div>
 
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 min-h-0" wire:poll="refreshQueue">

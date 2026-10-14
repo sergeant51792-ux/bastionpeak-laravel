@@ -1,7 +1,26 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {{ \App\Widgets\StatsOverview::make()->render() }}
+            <div class="p-4 bg-[var(--surface-raised)] rounded-lg border border-[var(--line)]">
+                <p class="text-sm text-[var(--text-muted)]">Total balance</p>
+                <p class="text-2xl font-semibold text-[var(--text)]">{{ number_format((float) $systemBalance, 2) }}</p>
+                <p class="text-xs text-[var(--text-muted)] mt-1">{{ \App\Models\Account::count() }} accounts</p>
+            </div>
+            <div class="p-4 bg-[var(--surface-raised)] rounded-lg border border-[var(--line)]">
+                <p class="text-sm text-[var(--text-muted)]">Transactions today</p>
+                <p class="text-2xl font-semibold text-[var(--text)]">{{ \App\Models\Transaction::whereDate('created_at', today())->count() }}</p>
+                <p class="text-sm text-[var(--text-muted)] mt-1">{{ \App\Models\Transaction::whereDate('created_at', today())->whereIn('status', ['approved', 'credited'])->count() }} completed</p>
+            </div>
+            <div class="p-4 bg-[var(--surface-raised)] rounded-lg border border-[var(--line)]">
+                <p class="text-sm text-[var(--text-muted)]">Pending approvals</p>
+                <p class="text-2xl font-semibold text-[var(--text)]">{{ \App\Models\Transaction::whereIn('status', ['pending_review', 'pending_match'])->count() }}</p>
+                <p class="text-xs text-[var(--text-muted)] mt-1">{{ \App\Models\Transaction::where('type', 'deposit_credit')->whereIn('status', ['pending_review', 'pending_match'])->count() }} deposits, {{ \App\Models\Transaction::where('type', 'payment_debit')->where('status', 'pending_review')->count() }} payments</p>
+            </div>
+            <div class="p-4 bg-[var(--surface-raised)] rounded-lg border border-[var(--line)]">
+                <p class="text-sm text-[var(--text-muted)]">Anomalies</p>
+                <p class="text-2xl font-semibold text-[var(--text)]">{{ count($anomalies) }}</p>
+                <p class="text-xs text-[var(--text-muted)] mt-1">Requires attention</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -12,7 +31,7 @@
                         <div class="flex items-center justify-between p-3 bg-[var(--line-soft)] rounded">
                             <div>
                                 <p class="font-medium text-[var(--text)]">{{ $item->fromUser?->name ?? 'Unknown' }}</p>
-                                <p class="text-sm text-[var(--text-muted)]">{{ $item->type->label() }} — {{ $item->amount }}</p>
+                                <p class="text-sm text-[var(--text-muted)]">{{ $item->type->label() }} — {{ number_format((float) $item->amount, $item->currency->decimals ?? 2) }} {{ $item->currency->symbol ?? '' }}</p>
                             </div>
                             <a href="{{ route('admin.approvals', ['tab' => $item->type === \App\Enums\TransactionType::DepositCredit ? 'deposits' : 'payments']) }}"
                                class="text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)]">

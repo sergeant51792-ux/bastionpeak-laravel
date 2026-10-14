@@ -65,6 +65,6 @@ class PayController extends Controller
             metadata: $request->input('metadata'),
         );
 
-        return redirect()->route('transfer', ['status' => 'submitted'])->with('status', 'Payment request submitted. It will be reviewed before processing.');
+        return redirect()->route('pay', ['status' => 'submitted'])->with('status', 'Payment request submitted. It will be reviewed before processing.');
     }
 }

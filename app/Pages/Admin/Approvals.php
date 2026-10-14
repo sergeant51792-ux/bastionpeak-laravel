@@ -27,6 +27,12 @@ class Approvals extends Page
     public ?string $activeTab = 'deposits';
     public ?int $openTransactionId = null;
 
+    public function mount(): void
+    {
+        $this->activeTab = request()->query('tab', 'deposits');
+        $this->openTransactionId = request()->query('open') ? (int) request()->query('open') : null;
+    }
+
     public function refreshQueue(): void
     {
     }
@@ -59,7 +65,8 @@ class Approvals extends Page
     public function getOpenTransactionProperty()
     {
         if ($this->openTransactionId) {
-            return Transaction::find($this->openTransactionId);
+            return Transaction::with(['fromUser', 'toUser', 'fromAccount', 'toAccount.depositMethods', 'merchant', 'currency'])
+                ->find($this->openTransactionId);
         }
 
         return $this->queue->first();
