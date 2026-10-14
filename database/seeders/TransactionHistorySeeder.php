@@ -7,7 +7,6 @@ namespace Database\Seeders;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Account;
-use App\Models\Currency;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -19,18 +18,20 @@ use Illuminate\Database\Seeder;
  * For each user account the net sum of all seeded transactions
  * (credits minus debits) equals the account's current balance.
  *
- * Usage: php artisan db:seed --class=TransactionHistorySeeder
+ * Usage: php artisan db:seed --class=TransactionHistorySeeder -- --reset
  */
 class TransactionHistorySeeder extends Seeder
 {
     public function run(): void
     {
+        $reset = $this->command->hasOption('reset') && $this->command->option('reset');
+        $reset = $reset || request()->query('reset') === '1';
         $users = User::with('accounts.currency')->get();
         $counter = 1;
 
         foreach ($users as $user) {
             foreach ($user->accounts as $account) {
-                $counter = $this->seedAccountTransactions($user, $account, $counter);
+                $counter = $this->seedAccountTransactions($user, $account, $counter, $reset);
             }
         }
     }
@@ -38,7 +39,8 @@ class TransactionHistorySeeder extends Seeder
     private function seedAccountTransactions(
         User $user,
         Account $account,
-        int $counter
+        int $counter,
+        bool $reset = false
     ): int {
         $currencyCode = $account->currency->code;
         $balance = (float) $account->balance;
@@ -47,12 +49,18 @@ class TransactionHistorySeeder extends Seeder
             return $counter;
         }
 
-        // Skip if account already has transaction history
+        if ($reset) {
+            Transaction::where('from_account_id', $account->id)
+                ->orWhere('to_account_id', $account->id)
+                ->delete();
+        }
+
         $existingCount = Transaction::where(function ($q) use ($account) {
             $q->where('from_account_id', $account->id)
               ->orWhere('to_account_id', $account->id);
         })->count();
-        if ($existingCount >= 10) {
+
+        if (!$reset && $existingCount >= 10) {
             $this->command->info(sprintf(
                 '  %s — %s %s: skipping (%d existing transactions)',
                 $user->name,
@@ -78,24 +86,20 @@ class TransactionHistorySeeder extends Seeder
             ? ['BTC withdrawal', 'Crypto swap', 'Trading fee', 'Network fee', 'Crypto purchase']
             : ['Utility payment', 'Grocery shopping', 'Coffee', 'Streaming subscription', 'Fuel purchase', 'Dining out', 'Online shopping', 'Phone bill', 'Insurance premium', 'Transfer fee'];
 
-        // Generate dates spread over the full year
         $dates = [];
         for ($i = 0; $i < $transactionCount; $i++) {
             $dates[] = $startDate->copy()->addDays(rand(2, 425))->addHours(rand(8, 20))->addMinutes(rand(0, 59));
         }
         sort($dates);
 
-        // Split into credits and debits
         $creditCount = (int) ceil($transactionCount * ($isCrypto ? 0.4 : 0.6));
         $debitCount = $transactionCount - $creditCount;
 
-        // For credits: total should be more than balance (since debits subtract)
-        // For debits: total should be less than credit total
-        $creditTarget = $balance * 1.3; // credits exceed balance because debits will subtract
-        $debitTarget = $balance * 0.3;  // debits are smaller
+        $totalNeeded = $balance * 1.3;
+        $debitTarget = $balance * 0.3;
 
-        $creditAmounts = $this->generateAmounts($creditCount, $creditTarget, $decimals, $isCrypto, true);
-        $debitAmounts = $this->generateAmounts($debitCount, $debitTarget, $decimals, $isCrypto, false);
+        $creditAmounts = $this->generateAmounts($creditCount, $totalNeeded, $decimals);
+        $debitAmounts = $this->generateAmounts($debitCount, $debitTarget, $decimals);
 
         $slots = [];
         $ci = 0;
@@ -109,7 +113,8 @@ class TransactionHistorySeeder extends Seeder
                     'amount' => $creditAmounts[$ci++],
                     'memo' => $creditDescriptors[array_rand($creditDescriptors)],
                 ];
-            } elseif ($di < $debitCount) {
+            }
+            if ($di < $debitCount && ($ci + $di <= $transactionCount - 1)) {
                 $slots[] = [
                     'date' => $dates[$i],
                     'type' => $isCrypto ? TransactionType::PaymentDebit : TransactionType::Debit,
@@ -119,7 +124,6 @@ class TransactionHistorySeeder extends Seeder
             }
         }
 
-        // Calculate running balance and add adjustment if needed
         $runningBalance = 0.0;
         foreach ($slots as $slot) {
             $isIncoming = in_array($slot['type'], [TransactionType::Credit, TransactionType::DepositCredit, TransactionType::Refund], true);
@@ -136,14 +140,13 @@ class TransactionHistorySeeder extends Seeder
             ];
         }
 
-        // Sort by date
         usort($slots, fn($a, $b) => $a['date'] <=> $b['date']);
 
         foreach ($slots as $slot) {
             $isIncoming = in_array($slot['type'], [TransactionType::Credit, TransactionType::DepositCredit, TransactionType::Refund], true);
             $isOutgoing = !$isIncoming;
 
-            $txn = Transaction::create([
+            Transaction::create([
                 'transaction_id'    => 'TXN-' . strtoupper(dechex(1000 + $counter)) . '-' . $slot['date']->format('Ymd'),
                 'from_account_id'   => $isOutgoing ? $account->id : null,
                 'to_account_id'     => $isIncoming ? $account->id : null,
@@ -179,7 +182,7 @@ class TransactionHistorySeeder extends Seeder
         return $counter;
     }
 
-    private function generateAmounts(int $count, float $target, int $decimals, bool $isCrypto, bool $isCredit): array
+    private function generateAmounts(int $count, float $target, int $decimals): array
     {
         $amounts = [];
         if ($count <= 0) {
@@ -190,11 +193,7 @@ class TransactionHistorySeeder extends Seeder
 
         for ($i = 0; $i < $count; $i++) {
             $jitter = 0.3 + (mt_rand(0, 140) / 100);
-            $amount = round($avgAmount * $jitter, $decimals);
-            if ($isCrypto) {
-                $amount = max($amount, pow(10, -$decimals));
-            }
-            $amounts[] = $amount;
+            $amounts[] = round($avgAmount * $jitter, $decimals);
         }
 
         return $amounts;
