@@ -20,28 +20,21 @@
         </a>
     </div>
 
-     {{-- Wallet Balance --}}
+    {{-- Wallet Balance --}}
     <div>
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-[var(--text-muted)]">Total portfolio value</span>
-            <button id="toggle-balance" onclick="toggleHideBalance()" class="text-xs text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
-                <span id="toggle-balance-text" class="{{ $hideBalance ? '' : 'hidden' }}">Show</span>
-                <span id="toggle-balance-text-hidden" class="{{ $hideBalance ? 'hidden' : '' }}">Hide</span>
-                <x-icon name="eye" class="w-3.5 h-3.5" />
-            </button>
-        </div>
         @if(count($walletBalances) > 0)
             <div id="wallet-slider" class="relative overflow-hidden">
                 <div id="wallet-track" class="flex transition-transform duration-500 ease-out">
                     @foreach($walletBalances as $code => $wallet)
                         <div class="w-full flex-shrink-0" data-currency="{{ $code }}">
                             <div class="card-balance h-44 sm:h-48">
-                                <div class="relative z-10 flex h-full flex-col justify-between">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <p class="text-xs font-medium uppercase tracking-wider text-white/60">Wallet</p>
-                                            <p class="font-semibold text-white">{{ $wallet['name'] }}</p>
-                                        </div>
+                                <button id="toggle-balance" onclick="toggleHideBalance()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all z-10" aria-label="Toggle balance visibility">
+                                    <x-icon name="eye" class="w-4 h-4" />
+                                </button>
+                                <div class="relative z-10 flex h-full flex-col justify-between pt-10">
+                                    <div>
+                                        <p class="text-xs font-medium uppercase tracking-wider text-white/60">Wallet</p>
+                                        <p class="font-semibold text-white">{{ $wallet['name'] }}</p>
                                     </div>
                                     <div>
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
@@ -135,7 +128,7 @@
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
                 @foreach($inProgress as $txn)
                     <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
-                        <span class="txn-icon w-10 h-10" style="background: var(--warning-bg); color: var(--warning); border-color: rgba(217, 119, 6, 0.15);">
+                        <span class="txn-icon w-10 h-10">
                             <x-icon name="clock" class="w-4 h-4" />
                         </span>
                         <div class="flex-1 min-w-0">
@@ -295,56 +288,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function toggleHideBalance() {
     var isHidden = document.body.getAttribute('data-hide-balance') === 'true';
+    var eyeIcon = document.querySelector('#toggle-balance svg');
     if (isHidden) {
         document.body.removeAttribute('data-hide-balance');
-        fetch('{{ route('profile.preferences') }}', {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-            body: new FormData()
-        });
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ route('profile.preferences') }}';
-        var token = document.createElement('input');
-        token.type = 'hidden';
-        token.name = '_token';
-        token.value = '{{ csrf_token() }}';
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'hide_balance';
-        input.value = '0';
-        var themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'theme_preference';
-        themeInput.value = '{{ $user->theme_preference ?: "system" }}';
-        form.appendChild(token);
-        form.appendChild(input);
-        form.appendChild(themeInput);
-        document.body.appendChild(form);
-        form.submit();
+        if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye');
     } else {
         document.body.setAttribute('data-hide-balance', 'true');
-        var form2 = document.createElement('form');
-        form2.method = 'POST';
-        form2.action = '{{ route('profile.preferences') }}';
-        var token = document.createElement('input');
-        token.type = 'hidden';
-        token.name = '_token';
-        token.value = '{{ csrf_token() }}';
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'hide_balance';
-        input.value = '1';
-        var themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'theme_preference';
-        themeInput.value = '{{ $user->theme_preference ?: "system" }}';
-        form2.appendChild(token);
-        form2.appendChild(input);
-        form2.appendChild(themeInput);
-        document.body.appendChild(form2);
-        form2.submit();
+        if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye-off');
     }
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ route('profile.preferences') }}';
+    var token = document.createElement('input');
+    token.type = 'hidden';
+    token.name = '_token';
+    token.value = '{{ csrf_token() }}';
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'hide_balance';
+    input.value = isHidden ? '0' : '1';
+    var themeInput = document.createElement('input');
+    themeInput.type = 'hidden';
+    themeInput.name = 'theme_preference';
+    themeInput.value = '{{ $user->theme_preference ?: "system" }}';
+    form.appendChild(token);
+    form.appendChild(input);
+    form.appendChild(themeInput);
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 @endsection

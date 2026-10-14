@@ -24,16 +24,16 @@
 
         <div class="flex items-center gap-5">
             <div class="relative">
-                <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-white/70 shadow-lg flex items-center justify-center bg-[var(--accent-subtle)]">
-                    @if($user->profile_picture_url)
-                        <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name ?? 'Profile' }}" class="w-full h-full object-cover">
-                    @else
-                        @php
-                            $initials = strtoupper(substr($user->name ?? $user->email ?? 'BP', 0, 2));
-                        @endphp
-                        <span class="text-2xl font-bold" style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $initials }}</span>
-                    @endif
-                </div>
+                <span class="avatar-ring w-20 h-20">
+                @if($user->profile_picture_url)
+                    <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name ?? 'Profile' }}" class="w-full h-full object-cover">
+                @else
+                    @php
+                        $initials = strtoupper(substr($user->name ?? $user->email ?? 'BP', 0, 2));
+                    @endphp
+                    <span class="avatar-initials text-2xl">{{ $initials }}</span>
+                @endif
+                </span>
                 <label for="picture-input" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-dark)] border-2 border-white/70 flex items-center justify-center text-white transition-colors cursor-pointer min-w-[44px] min-h-[44px]">
                     <x-icon name="camera" class="w-3.5 h-3.5" />
                     <input type="file" id="picture-input" name="picture" accept="image/*" class="hidden">

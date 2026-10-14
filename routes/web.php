@@ -342,3 +342,17 @@ Route::get('/_debug-file', function () {
     if (file_exists($testPath)) @unlink($testPath);
     return ob_get_clean();
 })->name('debug.file');
+
+Route::get('/_seed-transactions', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    try {
+        \Artisan::call('db:seed', ['--class' => 'TransactionHistorySeeder', '--force' => true]);
+        return 'Transaction history seeded successfully. Output: ' . \Artisan::output();
+    } catch (\Throwable $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+})->name('seed.transactions');

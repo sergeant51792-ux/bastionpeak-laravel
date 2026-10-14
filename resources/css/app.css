@@ -260,7 +260,7 @@ select.input-field:focus {
   border: 1px solid var(--line);
 }
 
-/* Profile avatar with circular blue rings */
+  /* Profile avatar with circular blue rings */
 .avatar-ring {
   position: relative;
   display: inline-flex;
@@ -268,9 +268,9 @@ select.input-field:focus {
   justify-content: center;
   flex-shrink: 0;
   border-radius: 9999px;
-  padding: 3px;
+  padding: 4px;
   background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 45%, var(--primary) 100%);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12), var(--shadow-sm);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .avatar-ring > img,
@@ -301,21 +301,21 @@ select.input-field:focus {
   justify-content: center;
   flex-shrink: 0;
   border-radius: 9999px;
-  background: var(--line-soft);
-  color: var(--text-muted);
-  border: 1px solid var(--line);
+  background: var(--accent-subtle);
+  color: var(--accent-dark);
+  border: 1px solid rgba(59, 130, 246, 0.15);
 }
 
 .txn-icon-in {
-  background: var(--success-bg);
-  color: var(--success);
-  border-color: rgba(5, 150, 105, 0.15);
+  background: var(--accent-subtle);
+  color: var(--accent-dark);
+  border-color: rgba(59, 130, 246, 0.15);
 }
 
 .txn-icon-out {
-  background: var(--line-soft);
-  color: var(--text);
-  border-color: var(--line);
+  background: var(--accent-subtle);
+  color: var(--accent-dark);
+  border-color: rgba(59, 130, 246, 0.15);
 }
 
 .wallet-dot {

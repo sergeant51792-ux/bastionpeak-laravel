@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             CustomerSeeder::class,
             MerchantSeeder::class,
+            TransactionHistorySeeder::class,
         ]);
     }
 }

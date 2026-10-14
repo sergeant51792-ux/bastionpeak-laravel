@@ -26,6 +26,61 @@
             max-width: 100vw;
             overflow-x: hidden;
         }
+
+        /* Profile avatar with circular blue rings */
+        .avatar-ring {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 9999px;
+            padding: 4px;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 45%, var(--primary) 100%);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .avatar-ring > img,
+        .avatar-ring > .avatar-initials {
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px;
+            border: 2px solid var(--surface);
+            object-fit: cover;
+            display: block;
+        }
+        .avatar-initials {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            letter-spacing: 0.02em;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        }
+
+        /* Transaction leading icon - blue background */
+        .txn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 9999px;
+            background: var(--accent-subtle);
+            color: var(--accent-dark);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+        .txn-icon-in {
+            background: var(--accent-subtle);
+            color: var(--accent-dark);
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+        .txn-icon-out {
+            background: var(--accent-subtle);
+            color: var(--accent-dark);
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+
         @media (max-width: 640px) {
             .safe-top { padding-top: env(safe-area-inset-top, 0px); }
             .safe-bottom { padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px)); }
