@@ -14,7 +14,7 @@
     <h1 class="text-3xl lg:text-4xl font-bold text-[var(--text)] tracking-tight">Terms of Service</h1>
     <p class="mt-2 text-sm text-[var(--text-muted)]">Last updated: {{ date('F j, Y') }}</p>
 
-    <div class="mt-8 bg-white border border-[var(--line)] rounded-2xl p-6 sm:p-10 space-y-8 text-sm leading-relaxed text-[var(--text)]">
+    <div class="mt-8 bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 sm:p-10 space-y-8 text-sm leading-relaxed text-[var(--text)]">
         <section>
             <h2 class="text-lg font-semibold mb-2">1. Acceptance of terms</h2>
             <p class="text-[var(--text-muted)]">By creating an account or using the Bastion Peak platform ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.</p>

@@ -10,13 +10,13 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach($services as $service)
-            <div class="bg-white border border-[var(--line)] rounded-2xl p-5">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="font-semibold text-[var(--text)]">{{ $service->name }}</h3>
                     <span class="text-xs px-2 py-1 rounded-full
-                        @if($service->type === 'loan') bg-blue-100 text-blue-700
-                        @elseif($service->type === 'grant') bg-purple-100 text-purple-700
-                        @else bg-green-100 text-green-700 @endif">
+                        @if($service->type === 'loan') bg-[var(--accent-subtle)] text-[var(--accent)]
+                        @elseif($service->type === 'grant') bg-[var(--warning-bg)] text-[var(--warning)]
+                        @else bg-[var(--success-bg)] text-[var(--success)] @endif">
                         {{ ucfirst($service->type) }}
                     </span>
                 </div>

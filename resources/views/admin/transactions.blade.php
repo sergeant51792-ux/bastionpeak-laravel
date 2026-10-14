@@ -32,7 +32,7 @@
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
             <button class="flex-1 px-4 py-2.5 bg-[var(--success)] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-sm min-h-[44px]">Credit</button>
-            <button class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors shadow-sm min-h-[44px]">Debit</button>
+            <button class="flex-1 px-4 py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-sm min-h-[44px]">Debit</button>
             <button class="flex-1 px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-all min-h-[44px]">Export</button>
         </div>
     </div>
@@ -64,7 +64,7 @@
                         <td class="px-4 py-3">{{ $fromName }} to {{ $toName }}</td>
                         <td class="px-4 py-3">{{ $typeLabel }}</td>
                         <td class="px-4 py-3">
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => in_array($status, ['credited','approved']), 'bg-yellow-100 text-yellow-800' => in_array($status, ['pending_review','pending_match']), 'bg-red-100 text-red-800' => in_array($status, ['rejected','reversed'])]))>
+                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($status, ['credited','approved']), 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($status, ['pending_review','pending_match']), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($status, ['rejected','reversed'])]))>
                                 {{ $statusLabel }}
                             </span>
                         </td>

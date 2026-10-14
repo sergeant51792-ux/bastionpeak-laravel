@@ -53,7 +53,7 @@
                     <span class="badge {{ $toneClass }}">{{ ucfirst($card->status ?? 'unknown') }}</span>
                 </div>
 
-                <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl mt-4">
+                <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl mt-4">
                     <div class="p-5">
                         <dl class="divide-y divide-[var(--line)]">
                             <div class="flex items-center justify-between py-3">
@@ -92,14 +92,14 @@
                 </div>
             </div>
         @empty
-            <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
+            <div class="empty-state bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
                 <x-icon name="credit-card" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
                 <p class="text-sm text-[var(--text-muted)]">No cards issued yet.</p>
             </div>
         @endforelse
 
         @if(!$pendingRequest)
-            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
                 <h2 class="text-base font-bold text-[var(--text)] mb-1">Request a card</h2>
                 <p class="text-sm text-[var(--text-muted)] mb-4">Submit a request and it will be reviewed shortly.</p>
                 <form method="POST" action="{{ route('cards.request') }}" class="space-y-4">
@@ -121,7 +121,7 @@
                 </form>
             </div>
         @else
-            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
                 <h2 class="text-base font-bold text-[var(--text)] mb-1">Card request</h2>
                 <p class="text-sm text-[var(--text-muted)]">A pending request for <span class="font-medium text-[var(--text)]">{{ optional($pendingRequest->account)->name ?? '—' }}</span> is being reviewed.</p>
                 <div class="mt-3">

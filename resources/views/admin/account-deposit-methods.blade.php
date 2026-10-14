@@ -34,11 +34,11 @@
                         $attached = $account->depositMethods()->where('deposit_method_id', $method->id)->first();
                     @endphp
                     @if($attached)
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)]/30">
                             Configured
                         </span>
                     @else
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--line-soft)] text-[var(--text-muted)] border border-[var(--line)]">
                             Not configured
                         </span>
                     @endif
@@ -106,7 +106,7 @@
                         @if($attached && $attached->pivot->qr_path)
                             <div class="flex items-center gap-2 mb-2">
                                 <img src="{{ asset('storage/' . $attached->pivot->qr_path) }}" alt="QR" class="w-24 h-24 object-contain border border-[var(--line)] rounded-xl">
-                                <button type="button" onclick="removeQr(this)" data-id="{{ $attached->pivot->id ?? '' }}" class="p-1 text-red-600 hover:bg-red-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Remove QR">
+                                <button type="button" onclick="removeQr(this)" data-id="{{ $attached->pivot->id ?? '' }}" class="p-1 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Remove QR">
                                     <x-icon name="x" class="w-4 h-4" />
                                 </button>
                             </div>

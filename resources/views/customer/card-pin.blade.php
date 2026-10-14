@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
         @if($hasPin)
             <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Change PIN</h2>
             <form method="POST" action="{{ route('card.pin.change', $card) }}" class="space-y-4" id="form-change">
@@ -59,7 +59,7 @@
         <div id="keypad" class="grid grid-cols-3 gap-2 mt-6"></div>
     </div>
 
-    <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
         <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Report a problem</h2>
         <form method="POST" action="{{ route('messages.send') }}" class="space-y-4">
             @csrf
@@ -73,12 +73,12 @@
     </div>
 
     @if(session('status'))
-        <div class="p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700 font-medium">
+        <div class="p-4 bg-[var(--success-bg)] border border-[var(--success)]/30 rounded-xl text-sm text-[var(--success)] font-medium">
             {{ session('status') }}
         </div>
     @endif
     @if($errors->any())
-        <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+        <div class="p-4 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
             <ul class="list-disc list-inside">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -102,7 +102,7 @@
         container.innerHTML = '';
         for (var i = 0; i < 4; i++) {
             var dot = document.createElement('div');
-            dot.className = 'w-10 h-10 border-2 border-gray-300 rounded-xl flex items-center justify-center text-xl font-bold text-gray-700';
+            dot.className = 'w-10 h-10 border-2 border-[var(--line)] rounded-xl flex items-center justify-center text-xl font-bold text-[var(--text-muted)]';
             dot.textContent = i < pin.length ? '•' : '•';
             dot.style.opacity = i < pin.length ? '1' : '0.3';
             container.appendChild(dot);
@@ -130,7 +130,7 @@
         container.appendChild(zeroBtn);
         var clearBtn = document.createElement('button');
         clearBtn.type = 'button';
-        clearBtn.className = 'py-4 text-lg font-bold text-red-600 bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl hover:bg-red-50 transition-colors';
+        clearBtn.className = 'py-4 text-lg font-bold text-[var(--danger)] bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl hover:bg-[var(--danger-bg)] transition-colors';
         clearBtn.textContent = '⌫';
         clearBtn.onclick = function() {
             pin = pin.slice(0, -1);

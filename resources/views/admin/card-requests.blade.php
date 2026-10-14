@@ -27,7 +27,7 @@
                         <td class="px-4 py-3">{{ $request->account->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $request->reason ?? '—' }}</td>
                         <td class="px-4 py-3">
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-yellow-100 text-yellow-800' => $request->status === 'pending', 'bg-green-100 text-green-800' => $request->status === 'approved', 'bg-red-100 text-red-800' => $request->status === 'rejected'])>
+                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $request->status === 'pending', 'bg-[var(--success-bg)] text-[var(--success)]' => $request->status === 'approved', 'bg-[var(--danger-bg)] text-[var(--danger)]' => $request->status === 'rejected'])>
                                 {{ ucfirst($request->status) }}
                             </span>
                         </td>
@@ -41,7 +41,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('admin.card-requests.reject', $request) }}" onsubmit="return confirm('Reject this card request?')">
                                         @csrf
-                                        <button type="submit" class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">Reject</button>
+                                        <button type="submit" class="px-3 py-1.5 bg-[var(--danger)] text-white rounded-lg text-xs font-bold hover:opacity-90 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">Reject</button>
                                     </form>
                                 </div>
                             @else

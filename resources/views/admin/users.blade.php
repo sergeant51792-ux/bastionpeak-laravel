@@ -54,7 +54,7 @@
                         <td class="px-4 py-3">{{ $accountCount }}</td>
                          <td class="px-4 py-3 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $totalBalance, 2) }} USD</td>
                         <td class="px-4 py-3">
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $user->status === 'active', 'bg-blue-100 text-blue-800' => $user->status === 'frozen', 'bg-red-100 text-red-800' => $user->status === 'locked', 'bg-gray-100 text-gray-800' => $user->status === 'closed', 'bg-amber-100 text-amber-800' => $user->status === 'pending'])>
+                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => $user->status === 'active', 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $user->status === 'frozen', 'bg-[var(--danger-bg)] text-[var(--danger)]' => $user->status === 'locked', 'bg-[var(--line-soft)] text-[var(--text-muted)]' => $user->status === 'closed', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $user->status === 'pending'])>
                                 {{ ucfirst($user->status) }}
                             </span>
                         </td>
@@ -63,21 +63,21 @@
                                 @if($user->status === 'pending')
                                     <form method="POST" action="{{ route('admin.users.approve', $user) }}" class="inline" onsubmit="return confirm('Approve this signup and activate their account?')">
                                         @csrf
-                                        <button type="submit" class="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors" aria-label="Approve signup">
+                                        <button type="submit" class="px-3 py-1.5 bg-[var(--success)] text-white rounded-lg text-xs font-medium hover:opacity-90 transition-colors" aria-label="Approve signup">
                                             Approve
                                         </button>
                                     </form>
                                 @elseif($user->status === 'active')
                                     <form method="POST" action="{{ route('admin.users.freeze', $user) }}" class="inline" onsubmit="return confirm('Freeze this user account?')">
                                         @csrf
-                                        <button type="submit" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Freeze">
+                                        <button type="submit" class="p-1.5 text-[var(--accent)] hover:bg-[var(--line-soft)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Freeze">
                                             <x-icon name="pause" class="w-4 h-4" />
                                         </button>
                                     </form>
                                     <form method="POST" action="{{ route('admin.users.block', $user) }}" class="inline" onsubmit="return confirm('Block this user account?')" title="Block account">
                                         @csrf
                                         <input type="hidden" name="reason" value="Blocked by admin">
-                                        <button type="submit" class="p-1.5 text-red-600 hover:bg-red-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
+                                        <button type="submit" class="p-1.5 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
                                             <x-icon name="lock" class="w-4 h-4" />
                                         </button>
                                     </form>
@@ -87,14 +87,14 @@
                                         <input type="hidden" name="name" value="{{ $user->name }}">
                                         <input type="hidden" name="email" value="{{ $user->email }}">
                                         <input type="hidden" name="status" value="active">
-                                        <button type="submit" class="p-1.5 text-green-600 hover:bg-green-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Unfreeze">
+                                        <button type="submit" class="p-1.5 text-[var(--success)] hover:bg-[var(--success-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Unfreeze">
                                             <x-icon name="play" class="w-4 h-4" />
                                         </button>
                                     </form>
                                     <form method="POST" action="{{ route('admin.users.block', $user) }}" class="inline" onsubmit="return confirm('Block this user account?')" title="Block account">
                                         @csrf
                                         <input type="hidden" name="reason" value="Blocked by admin">
-                                        <button type="submit" class="p-1.5 text-red-600 hover:bg-red-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
+                                        <button type="submit" class="p-1.5 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
                                             <x-icon name="lock" class="w-4 h-4" />
                                         </button>
                                     </form>

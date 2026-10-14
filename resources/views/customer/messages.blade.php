@@ -14,7 +14,7 @@
     </div>
 
     {{-- New Message Form (collapsed) --}}
-    <div id="new-msg-form" class="hidden bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
+    <div id="new-msg-form" class="hidden bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <form method="POST" action="{{ route('messages.send') }}" class="space-y-4">
             @csrf
             <input type="hidden" name="subject" value="Customer message">
@@ -36,7 +36,7 @@
                     <div @class([
                         'p-4 rounded-2xl',
                         'bg-[var(--primary)] text-white' => $isMine,
-                        'bg-white dark:bg-[var(--surface)] border border-[var(--line)] text-[var(--text)]' => ! $isMine,
+                        'bg-[var(--surface)] border border-[var(--line)] text-[var(--text)]' => ! $isMine,
                     ])>
                         <p class="text-sm">{{ $msg->body }}</p>
                         <div class="flex items-center justify-between gap-3 mt-1.5">
@@ -72,7 +72,7 @@
     @else
         <div class="space-y-2.5">
             @forelse($threads as $thread)
-                <div class="flex items-start gap-3 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-sm transition-all">
+                <div class="flex items-start gap-3 p-4 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-sm transition-all">
                     <a href="{{ route('messages', ['thread' => $thread->thread_id]) }}" class="flex items-start gap-3 flex-1 min-w-0">
                         <span class="txn-icon w-10 h-10">
                             <x-icon name="message-square" class="w-4 h-4" />
@@ -99,7 +99,7 @@
                     </div>
                 </div>
             @empty
-                <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-8">
+                <div class="empty-state bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-8">
                     <x-icon name="message-square" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
                     <p class="text-sm text-[var(--text-muted)] mb-4">No secure messages yet. Send a message to get started.</p>
                     <form method="POST" action="{{ route('messages.send') }}" class="flex gap-2 max-w-md mx-auto">

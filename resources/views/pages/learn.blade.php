@@ -15,7 +15,7 @@
     </p>
 
     <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <article class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-4">
                 <x-icon name="wallet" class="w-5 h-5" />
             </div>
@@ -24,7 +24,7 @@
                 Choose the funding method that works best. Cryptocurrency is usually credited quickly but may require network confirmations. Gift cards and bank transfers are reviewed by our team before funds are credited — check the expected time shown for each method.
             </p>
         </article>
-        <article class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-4">
                 <x-icon name="send" class="w-5 h-5" />
             </div>
@@ -33,7 +33,7 @@
                 Always confirm the recipient's details before sending. Once submitted, a transfer may require approval before it leaves your account. You'll see its status update in your transaction history in real time.
             </p>
         </article>
-        <article class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-4">
                 <x-icon name="shield-check" class="w-5 h-5" />
             </div>
@@ -42,7 +42,7 @@
                 Use a strong, unique password and enable authenticator codes when prompted. Never share your login details or one-time codes with anyone — including anyone claiming to be from support. We will never ask for your password or codes.
             </p>
         </article>
-        <article class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-4">
                 <x-icon name="credit-card" class="w-5 h-5" />
             </div>
@@ -51,7 +51,7 @@
                 Freeze any card instantly if it's lost or you spot unusual activity. Virtual cards are issued immediately; physical cards require a request and delivery time. Keep track of limits in the Cards section.
             </p>
         </article>
-        <article class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-4">
                 <x-icon name="clock" class="w-5 h-5" />
             </div>
@@ -60,13 +60,13 @@
                 <strong>Pending</strong> — the transaction is being reviewed. <strong>Credited / Completed</strong> — the money is in the destination account. <strong>Debited / Completed</strong> — money left your account. <strong>Failed</strong> — the transaction was declined. If a transfer fails, your funds are returned to balance.
             </p>
         </article>
-        <article class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] mb-4">
                 <x-icon name="landmark" class="w-5 h-5" />
             </div>
             <h2 class="text-base font-semibold text-[var(--text)]">Financial services</h2>
             <p class="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
-                Loans, insurance, and investment products are available through the Financial Services section. Applications are assessed individually — see <a href="{{ route('recommendations') }}" class="underline text-[var(--primary)]">Recommendations</a> for products matched to your profile.
+                Loans, insurance, and investment products are available through the Financial Services section. Applications are assessed individually — see <a href="{{ route('recommendations') }}" class="underline hover:text-[var(--primary)]">Recommendations</a> for products matched to your profile.
             </p>
         </article>
     </div>

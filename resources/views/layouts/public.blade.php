@@ -7,15 +7,19 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="description" content="@yield('meta_description', 'Bastion Peak is a modern banking platform for secure account management, transfers, and financial operations.')">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+            --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        }
+        body { font-family: var(--font-body); }
+        .font-display { font-family: var(--font-display); }
     </style>
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)]">
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--line)]">
+    <nav class="sticky top-0 z-50 bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--line)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="{{ route('landing') }}" class="flex items-center gap-2.5">
                 <x-bp-logo :width="28" :height="28" />
@@ -38,7 +42,7 @@
         @yield('content')
     </main>
 
-    <footer class="bg-white border-t border-[var(--line)] py-12 mt-12">
+    <footer class="bg-[var(--surface)] border-t border-[var(--line)] py-12 mt-12">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div>

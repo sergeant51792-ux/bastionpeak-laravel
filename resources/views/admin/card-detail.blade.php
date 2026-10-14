@@ -29,13 +29,13 @@
                 <form method="POST" action="{{ route('admin.cards.block', $card) }}" class="inline" onsubmit="return confirm('Block this card?')">
                     @csrf
                     <input type="hidden" name="reason" value="Blocked by admin">
-                    <button type="submit" class="px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all">Block</button>
+                    <button type="submit" class="px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-bold text-[var(--danger)] hover:bg-[var(--danger-bg)] transition-all">Block</button>
                 </form>
             @endif
             <form method="POST" action="{{ route('admin.cards.cancel', $card) }}" class="inline" onsubmit="return confirm('Cancel this card?')">
                 @csrf
                 <input type="hidden" name="reason" value="Cancelled by admin">
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors shadow-sm">Cancel card</button>
+                    <button type="submit" class="px-4 py-2 bg-[var(--danger)] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">Cancel card</button>
             </form>
         </div>
     </div>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Status</span>
-                    <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $card->status === 'active' ? 'bg-green-100 text-green-800' : ($card->status === 'frozen' ? 'bg-blue-100 text-blue-800' : ($card->status === 'blocked' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">{{ ucfirst($card->status ?? 'unknown') }}</span>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $card->status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : ($card->status === 'frozen' ? 'bg-[var(--accent-subtle)] text-[var(--accent)]' : ($card->status === 'blocked' ? 'bg-[var(--danger-bg)] text-[var(--danger)]' : 'bg-[var(--line-soft)] text-[var(--text-muted)]')) }}">{{ ucfirst($card->status ?? 'unknown') }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Valid from</span>

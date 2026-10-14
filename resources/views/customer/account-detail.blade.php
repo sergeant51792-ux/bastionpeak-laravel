@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <section class="bg-white border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)]">
+    <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)]">
         <div class="px-5 py-4">
             <h2 class="section-title mb-3">Limits</h2>
             <div class="space-y-4">

@@ -59,7 +59,7 @@
 {{-- Deposit Modal --}}
 <div id="deposit-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
     <div class="flex items-center justify-center min-h-screen p-4">
-         <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+         <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-5">
                     <h2 id="modal-title" class="text-lg font-semibold text-[var(--text)]">Receive via Bank Transfer</h2>
@@ -93,7 +93,7 @@
                 <div id="modal-step-details" class="hidden space-y-5">
                     <div class="text-center">
                         <div id="modal-qr-container" class="mb-4">
-                            <img id="modal-qr-image" src="" alt="QR Code or Deposit Image" class="w-48 h-48 object-contain mx-auto border border-[var(--line)] rounded-xl bg-white p-2">
+                            <img id="modal-qr-image" src="" alt="QR Code or Deposit Image" class="w-48 h-48 object-contain mx-auto border border-[var(--line)] rounded-xl bg-[var(--surface)] p-2">
                         </div>
                         <div id="modal-address-container" class="hidden mb-4">
                             <div class="flex items-center justify-center gap-2 p-3 bg-[var(--line-soft)] rounded-xl">
@@ -103,7 +103,7 @@
                                 </button>
                             </div>
                         </div>
-                        <span id="modal-copied" class="hidden fixed top-4 right-1/2 translate-x-1/2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-50">Copied!</span>
+                        <span id="modal-copied" class="hidden fixed top-4 right-1/2 translate-x-1/2 px-3 py-1.5 bg-[var(--primary)] text-white text-xs rounded-lg shadow-lg z-50">Copied!</span>
                     </div>
 
                     <div id="modal-instructions-container" class="hidden">
@@ -129,15 +129,14 @@
 
                  {{-- Step 3: Processing (success green state) --}}
                  <div id="modal-step-processing" class="hidden text-center py-8">
-                     <div class="w-24 h-24 mx-auto bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6 border-4 border-green-100 dark:border-green-900/30">
-                         <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                             <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
-                         </svg>
-                     </div>
-                     <h3 class="text-xl font-semibold text-[var(--text)] mb-2">{{ __('Request submitted') }}</h3>
-                     <p class="text-sm text-[var(--text-muted)] mb-5">{{ __('Your deposit request has been sent for admin approval. Your balance will update once it is processed.') }}</p>
-                     <div class="w-full bg-[var(--line-soft)] rounded-full h-1.5 mb-2">
-                         <div class="bg-green-500 h-1.5 rounded-full" style="width: 100%"></div>
+                <div class="w-24 h-24 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">
+                    <svg class="w-12 h-12 text-[var(--success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
+                    </svg>
+                </div>
+                ...
+                <div class="w-full bg-[var(--line-soft)] rounded-full h-1.5 mb-2">
+                    <div class="bg-[var(--success)] h-1.5 rounded-full" style="width: 100%"></div>
                      </div>
                      <p class="text-xs text-[var(--text-muted)]">Progress: 100%</p>
                      <button onclick="closeDepositModal()" class="mt-5 text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">
@@ -217,7 +216,7 @@ function showDepositDetails() {
     if (!anyAmount && (!amount || parseFloat(amount) <= 0)) {
         // Show error
         const errorDiv = document.createElement('div');
-        errorDiv.className = 'p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 mb-3';
+        errorDiv.className = 'p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)] mb-3';
         errorDiv.textContent = 'Please enter a valid amount or select "Any amount".';
         const amountDiv = document.getElementById('modal-step-amount');
         amountDiv.insertBefore(errorDiv, amountDiv.firstChild);

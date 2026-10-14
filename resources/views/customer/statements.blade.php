@@ -31,11 +31,11 @@
         <div>
             <label class="block text-sm font-semibold text-[var(--text)] mb-2">Format</label>
             <div class="grid grid-cols-2 gap-3">
-                <label class="flex items-center justify-center gap-2 p-3.5 bg-white border border-[var(--line)] rounded-xl cursor-pointer hover:border-[var(--accent)] transition-all has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-subtle)]">
+                <label class="flex items-center justify-center gap-2 p-3.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl cursor-pointer hover:border-[var(--accent)] transition-all has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-subtle)]">
                     <input type="radio" name="format" value="pdf" checked class="w-4 h-4 text-[var(--accent)]">
                     <span class="text-sm font-medium text-[var(--text)]">PDF</span>
                 </label>
-                <label class="flex items-center justify-center gap-2 p-3.5 bg-white border border-[var(--line)] rounded-xl cursor-pointer hover:border-[var(--accent)] transition-all has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-subtle)]">
+                <label class="flex items-center justify-center gap-2 p-3.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl cursor-pointer hover:border-[var(--accent)] transition-all has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-subtle)]">
                     <input type="radio" name="format" value="csv" class="w-4 h-4 text-[var(--accent)]">
                     <span class="text-sm font-medium text-[var(--text)]">CSV</span>
                 </label>
@@ -55,7 +55,7 @@
         <h2 class="section-title">Recent statements</h2>
         <div class="space-y-2">
             @forelse($history->take(5) as $stmt)
-                <div class="flex items-center justify-between p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-xl hover:border-[var(--accent)] transition-all">
+                <div class="flex items-center justify-between p-4 bg-[var(--surface)] border border-[var(--line)] rounded-xl hover:border-[var(--accent)] transition-all">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-[var(--line-soft)] flex items-center justify-center text-[var(--text-muted)]">
                             <x-icon name="file-text"  class="w-4 h-4" />
@@ -68,7 +68,7 @@
                     <button class="text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">Download</button>
                 </div>
             @empty
-                <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
+                <div class="empty-state bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
                     <p class="text-sm text-[var(--text-muted)]">No statements yet.</p>
                 </div>
             @endforelse

@@ -18,14 +18,14 @@
 @endphp
 
 @if($href)
-    <a href="{{ $href }}" {{ $attributes->merge(['class' => 'flex flex-col items-center gap-1.5 ' . ($disabled ? 'opacity-40 pointer-events-none' : 'text-slate-400 hover:text-indigo-400 transition-colors')]) }}>
+    <a href="{{ $href }}" {{ $attributes->merge(['class' => 'flex flex-col items-center gap-1.5 ' . ($disabled ? 'opacity-40 pointer-events-none' : 'text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors')]) }}>
 @elseif($wireClick)
-    <button wire:click="{{ $wireClick }}" {{ $attributes->merge(['class' => 'flex flex-col items-center gap-1.5 ' . ($disabled ? 'opacity-40 pointer-events-none' : 'text-slate-400 hover:text-indigo-400 transition-colors'), 'disabled' => $disabled]) }}>
+    <button wire:click="{{ $wireClick }}" {{ $attributes->merge(['class' => 'flex flex-col items-center gap-1.5 ' . ($disabled ? 'opacity-40 pointer-events-none' : 'text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors'), 'disabled' => $disabled]) }}>
 @else
-    <div {{ $attributes->merge(['class' => 'flex flex-col items-center gap-1.5 ' . ($disabled ? 'opacity-40' : 'text-slate-400 hover:text-indigo-400 transition-colors')]) }}>
+    <div {{ $attributes->merge(['class' => 'flex flex-col items-center gap-1.5 ' . ($disabled ? 'opacity-40' : 'text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors')]) }}>
 @endif
-    <span class="flex items-center justify-center w-14 h-14 rounded-full bg-slate-800 border border-slate-700 {{ $disabled ? '' : 'hover:bg-indigo-500/20 hover:border-indigo-500/30' }}">
-        <x-icon name="{{ $iconMap[$icon] ?? $iconMap['home'] }}" class="h-6 w-6" />
+    <span class="flex items-center justify-center w-14 h-14 rounded-full bg-[var(--line-soft)] border border-[var(--line)] {{ $disabled ? '' : 'hover:bg-[var(--accent)]/20 hover:border-[var(--accent)]/30' }}">
+        <x-icon name="{{ $iconMap[$icon] ?? $iconMap['home'] }}" class="h-6 w-6 text-[var(--text-muted)]" />
     </span>
     <span class="text-xs font-medium">{{ $label }}</span>
 @if($href)</a>@elseif($wireClick)</button>@else</div>@endif

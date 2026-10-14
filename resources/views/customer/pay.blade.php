@@ -182,7 +182,7 @@
         </div>
 
         @if($errors->any())
-            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <div class="p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
                 {{ $errors->first() }}
             </div>
         @endif

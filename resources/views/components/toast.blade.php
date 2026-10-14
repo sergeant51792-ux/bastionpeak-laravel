@@ -5,10 +5,10 @@
 
 @php
     $colorMap = [
-        'success' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-        'error' => 'bg-red-500/20 text-red-300 border-red-500/30',
-        'info' => 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
-        'warning' => 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+        'success' => 'bg-[var(--success-bg)] text-[var(--success)] border-[var(--success)]/30',
+        'error' => 'bg-[var(--danger-bg)] text-[var(--danger)] border-[var(--danger)]/30',
+        'info' => 'bg-[var(--accent-subtle)] text-[var(--accent-dark)] border-[var(--accent)]/30',
+        'warning' => 'bg-[var(--warning-bg)] text-[var(--warning)] border-[var(--warning)]/30',
     ];
 
     $iconMap = [

@@ -13,7 +13,7 @@ Apply for {{ $service->name }}
         <h1 class="text-xl font-semibold">{{ $service->name }}</h1>
     </header>
 
-    <div class="bg-white border border-[var(--line)] rounded-2xl p-5">
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-2">About this service</h2>
         <p class="text-sm text-[var(--text)] mb-4">{{ $service->description }}</p>
         @if($service->interest_rate)
@@ -58,7 +58,7 @@ Apply for {{ $service->name }}
         </div>
 
         @if($errors->any())
-            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <div class="p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
                 {{ $errors->first() }}
             </div>
         @endif

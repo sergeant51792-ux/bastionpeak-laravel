@@ -6,6 +6,16 @@
     <title>Change password — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
+    <style>
+        :root {
+            --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+            --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        }
+        body { font-family: var(--font-body); }
+        h1, h2, h3, h4, h5, .font-display { font-family: var(--font-display); }
+    </style>
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)]">
     <div class="min-h-screen flex items-center justify-center p-6">
@@ -19,7 +29,7 @@
                 @csrf
 
                 @if(session('status'))
-                    <div class="p-3 bg-green-900/30 border border-green-700 rounded-lg text-sm text-green-300">
+                    <div class="p-3 bg-[var(--success-bg)] border border-[var(--success)]/30 rounded-lg text-sm text-[var(--success)]">
                         {{ session('status') }}
                     </div>
                 @endif
@@ -42,9 +52,7 @@
                            class="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--focus)]">
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-[var(--text)] text-[var(--bg)] rounded-lg font-medium hover:opacity-90 transition-opacity">
-                    Update password
-                </button>
+                <button type="submit" class="w-full py-3 btn-primary">Update password</button>
             </form>
         </div>
     </div>

@@ -13,13 +13,13 @@
                 <p class="text-sm text-[var(--text-muted)]">{{ $user->email }}</p>
             </div>
         </div>
-        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $user->status === 'active', 'bg-blue-100 text-blue-800' => $user->status === 'frozen', 'bg-red-100 text-red-800' => $user->status === 'locked', 'bg-gray-100 text-gray-800' => $user->status === 'closed', 'bg-amber-100 text-amber-800' => $user->status === 'pending'])>
+        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => $user->status === 'active', 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $user->status === 'frozen', 'bg-[var(--danger-bg)] text-[var(--danger)]' => $user->status === 'locked', 'bg-[var(--line-soft)] text-[var(--text-muted)]' => $user->status === 'closed', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $user->status === 'pending'])>
             {{ ucfirst($user->status) }}
         </span>
         @if($user->status === 'pending')
             <form method="POST" action="{{ route('admin.users.approve', $user) }}" class="inline" onsubmit="return confirm('Approve this signup and activate their account?')">
                 @csrf
-                <button type="submit" class="ml-2 px-4 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors">
+                <button type="submit" class="ml-2 px-4 py-1.5 bg-[var(--success)] text-white rounded-lg text-xs font-medium hover:opacity-90 transition-colors">
                     Approve signup
                 </button>
             </form>
@@ -31,21 +31,21 @@
                     <input type="hidden" name="name" value="{{ $user->name }}">
                     <input type="hidden" name="email" value="{{ $user->email }}">
                     <input type="hidden" name="status" value="active">
-                    <button type="submit" class="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Unfreeze">
+                    <button type="submit" class="ml-2 px-2 py-1 bg-[var(--success-bg)] text-[var(--success)] rounded-lg text-xs font-medium hover:bg-[var(--success-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Unfreeze">
                         <x-icon name="play" class="w-4 h-4" />
                     </button>
                 </form>
             @else
                 <form method="POST" action="{{ route('admin.users.freeze', $user) }}" class="ml-2 inline" onsubmit="return confirm('Freeze this user account?')">
                     @csrf
-                    <button type="submit" class="p-2 bg-blue-100 text-blue-800 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Freeze account">
+                    <button type="submit" class="p-2 bg-[var(--accent-subtle)] text-[var(--accent)] rounded-lg text-xs font-medium hover:bg-[var(--accent-subtle)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Freeze account">
                         <x-icon name="pause" class="w-4 h-4" />
                     </button>
                 </form>
                 <form method="POST" action="{{ route('admin.users.block', $user) }}" class="ml-1 inline" onsubmit="return confirm('Block this user account?')" title="Block account">
                     @csrf
                     <input type="hidden" name="reason" value="Blocked by admin">
-                    <button type="submit" class="p-2 bg-red-100 text-red-800 rounded-lg text-xs font-medium hover:bg-red-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                    <button type="submit" class="p-2 bg-[var(--danger-bg)] text-[var(--danger)] rounded-lg text-xs font-medium hover:bg-[var(--danger-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                         <x-icon name="lock" class="w-4 h-4" />
                     </button>
                 </form>
@@ -170,7 +170,7 @@
                     </div>
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-[var(--text-muted)]">Pending approvals</span>
-                        <span class="font-medium text-amber-600">{{ $requests->count() }}</span>
+                        <span class="font-medium text-[var(--warning)]">{{ $requests->count() }}</span>
                     </div>
                 </div>
 
@@ -178,9 +178,9 @@
                     <h2 class="text-sm font-semibold text-[var(--text-muted)]">Authenticator (2-step)</h2>
 
                     @if(session('totp_issued'))
-                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                            <p class="text-xs text-emerald-700 mb-1">Setup key issued. Share this key with the customer:</p>
-                            <p class="font-mono text-sm font-semibold text-emerald-800 break-all">{{ session('totp_issued') }}</p>
+                        <div class="p-3 bg-[var(--success-bg)] border border-[var(--success)]/30 rounded-xl">
+                            <p class="text-xs text-[var(--text-muted)] mb-1">Setup key issued. Share this key with the customer:</p>
+                            <p class="font-mono text-sm font-semibold text-[var(--success)] break-all">{{ session('totp_issued') }}</p>
                         </div>
                     @endif
 
@@ -198,7 +198,7 @@
                             <form method="POST" action="{{ route('admin.users.authenticator.destroy', $user) }}" class="flex-1" onsubmit="return confirm('Disable authenticator for this customer?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="w-full px-3 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors">Disable</button>
+                                <button type="submit" class="w-full px-3 py-2 bg-[var(--danger-bg)] text-[var(--danger)] border border-[var(--danger)]/20 rounded-lg text-xs font-medium hover:bg-[var(--danger-bg)]/50 transition-colors">Disable</button>
                             </form>
                         </div>
                     @else
@@ -249,7 +249,7 @@
                     <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-semibold text-[var(--text)]">{{ $account->name }}</h3>
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $account->status === 'active', 'bg-gray-100 text-gray-800' => $account->status !== 'active'])>
+                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => $account->status === 'active', 'bg-[var(--line-soft)] text-[var(--text-muted)]' => $account->status !== 'active'])>
                                 {{ ucfirst($account->status) }}
                             </span>
                         </div>
@@ -387,7 +387,7 @@
                                      <td class="px-4 py-2">{{ Str::limit($txn->memo ?? '—', 40) }}</td>
                                      <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</td>
                                      <td class="px-4 py-2">
-                                         <span @class(['px-2 py-0.5 rounded text-xs font-medium', 'bg-green-100 text-green-800' => $txn->status === \App\Enums\TransactionStatus::Posted, 'bg-yellow-100 text-yellow-800' => in_array($txn->status, [\App\Enums\TransactionStatus::PendingReview, \App\Enums\TransactionStatus::PendingMatch, \App\Enums\TransactionStatus::Approved]), 'bg-red-100 text-red-800' => in_array($txn->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed]), 'bg-gray-100 text-gray-800' => true])>
+                                          <span @class(['px-2 py-0.5 rounded text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => $txn->status === \App\Enums\TransactionStatus::Posted, 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($txn->status, [\App\Enums\TransactionStatus::PendingReview, \App\Enums\TransactionStatus::PendingMatch, \App\Enums\TransactionStatus::Approved]), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($txn->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed]), 'bg-[var(--line-soft)] text-[var(--text-muted)]' => true])>
                                              {{ $statusLabel }}
                                          </span>
                                      </td>
@@ -410,7 +410,7 @@
                                                      <input type="hidden" name="memo" value="{{ $txn->memo }}">
                                                      <input type="hidden" name="reference" value="{{ $txn->reference }}">
                                                      <input type="hidden" name="status" value="posted">
-                                                     <button type="submit" onclick="return confirm('Mark as posted?')" class="px-2.5 py-1.5 bg-green-100 text-green-800 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Approve">
+                                                      <button type="submit" onclick="return confirm('Mark as posted?')" class="px-2.5 py-1.5 bg-[var(--success-bg)] text-[var(--success)] rounded-lg text-xs font-medium hover:bg-[var(--success-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Approve">
                                                          <x-icon name="check-circle" class="w-3.5 h-3.5" />
                                                      </button>
                                                  </form>
@@ -418,7 +418,7 @@
                                              <form method="POST" action="{{ route('admin.transactions.destroy', $txn) }}" class="inline" onsubmit="return confirm('Delete this transaction? This cannot be undone.')">
                                                  @csrf
                                                  @method('DELETE')
-                                                 <button type="submit" class="px-2.5 py-1.5 bg-red-100 text-red-800 rounded-lg text-xs font-medium hover:bg-red-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Delete">
+                                                 <button type="submit" class="px-2.5 py-1.5 bg-[var(--danger-bg)] text-[var(--danger)] rounded-lg text-xs font-medium hover:bg-[var(--danger-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Delete">
                                                      <x-icon name="trash-2" class="w-3.5 h-3.5" />
                                                  </button>
                                              </form>
@@ -517,7 +517,7 @@
                                     <form method="POST" action="{{ route('messages.destroy', $message) }}" class="inline" onsubmit="return confirm('Delete this message?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-xs text-[var(--text-muted)] hover:text-red-500 transition-colors">Delete</button>
+                                        <button type="submit" class="text-xs text-[var(--text-muted)] hover:text-[var(--danger)] transition-colors">Delete</button>
                                     </form>
                                 </div>
                             </div>

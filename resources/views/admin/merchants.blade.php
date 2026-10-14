@@ -42,7 +42,7 @@
                         <td class="px-4 py-3" style="font-variant-numeric: tabular-nums;">${{ number_format($merchant->receiving_cap, 0) }}</td>
                         <td class="px-4 py-3" style="font-variant-numeric: tabular-nums;">{{ number_format($merchant->transactions->sum('amount'), 2) }} {{ $merchant->transactions->first()?->currency->symbol ?? '$' }}</td>
                         <td class="px-4 py-3">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ ucfirst($status) }}</span>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]' }}">{{ ucfirst($status) }}</span>
                         </td>
                         <td class="px-4 py-3">
                             <a href="{{ route('admin.merchants.show', $merchant) }}" class="px-3 py-1.5 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-bold text-[var(--accent)] hover:text-[var(--accent-dark)] hover:border-[var(--accent)] transition-all">View</a>

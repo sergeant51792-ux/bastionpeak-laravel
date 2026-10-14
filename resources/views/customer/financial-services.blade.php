@@ -9,7 +9,7 @@
     </header>
 
     @if(session('status'))
-        <div class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-sm text-green-700 dark:text-green-400">
+        <div class="p-4 bg-[var(--success-bg)] border border-[var(--success)]/30 rounded-xl text-sm text-[var(--success)]">
             {{ session('status') }}
         </div>
     @endif
@@ -23,7 +23,7 @@
                 if ($service->type === 'grant') { $iconColor = 'var(--success)'; $bgColor = 'var(--success-bg)'; }
                 if ($service->type === 'refund') { $iconColor = 'var(--primary)'; $bgColor = 'var(--accent-subtle)'; }
             @endphp
-            <a href="{{ route('financial-service.apply', $service->id) }}" class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 text-center transition-all hover:border-[var(--accent)] hover:shadow-md group">
+            <a href="{{ route('financial-service.apply', $service->id) }}" class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 text-center transition-all hover:border-[var(--accent)] hover:shadow-md group">
                 <div class="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background-color: {{ $bgColor }}; color: {{ $iconColor }};">
                     @if($service->type === 'loan')
                         <x-icon name="landmark" class="w-6 h-6" />
@@ -44,7 +44,7 @@
     @if($applications->isNotEmpty())
         <div class="mt-8">
             <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-3">My Applications</h2>
-            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
                 @foreach($applications as $app)
                     <div class="p-4 border-b border-[var(--line)] last:border-b-0 flex items-center justify-between">
                         <div>

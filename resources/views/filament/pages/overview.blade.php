@@ -5,61 +5,61 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold mb-4">Waiting for you</h2>
+            <div class="lg:col-span-2 bg-[var(--surface)] rounded-lg border border-[var(--line)] p-6">
+                <h2 class="text-lg font-semibold text-[var(--text)] mb-4">Waiting for you</h2>
                 <div class="space-y-3">
                     @forelse($pendingDeposits->merge($pendingPayments)->take(4) as $item)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                        <div class="flex items-center justify-between p-3 bg-[var(--line-soft)] rounded">
                             <div>
-                                <p class="font-medium">{{ $item->fromUser?->name ?? 'Unknown' }}</p>
-                                <p class="text-sm text-gray-500">{{ $item->type->label() }} — {{ $item->amount }}</p>
+                                <p class="font-medium text-[var(--text)]">{{ $item->fromUser?->name ?? 'Unknown' }}</p>
+                                <p class="text-sm text-[var(--text-muted)]">{{ $item->type->label() }} — {{ $item->amount }}</p>
                             </div>
                             <a href="{{ route('admin.approvals', ['tab' => $item->type === \App\Enums\TransactionType::DepositCredit ? 'deposits' : 'payments']) }}"
-                               class="text-sm font-medium text-primary-600 hover:text-primary-500">
+                               class="text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)]">
                                 Review
                             </a>
                         </div>
                     @empty
-                        <p class="text-gray-500">Nothing pending right now.</p>
+                        <p class="text-[var(--text-muted)]">Nothing pending right now.</p>
                     @endforelse
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold mb-4">System balance</h2>
-                <p class="text-3xl font-semibold">{{ number_format((float) $systemBalance, 2) }}</p>
-                <p class="text-sm text-gray-500 mt-1">{{ \App\Models\Account::count() }} accounts</p>
+            <div class="bg-[var(--surface)] rounded-lg border border-[var(--line)] p-6">
+                <h2 class="text-lg font-semibold text-[var(--text)] mb-4">System balance</h2>
+                <p class="text-3xl font-semibold text-[var(--text)]">{{ number_format((float) $systemBalance, 2) }}</p>
+                <p class="text-sm text-[var(--text-muted)] mt-1">{{ \App\Models\Account::count() }} accounts</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold mb-4">Needs a look</h2>
+            <div class="bg-[var(--surface)] rounded-lg border border-[var(--line)] p-6">
+                <h2 class="text-lg font-semibold text-[var(--text)] mb-4">Needs a look</h2>
                 <div class="space-y-3">
                     @forelse($anomalies as $anomaly)
-                        <div class="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-700">
-                            <x-icon name="alert-triangle" class="w-5 h-5 text-yellow-600" />
-                            <span class="text-sm">{{ $anomaly['message'] ?? 'Anomaly detected' }}</span>
+                        <div class="flex items-center gap-2 p-3 bg-[var(--warning-bg)] rounded border border-[var(--warning)]/30">
+                            <x-icon name="alert-triangle" class="w-5 h-5 text-[var(--warning)]" />
+                            <span class="text-sm text-[var(--text)]">{{ $anomaly['message'] ?? 'Anomaly detected' }}</span>
                         </div>
                     @empty
-                        <p class="text-gray-500">No anomalies detected.</p>
+                        <p class="text-[var(--text-muted)]">No anomalies detected.</p>
                     @endforelse
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold mb-4">Recent admin actions</h2>
+            <div class="bg-[var(--surface)] rounded-lg border border-[var(--line)] p-6">
+                <h2 class="text-lg font-semibold text-[var(--text)] mb-4">Recent admin actions</h2>
                 <div class="space-y-2">
                     @forelse($recentActions as $action)
-                        <div class="flex items-center justify-between p-2 border-b border-gray-100 last:border-0">
+                        <div class="flex items-center justify-between p-2 border-b border-[var(--line)] last:border-0">
                             <div>
-                                <p class="text-sm">{{ $action->action }}</p>
-                                <p class="text-xs text-gray-500">{{ $action->created_at->diffForHumans() }}</p>
+                                <p class="text-sm text-[var(--text)]">{{ $action->action }}</p>
+                                <p class="text-xs text-[var(--text-muted)]">{{ $action->created_at->diffForHumans() }}</p>
                             </div>
-                            <span class="text-xs text-gray-400">{{ $action->admin?->name ?? 'system' }}</span>
+                            <span class="text-xs text-[var(--text-muted)]">{{ $action->admin?->name ?? 'system' }}</span>
                         </div>
                     @empty
-                        <p class="text-gray-500">No recent actions.</p>
+                        <p class="text-[var(--text-muted)]">No recent actions.</p>
                     @endforelse
                 </div>
             </div>

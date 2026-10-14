@@ -13,7 +13,7 @@
                 <p class="text-sm text-[var(--text-muted)]">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
             </div>
         </div>
-        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => in_array($transaction->status, ['approved', 'posted', 'credited']), 'bg-yellow-100 text-yellow-800' => in_array($transaction->status, ['pending_review', 'pending_match']), 'bg-red-100 text-red-800' => in_array($transaction->status, ['rejected', 'reversed', 'cancelled'])])>
+        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($transaction->status, ['approved', 'posted', 'credited']), 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($transaction->status, ['pending_review', 'pending_match']), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($transaction->status, ['rejected', 'reversed', 'cancelled'])])>
             {{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? '—') }}
         </span>
     </div>
@@ -102,7 +102,7 @@
                     <form method="POST" action="{{ route('admin.transactions.destroy', $transaction) }}" onsubmit="return confirm('Delete this transaction? Balance will be reverted.');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="w-full py-2.5 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">Delete</button>
+                        <button type="submit" class="w-full py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Delete</button>
                     </form>
                 </div>
             </div>

@@ -115,7 +115,7 @@
                 ['route' => 'cards', 'icon' => 'credit-card', 'label' => 'Cards'],
                 ['route' => 'deposit', 'icon' => 'wallet', 'label' => 'Add money'],
             ] as $action)
-                <a href="{{ route($action['route']) }}" class="flex flex-col items-center gap-2 p-3 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
+                <a href="{{ route($action['route']) }}" class="flex flex-col items-center gap-2 p-3 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all group">
                     <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white transition-all">
                         <x-icon name="{{ $action['icon'] }}" class="w-5 h-5" />
                     </span>
@@ -132,7 +132,7 @@
                 <h2 class="section-title mb-0">Pending</h2>
                 <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
             </div>
-            <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
                 @foreach($inProgress as $txn)
                     <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
                         <span class="txn-icon w-10 h-10" style="background: var(--warning-bg); color: var(--warning); border-color: rgba(217, 119, 6, 0.15);">
@@ -158,7 +158,7 @@
             <h2 class="section-title mb-0">Recent transactions</h2>
             <a href="{{ route('activity') }}" class="text-xs font-semibold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">View all</a>
         </div>
-        <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl divide-y divide-[var(--line)] overflow-hidden">
             @forelse($recentActivity as $txn)
                 <x-txn-row :transaction="$txn" variant="mobile" />
             @empty
@@ -173,7 +173,7 @@
     {{-- Financial Services --}}
     <section>
         <h2 class="section-title">Financial services</h2>
-        <a href="{{ route('financial-services') }}" class="flex items-center gap-3 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
+        <a href="{{ route('financial-services') }}" class="flex items-center gap-3 p-4 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
             <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] flex-shrink-0">
                 <x-icon name="trending-up" class="w-5 h-5" />
             </span>
@@ -195,7 +195,7 @@
                 ['route' => 'recommendations', 'icon' => 'sparkles', 'title' => 'Recommendations', 'desc' => 'Tailored financial services'],
                 ['route' => 'policies', 'icon' => 'shield-check', 'title' => 'Policies & terms', 'desc' => 'Legal and privacy information'],
             ] as $item)
-                <a href="{{ route($item['route']) }}" class="flex items-center gap-3 p-4 bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
+                <a href="{{ route($item['route']) }}" class="flex items-center gap-3 p-4 bg-[var(--surface)] border border-[var(--line)] rounded-2xl hover:border-[var(--accent)] hover:shadow-md transition-all">
                     <span class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] flex-shrink-0">
                         <x-icon name="{{ $item['icon'] }}" class="w-5 h-5" />
                     </span>

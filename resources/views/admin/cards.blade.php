@@ -13,7 +13,7 @@
                     <option value="unfreeze">Unfreeze selected</option>
                     <option value="block">Block selected</option>
                     <option value="cancel">Cancel selected</option>
-                    <option value="delete" class="text-red-600">Delete selected</option>
+                    <option value="delete" class="text-[var(--danger)]">Delete selected</option>
                 </select>
                 <button onclick="runBulkAction()" class="px-4 py-2.5 bg-[var(--primary)] text-white rounded-lg text-xs font-bold hover:opacity-90 transition-opacity min-h-[44px] min-w-[44px]">Apply</button>
             </div>
@@ -51,7 +51,7 @@
                         <td class="px-4 py-3">{{ $card->account->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ ucfirst($card->card_type ?? '—') }}</td>
                         <td class="px-4 py-3">
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-green-100 text-green-800' => $card->status === 'active', 'bg-blue-100 text-blue-800' => $card->status === 'frozen', 'bg-red-100 text-red-800' => in_array($card->status, ['blocked','cancelled']), 'bg-gray-100 text-gray-800' => in_array($card->status, ['expired','closed','deactivated'])])>
+                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => $card->status === 'active', 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $card->status === 'frozen', 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($card->status, ['blocked','cancelled']), 'bg-[var(--line-soft)] text-[var(--text-muted)]' => in_array($card->status, ['expired','closed','deactivated'])])>
                                 {{ ucfirst($card->status ?? 'unknown') }}
                             </span>
                         </td>
@@ -60,21 +60,21 @@
                                 @if($card->status === 'active')
                                     <form method="POST" action="{{ route('admin.cards.freeze', $card) }}" class="inline" onsubmit="return confirm('Freeze this card?')">
                                         @csrf
-                                        <button type="submit" class="p-2 text-blue-600 hover:bg-blue-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Freeze">
+                                        <button type="submit" class="p-2 text-[var(--accent)] hover:bg-[var(--accent-subtle)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Freeze">
                                             <x-icon name="pause" class="w-5 h-5" />
                                         </button>
                                     </form>
                                 @elseif($card->status === 'frozen')
                                     <form method="POST" action="{{ route('admin.cards.unfreeze', $card) }}" class="inline">
                                         @csrf
-                                        <button type="submit" class="p-2 text-green-600 hover:bg-green-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Unfreeze">
+                                        <button type="submit" class="p-2 text-[var(--success)] hover:bg-[var(--success-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Unfreeze">
                                             <x-icon name="play" class="w-5 h-5" />
                                         </button>
                                     </form>
                                     <form method="POST" action="{{ route('admin.cards.block', $card) }}" class="inline" onsubmit="return confirm('Block this card?')">
                                         @csrf
                                         <input type="hidden" name="reason" value="Blocked by admin">
-                                        <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
+                                        <button type="submit" class="p-2 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
                                             <x-icon name="lock" class="w-5 h-5" />
                                         </button>
                                     </form>

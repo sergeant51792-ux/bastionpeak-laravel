@@ -18,7 +18,7 @@
                                         <p class="font-semibold text-sm text-[var(--text)]">{{ $method->name }}</p>
                                         <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ ucfirst($method->type) }} • Code: {{ $method->code }}</p>
                                     </div>
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $method->pivot->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-50 text-gray-700 border border-gray-200' }}">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $method->pivot->is_active ? 'bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)]/30' : 'bg-[var(--line-soft)] text-[var(--text-muted)] border border-[var(--line)]' }}">
                                         {{ $method->pivot->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </div>
@@ -41,13 +41,13 @@
                 <div class="space-y-3">
                     <form method="POST" action="{{ route('admin.accounts.balance.update', $account) }}" class="flex gap-2">
                         @csrf
-                        <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="balance" value="{{ old('balance', $account->balance) }}" required class="flex-1 px-3 py-2 bg-white border border-[var(--line)] rounded-lg text-sm">
+                        <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="balance" value="{{ old('balance', $account->balance) }}" required class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                         <button type="submit" class="px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Update balance</button>
                     </form>
 
                     <form method="POST" action="{{ route('admin.accounts.status.update', $account) }}" class="flex gap-2">
                         @csrf
-                        <select name="status" class="flex-1 px-3 py-2 bg-white border border-[var(--line)] rounded-lg text-sm">
+                        <select name="status" class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                             <option value="active" {{ $account->status === 'active' ? 'selected' : '' }}>Active</option>
                             <option value="frozen" {{ $account->status === 'frozen' ? 'selected' : '' }}>Frozen</option>
                             <option value="locked" {{ $account->status === 'locked' ? 'selected' : '' }}>Locked</option>
@@ -62,19 +62,19 @@
                             @csrf
                             <div>
                                 <label class="text-xs text-[var(--text-muted)]">Per-transaction</label>
-                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="per_transaction_cap" value="{{ old('per_transaction_cap', $account->per_transaction_cap) }}" class="w-full px-2 py-1 bg-white border border-[var(--line)] rounded text-sm">
+                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="per_transaction_cap" value="{{ old('per_transaction_cap', $account->per_transaction_cap) }}" class="w-full px-2 py-1 bg-[var(--surface)] border border-[var(--line)] rounded text-sm">
                             </div>
                             <div>
                                 <label class="text-xs text-[var(--text-muted)]">Daily</label>
-                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="daily_cap" value="{{ old('daily_cap', $account->daily_cap) }}" class="w-full px-2 py-1 bg-white border border-[var(--line)] rounded text-sm">
+                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="daily_cap" value="{{ old('daily_cap', $account->daily_cap) }}" class="w-full px-2 py-1 bg-[var(--surface)] border border-[var(--line)] rounded text-sm">
                             </div>
                             <div>
                                 <label class="text-xs text-[var(--text-muted)]">Monthly</label>
-                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="monthly_cap" value="{{ old('monthly_cap', $account->monthly_cap) }}" class="w-full px-2 py-1 bg-white border border-[var(--line)] rounded text-sm">
+                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="monthly_cap" value="{{ old('monthly_cap', $account->monthly_cap) }}" class="w-full px-2 py-1 bg-[var(--surface)] border border-[var(--line)] rounded text-sm">
                             </div>
                             <div>
                                 <label class="text-xs text-[var(--text-muted)]">Balance cap</label>
-                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="balance_cap" value="{{ old('balance_cap', $account->balance_cap) }}" class="w-full px-2 py-1 bg-white border border-[var(--line)] rounded text-sm">
+                                <input type="number" step="{{ pow(10, -$account->currency->decimals) }}" name="balance_cap" value="{{ old('balance_cap', $account->balance_cap) }}" class="w-full px-2 py-1 bg-[var(--surface)] border border-[var(--line)] rounded text-sm">
                             </div>
                             <div class="col-span-2">
                                 <button type="submit" class="w-full px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Update limits</button>

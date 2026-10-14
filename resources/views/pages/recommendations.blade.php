@@ -15,7 +15,7 @@
     </p>
 
     <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
                     <x-icon name="piggy-bank" class="w-5 h-5" />
@@ -26,7 +26,7 @@
                 Grow your money in a dedicated savings account with competitive interest, no lock-in, and instant access when you need funds.
             </p>
         </div>
-        <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
                     <x-icon name="trending-up" class="w-5 h-5" />
@@ -37,7 +37,7 @@
                 Portfolio managed by professionals, built around your risk profile and goals. Start small and scale as your balance grows.
             </p>
         </div>
-        <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
                     <x-icon name="shield" class="w-5 h-5" />
@@ -48,7 +48,7 @@
                 Protection for you and your family — from device and travel cover to life insurance — with simple claims through your account.
             </p>
         </div>
-        <div class="bg-white border border-[var(--line)] rounded-2xl p-6">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
                     <x-icon name="percent" class="w-5 h-5" />

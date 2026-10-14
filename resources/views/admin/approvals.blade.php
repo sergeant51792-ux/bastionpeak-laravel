@@ -16,7 +16,7 @@
             <button type="button" onclick="bulkApprove()" class="py-1.5 px-3 bg-[var(--success)] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Approve selected">
                 <x-icon name="check" class="w-4 h-4" /> Approve
             </button>
-            <button type="button" onclick="bulkDelete()" class="py-1.5 px-3 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Delete selected">
+                <button type="button" onclick="bulkDelete()" class="py-1.5 px-3 bg-[var(--danger)] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Delete selected">
                 <x-icon name="trash-2" class="w-4 h-4" /> Delete
             </button>
             <button type="button" onclick="clearSelection()" class="py-1.5 px-3 text-[var(--text-muted)] hover:bg-[var(--surface-raised)] rounded-lg text-sm min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Clear">
@@ -93,7 +93,7 @@
                         $isChecked = request('open') == $item->id;
                     @endphp
                      <div class="relative">
-                         <input type="checkbox" class="approval-checkbox absolute top-4 left-4 z-10 h-4 w-4 rounded border-gray-300 text-[var(--accent)] focus:ring-[var(--accent)]" value="{{ $item->id }}" @if($isChecked) checked @endif>
+                         <input type="checkbox" class="approval-checkbox absolute top-4 left-4 z-10 h-4 w-4 rounded border-[var(--line)] text-[var(--accent)] focus:ring-[var(--accent)]" value="{{ $item->id }}" @if($isChecked) checked @endif>
                          <a href="{{ route('admin.approvals', array_merge(request()->query(), ['open' => $item->id])) }}" @class(['block p-4 border-b border-[var(--line)] hover:bg-[var(--surface-raised)] transition-colors', 'bg-[var(--success)]/5' => $openTransaction?->id === $item->id])>
                              <div class="flex items-center justify-between ml-6">
                                  <div>
@@ -123,7 +123,7 @@
                             <p class="text-2xl font-semibold mt-1">{{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}</p>
                             <p class="text-sm text-[var(--text-muted)]">{{ $openTransaction->fromAccount?->name ?? 'External' }} to {{ $openTransaction->toAccount?->name ?? $openTransaction->toUser?->name ?? 'External' }}</p>
                         </div>
-                        <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-yellow-100 text-yellow-800' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-blue-100 text-blue-800' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch])>
+                        <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch])>
                             {{ $openTransaction->status instanceof \App\Enums\TransactionStatus ? $openTransaction->status->label() : ($openTransaction->status ?? '—') }}
                         </span>
                     </div>
@@ -152,7 +152,7 @@
                                     @if($configuredMethod->pivot->address)
                                         <div>
                                             <span class="text-xs text-[var(--text-muted)]">Address:</span>
-                                            <code class="text-xs font-mono text-[var(--text)] bg-white px-2 py-1 rounded break-all block">{{ $configuredMethod->pivot->address }}</code>
+                                            <code class="text-xs font-mono text-[var(--text)] bg-[var(--line-soft)] px-2 py-1 rounded break-all block">{{ $configuredMethod->pivot->address }}</code>
                                         </div>
                                     @endif
                                     @if($configuredMethod->pivot->qr_path)
@@ -218,7 +218,7 @@
                         <form method="POST" action="{{ route('admin.approvals.reject', $openTransaction) }}" class="flex-1">
                             @csrf
                             <input type="hidden" name="reason" value="Rejected during review">
-                            <button type="submit" class="w-full py-2.5 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">Reject</button>
+                            <button type="submit" class="w-full py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors">Reject</button>
                         </form>
                         <form method="POST" action="{{ route('admin.approvals.approve', $openTransaction) }}" class="flex-1">
                             @csrf

@@ -67,14 +67,14 @@
         </div>
 
         @if($errors->any())
-            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <div class="p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
                 {{ $errors->first() }}
             </div>
         @endif
 
         <div class="flex items-center gap-3 pt-2">
             <button type="submit" class="flex-1 py-3.5 btn-primary">Update deposit method</button>
-            <a href="{{ route('admin.deposit-methods.index') }}" class="px-6 py-3.5 bg-white border border-[var(--line)] rounded-xl text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">Cancel</a>
+            <a href="{{ route('admin.deposit-methods.index') }}" class="px-6 py-3.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">Cancel</a>
         </div>
     </form>
 </div>

@@ -7,11 +7,15 @@
     <title>@yield('title', 'Home') — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+            --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        }
+        body { font-family: var(--font-body); }
+        h1, h2, h3, h4, h5, .font-display { font-family: var(--font-display); }
         html, body {
             max-width: 100vw;
             overflow-x: hidden;
@@ -22,7 +26,7 @@
         }
     </style>
 </head>
-<body class="bg-[var(--bg)] text-[var(--text)]">
+    <body class="bg-[var(--bg)] text-[var(--text)]">
     <script>
          (function() {
             @auth
@@ -50,7 +54,7 @@
     @auth
         @if(!auth()->user()->hasRole('Super Admin'))
             <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
-            <aside id="customer-sidebar" class="bg-white dark:bg-[var(--surface)] border-r border-[var(--line)] fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out w-64 sidebar-closed lg:translate-x-0 lg:static lg:inset-auto lg:z-auto">
+            <aside id="customer-sidebar" class="bg-[var(--surface)] border-r border-[var(--line)] fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out w-64 sidebar-closed lg:translate-x-0 lg:static lg:inset-auto lg:z-auto">
                 <div class="p-4 border-b border-[var(--line)] flex items-center justify-between">
                     <x-icon name="landmark" class="w-6 h-6 text-[var(--primary)]" />
                     <button id="sidebar-close" class="lg:hidden p-2 rounded-xl text-[var(--text-muted)] hover:bg-[var(--surface-raised)] transition-colors">
@@ -100,7 +104,7 @@
     @endauth
 
         <div class="flex-1 flex flex-col min-h-screen w-full overflow-x-hidden">
-            <header class="h-16 flex items-center justify-between gap-3 px-3 sm:px-4 border-b border-[var(--line)] bg-white dark:bg-[var(--surface)] flex-shrink-0 lg:hidden">
+            <header class="h-16 flex items-center justify-between gap-3 px-3 sm:px-4 border-b border-[var(--line)] bg-[var(--surface)] flex-shrink-0 lg:hidden">
                 <div class="flex items-center gap-3">
                     @auth
                         @if(!auth()->user()->hasRole('Super Admin'))
@@ -121,7 +125,7 @@
                                     $unreadNotifications = auth()->user()->notifications()->whereNull('read_at')->count();
                                 @endphp
                                 @if($unreadNotifications > 0)
-                                    <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[9px] font-bold text-white bg-red-500 rounded-full" data-unread-notif-badge>{{ $unreadNotifications }}</span>
+                                    <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[9px] font-bold text-white bg-[var(--danger)] rounded-full" data-unread-notif-badge>{{ $unreadNotifications }}</span>
                                 @endif
                             </a>
                         </div>
@@ -138,7 +142,7 @@
     {{-- Mobile Bottom Navigation --}}
     @auth
         @if(!auth()->user()->hasRole('Super Admin'))
-            <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-[var(--surface)] border-t border-[var(--line)] flex items-center justify-around py-2.5 lg:hidden z-50 bottom-nav" style="bottom: 0; left: 0; right: 0;">
+            <nav class="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--line)] flex items-center justify-around py-2.5 lg:hidden z-50 bottom-nav" style="bottom: 0; left: 0; right: 0;">
                 <a href="{{ route('home') }}" class="bottom-nav-item flex flex-col items-center justify-center w-1/4 min-h-[44px] text-xs font-medium @if(request()->routeIs('home')) text-[var(--primary)] @else text-[var(--text-muted)] @endif">
                     <x-icon name="layout-dashboard" class="w-5 h-5 mb-0.5" />
                     {{ __('Dashboard') }}
@@ -202,7 +206,7 @@
 
     @if(auth()->check() && !auth()->user()->hasRole('Super Admin'))
         <div id="support-widget" class="fixed bottom-24 right-6 z-[90] w-80 hidden lg:bottom-6">
-            <div class="bg-white border border-[var(--line)] rounded-2xl shadow-lg overflow-hidden">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl shadow-lg overflow-hidden">
                 <div class="bg-[var(--primary)] text-white p-4 flex items-center justify-between cursor-pointer" onclick="toggleSupportChat()">
                 <div class="flex items-center gap-3">
                     <x-icon name="message-circle" class="w-5 h-5" />
@@ -251,7 +255,7 @@
             $unreadCount = auth()->user()->unreadMessagesCount();
         @endphp
         @if($unreadCount > 0)
-            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[9px] font-bold text-white bg-red-500 rounded-full">{{ $unreadCount }}</span>
+            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[9px] font-bold text-white bg-[var(--danger)] rounded-full">{{ $unreadCount }}</span>
         @endif
     </button>
     @endif

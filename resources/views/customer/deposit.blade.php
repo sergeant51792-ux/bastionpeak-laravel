@@ -30,9 +30,9 @@
 
     @if(request('status') === 'submitted')
         <div id="success-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div class="bg-white dark:bg-[var(--surface)] rounded-3xl shadow-2xl w-full max-w-md mx-4 p-8 text-center animate-scale-in border border-[var(--line)]">
-                <div class="w-24 h-24 mx-auto bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-6 border-4 border-green-100 dark:border-green-900/30">
-                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
+                <div class="w-24 h-24 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">
+                    <svg class="w-12 h-12 text-[var(--success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
                     </svg>
                 </div>
@@ -48,7 +48,7 @@
             </div>
         </div>
     @elseif($depositMethods->isEmpty())
-        <div class="bg-white border border-[var(--line)] rounded-2xl p-8 text-center">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-8 text-center">
             <x-icon name="wallet" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
             <p class="text-[var(--text-muted)]">No add money methods are available right now. Please try again later.</p>
         </div>
@@ -133,12 +133,12 @@
                         <p id="detail-method-account" class="text-xs text-[var(--text-muted)]"></p>
                         <div id="detail-address" class="hidden">
                             <p class="text-xs text-[var(--text-muted)] mb-1">Address</p>
-                            <div class="inline-flex items-center gap-2 p-2 bg-white border border-[var(--line)] rounded-lg font-mono text-xs text-[var(--text)] relative max-w-full">
+                                <div class="inline-flex items-center gap-2 p-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg font-mono text-xs text-[var(--text)] relative max-w-full">
                                 <span id="copy-address-value" class="break-all"></span>
                                 <button type="button" onclick="copyAddressText()" class="p-1 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors shrink-0">
                                     <x-icon name="copy" class="w-4 h-4" />
                                 </button>
-                                <span id="copy-tooltip" class="hidden absolute -bottom-7 left-0 px-2 py-1 bg-gray-800 text-white text-xs rounded">Copied!</span>
+                                <span id="copy-tooltip" class="hidden absolute -bottom-7 left-0 px-2 py-1 bg-[var(--text)] text-white text-xs rounded">Copied!</span>
                             </div>
                         </div>
                         <div id="detail-qr" class="hidden">
@@ -177,7 +177,7 @@
                 </div>
 
                 @if($errors->any())
-                    <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    <div class="p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
                         {{ $errors->first() }}
                     </div>
                 @endif

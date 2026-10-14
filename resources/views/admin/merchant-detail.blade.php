@@ -17,10 +17,10 @@
             @if($merchant->status === 'active')
                 <form method="POST" action="{{ route('admin.merchants.deactivate', $merchant) }}" class="inline">
                     @csrf
-                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">Deactivate</button>
+                    <button type="submit" class="px-4 py-2 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors">Deactivate</button>
                 </form>
             @else
-                <span class="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl text-sm font-medium">Deactivated</span>
+                <span class="px-4 py-2 bg-[var(--line-soft)] text-[var(--text-muted)] rounded-xl text-sm font-medium">Deactivated</span>
             @endif
         </div>
     </div>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Status</span>
-                    <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $merchant->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">{{ ucfirst($merchant->status) }}</span>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $merchant->status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]' }}">{{ ucfirst($merchant->status) }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Pending payments</span>

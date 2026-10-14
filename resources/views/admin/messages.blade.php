@@ -35,7 +35,7 @@
                         <td class="px-4 py-3">{{ $subject }}</td>
                         <td class="px-4 py-3 text-[var(--text-muted)]">{{ $lastAt }}</td>
                         <td class="px-4 py-3">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $unread ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $unread ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--line-soft)] text-[var(--text-muted)]' }}">
                                 {{ $unread ? 'Unread' : 'Read' }}
                             </span>
                         </td>

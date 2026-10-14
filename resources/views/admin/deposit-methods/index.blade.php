@@ -11,7 +11,7 @@
         </a>
     </div>
 
-    <div class="bg-white border border-[var(--line)] rounded-2xl overflow-hidden">
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-[var(--surface-raised)]">
@@ -47,11 +47,11 @@
                             </td>
                             <td class="px-6 py-4">
                                 @if($method->is_active)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)]/30">
                                         Active
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--line-soft)] text-[var(--text-muted)] border border-[var(--line)]">
                                         Inactive
                                     </span>
                                 @endif
@@ -64,7 +64,7 @@
                                     <form method="POST" action="{{ route('admin.deposit-methods.destroy', $method) }}" class="inline" onsubmit="return confirm('Delete this deposit method?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" aria-label="Delete">
+                                        <button type="submit" class="p-2 text-[var(--danger)] hover:text-[var(--danger)]/80 hover:bg-[var(--danger-bg)] rounded-lg transition-colors" aria-label="Delete">
                                             <x-icon name="trash-2" class="w-4 h-4" />
                                         </button>
                                     </form>

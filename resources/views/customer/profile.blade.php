@@ -19,12 +19,12 @@
     @endif
 
     {{-- Profile Picture & Info --}}
-    <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
+    <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <h2 class="text-base font-bold text-[var(--text)] mb-4">{{ __('Profile') }}</h2>
 
         <div class="flex items-center gap-5">
             <div class="relative">
-                <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-lg flex items-center justify-center bg-[var(--accent-subtle)]">
+                <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-white/70 shadow-lg flex items-center justify-center bg-[var(--accent-subtle)]">
                     @if($user->profile_picture_url)
                         <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name ?? 'Profile' }}" class="w-full h-full object-cover">
                     @else
@@ -34,7 +34,7 @@
                         <span class="text-2xl font-bold" style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ $initials }}</span>
                     @endif
                 </div>
-                <label for="picture-input" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-dark)] border-2 border-white flex items-center justify-center text-white transition-colors cursor-pointer min-w-[44px] min-h-[44px]">
+                <label for="picture-input" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-dark)] border-2 border-white/70 flex items-center justify-center text-white transition-colors cursor-pointer min-w-[44px] min-h-[44px]">
                     <x-icon name="camera" class="w-3.5 h-3.5" />
                     <input type="file" id="picture-input" name="picture" accept="image/*" class="hidden">
                 </label>
@@ -57,7 +57,7 @@
     </section>
 
     {{-- Personal Information Form --}}
-    <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
+    <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-bold text-[var(--text)]">{{ __('Personal Information') }}</h2>
             <div class="flex gap-2">
@@ -93,7 +93,7 @@
     </section>
 
     {{-- Security --}}
-    <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-5">
+    <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-5">
         <h2 class="text-base font-bold text-[var(--text)]">{{ __('Security') }}</h2>
 
         <form id="password-form" method="POST" action="{{ route('password.change') }}" class="space-y-4">
@@ -127,7 +127,7 @@
     </section>
 
     {{-- Preferences --}}
-    <section class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
+    <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-bold text-[var(--text)]">{{ __('Preferences') }}</h2>
             <button type="button" id="save-preferences-btn" class="hidden px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium min-h-[44px]">
@@ -144,7 +144,7 @@
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="hidden" name="hide_balance" value="0">
                     <input type="checkbox" id="hide-balance-toggle" name="hide_balance" value="1" class="sr-only peer" {{ $user->hide_balance ? 'checked' : '' }}>
-                    <div class="w-11 h-6 bg-[var(--line)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[var(--accent)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
+                    <div class="w-11 h-6 bg-[var(--line)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[var(--accent)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--line)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
                 </label>
             </div>
 
@@ -271,14 +271,13 @@ document.addEventListener('DOMContentLoaded', function () {
         themeInput.value = currentTheme;
     }
 
-    function updateThemeButtons(theme) {
+        function updateThemeButtons(theme) {
         themeOptions.forEach(function (btn) {
-            btn.classList.remove('bg-white', 'shadow-md', 'dark:bg-[var(--surface)]', 'dark:border', 'dark:border-[var(--accent)]');
+            btn.classList.remove('bg-[var(--surface)]', 'shadow-md', 'border', 'border-[var(--accent)]');
         });
         var activeBtn = document.querySelector('.theme-option[data-theme="' + theme + '"]');
         if (activeBtn) {
-            var isDark = document.body.classList.contains('dark');
-            activeBtn.classList.add(isDark ? 'bg-[var(--surface-raised)]' : 'bg-white', 'shadow-md');
+            activeBtn.classList.add('bg-[var(--surface)]', 'shadow-md');
         }
     }
 

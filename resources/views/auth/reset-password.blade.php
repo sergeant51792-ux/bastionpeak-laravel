@@ -6,11 +6,15 @@
     <title>Reset password — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+            --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        }
+        body { font-family: var(--font-body); }
+        h1, h2, h3, h4, h5, .font-display { font-family: var(--font-display); }
     </style>
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)]">
@@ -28,7 +32,7 @@
 
         <div class="flex-1 flex items-center justify-center">
             <div class="w-full max-w-md">
-                <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl shadow-xl p-8 mx-4">
+                <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl shadow-xl p-8 mx-4">
                     <div class="text-center mb-8">
                         <div class="w-16 h-16 bg-[var(--accent-subtle)] rounded-full flex items-center justify-center mx-auto mb-4">
                             <x-icon name="key" class="w-7 h-7 text-[var(--accent)]" />
@@ -38,7 +42,7 @@
                     </div>
 
                     @if($errors->any())
-                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-medium">
+                        <div class="mb-6 p-4 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)] font-medium">
                             {{ $errors->first() }}
                         </div>
                     @endif

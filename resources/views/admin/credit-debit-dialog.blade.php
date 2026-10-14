@@ -64,7 +64,7 @@
 
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.accounts.show', $account) }}" class="flex-1 py-3 border border-[var(--line)] rounded-xl text-sm font-medium text-center hover:bg-[var(--surface-raised)]">Cancel</a>
-            <button type="submit" class="flex-1 py-3 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">Debit</button>
+            <button type="submit" class="flex-1 py-3 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors">Debit</button>
         </div>
     </form>
 </div>

@@ -26,7 +26,7 @@
     </button>
 
     <div
-        class="custom-select-dropdown absolute z-50 w-full mt-1 bg-white border border-[var(--line)] rounded-xl shadow-lg overflow-hidden"
+        class="custom-select-dropdown absolute z-50 w-full mt-1 bg-[var(--surface)] border border-[var(--line)] rounded-xl shadow-lg overflow-hidden"
         role="listbox"
     >
         <div class="max-h-60 overflow-y-auto py-1">

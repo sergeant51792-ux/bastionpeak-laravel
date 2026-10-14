@@ -28,7 +28,7 @@
                 };
                 $isUnread = is_null($notification->read_at);
             @endphp
-            <button type="button" class="flex items-start gap-3 p-4 bg-white dark:bg-[var(--surface)] border rounded-2xl transition-all {{ $isUnread ? 'border-[var(--accent)]/40 shadow-sm' : 'border-[var(--line)] hover:border-[var(--accent)]' }}">
+            <button type="button" class="flex items-start gap-3 p-4 bg-[var(--surface)] border rounded-2xl transition-all {{ $isUnread ? 'border-[var(--accent)]/40 shadow-sm' : 'border-[var(--line)] hover:border-[var(--accent)]' }}">
                 <span class="txn-icon w-10 h-10 {{ $toneClass }}" style="border-color: rgba(5, 150, 105, 0.15);">
                     <x-icon name="{{ $notification->icon() }}" class="w-4 h-4" />
                 </span>
@@ -44,7 +44,7 @@
                 </div>
             </button>
         @empty
-            <div class="empty-state bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
+            <div class="empty-state bg-[var(--surface)] border border-[var(--line)] rounded-2xl">
                 <x-icon name="bell" class="w-10 h-10 mx-auto mb-3 text-[var(--text-muted)]" />
                 <p class="text-sm text-[var(--text-muted)]">No alerts yet.</p>
             </div>

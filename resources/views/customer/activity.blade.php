@@ -14,14 +14,14 @@
             <a href="{{ $url }}" @class([
                 'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all min-h-[44px] flex items-center justify-center',
                 'bg-[var(--primary)] text-white shadow-sm' => $filter === $key,
-                'bg-white dark:bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--line)] hover:border-[var(--accent)] hover:text-[var(--text)]' => $filter !== $key,
+                'bg-[var(--line-soft)] text-[var(--text-muted)] border border-[var(--line)] hover:border-[var(--accent)] hover:text-[var(--text)]' => $filter !== $key,
             ])>
                 {{ $label }}
             </a>
         @endforeach
     </div>
 
-    <div class="bg-white dark:bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead>

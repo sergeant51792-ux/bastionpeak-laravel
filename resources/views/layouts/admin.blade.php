@@ -6,11 +6,15 @@
     <title>@yield('title', 'Admin') — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
+    <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+            --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        }
+        body { font-family: var(--font-body); }
+        h1, h2, h3, h4, h5, .font-display { font-family: var(--font-display); }
         .sidebar-link.active { background: var(--primary); color: white; }
         .sidebar-link:hover:not(.active) { background: var(--line-soft); color: var(--text); }
         .sidebar-link.active svg { stroke: white; }
@@ -38,7 +42,7 @@
     <div class="flex min-h-screen">
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
 
-        <aside id="admin-sidebar" class="bg-white dark:bg-[var(--surface)] border-r border-[var(--line)] fixed inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out w-60 sidebar-closed lg:translate-x-0 lg:static lg:inset-auto lg:z-auto lg:sidebar-open lg:w-60">
+        <aside id="admin-sidebar" class="bg-[var(--surface)] border-r border-[var(--line)] fixed inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out w-60 sidebar-closed lg:translate-x-0 lg:static lg:inset-auto lg:z-auto lg:sidebar-open lg:w-60">
             <div class="h-16 flex items-center justify-between px-3 border-b border-[var(--line)]">
                 <div class="flex items-center gap-2.5">
                     <x-icon name="landmark" class="w-7 h-7 text-[var(--primary)] flex-shrink-0" />
@@ -77,7 +81,7 @@
         </aside>
 
         <div class="flex-1 flex flex-col min-h-screen" id="admin-main">
-            <header class="h-16 flex items-center gap-3 justify-between px-3 sm:px-4 border-b border-[var(--line)] bg-white dark:bg-[var(--surface)] flex-shrink-0">
+            <header class="h-16 flex items-center gap-3 justify-between px-3 sm:px-4 border-b border-[var(--line)] bg-[var(--surface)] flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-xl text-[var(--text-muted)] hover:bg-[var(--surface-raised)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                         <x-icon name="menu" class="w-5 h-5" />
