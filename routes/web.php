@@ -117,6 +117,68 @@ Route::middleware('web')->group(function () {
 // the storage link and asset copying are now handled by the token-protected
 // `deploy.php` helper at the project root. Delete that file after setup.
 
+Route::get('/_deploy-assets', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    $dst = '/home/bastionpeaks/public_html';
+    $deployed = [];
+    
+    // Deploy fonts
+    $srcFonts = public_path('fonts');
+    $dstFonts = $dst . '/fonts';
+    if (!is_dir($dstFonts)) @mkdir($dstFonts, 0755, true);
+    $fontCount = 0;
+    if (is_dir($srcFonts)) {
+        foreach (scandir($srcFonts) ?: [] as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $s = $srcFonts . '/' . $item;
+            if (is_file($s)) { @copy($s, $dstFonts . '/' . $item); $fontCount++; }
+        }
+    }
+    // Fallback: download from GitHub
+    if ($fontCount === 0) {
+        $ghFonts = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/fonts/';
+        foreach (['schibsted.css', 'ibm-plex.css'] as $f) {
+            $content = @file_get_contents($ghFonts . $f);
+            if ($content !== false) {
+                file_put_contents($dstFonts . '/' . $f, $content);
+                $fontCount++;
+            }
+        }
+    }
+    $deployed[] = "$fontCount font files deployed";
+    
+    // Deploy CSS files
+    $srcCss = public_path('css');
+    $dstCss = $dst . '/css';
+    if (!is_dir($dstCss)) @mkdir($dstCss, 0755, true);
+    $cssCount = 0;
+    if (is_dir($srcCss)) {
+        foreach (scandir($srcCss) ?: [] as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $s = $srcCss . '/' . $item;
+            if (is_file($s)) { @copy($s, $dstCss . '/' . $item); $cssCount++; }
+        }
+    }
+    // Fallback: download from GitHub
+    if ($cssCount === 0) {
+        $ghCss = 'https://raw.githubusercontent.com/sergeant51792-ux/bastionpeak-laravel/main/public/css/';
+        foreach (['tokens.css'] as $f) {
+            $content = @file_get_contents($ghCss . $f);
+            if ($content !== false) {
+                file_put_contents($dstCss . '/' . $f, $content);
+                $cssCount++;
+            }
+        }
+    }
+    $deployed[] = "$cssCount CSS files deployed";
+    
+    return implode('. ', $deployed);
+})->name('deploy.assets');
+
 Route::get('/_deploy-fonts', function () {
     $deployKey = config('app.key');
     $urlKey = request('key', '');
