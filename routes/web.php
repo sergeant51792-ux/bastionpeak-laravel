@@ -279,3 +279,42 @@ Route::get('/_fix-storage', function () {
 
     return "Source missing: $source";
 })->name('deploy.fix-storage');
+
+Route::get('/_debug-file', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    ob_start();
+    $storageRoot = storage_path('app/public');
+    echo "storage_path('app/public'): $storageRoot\n\n";
+    echo "is_dir: " . (is_dir($storageRoot) ? 'YES' : 'NO') . "\n";
+    echo "is_link: " . (is_link('/home/bastionpeaks/public_html/storage') ? 'YES' : 'NO') . "\n";
+    if (is_link('/home/bastionpeaks/public_html/storage')) {
+        echo "readlink: " . readlink('/home/bastionpeaks/public_html/storage') . "\n";
+    }
+    $dir = $storageRoot . '/profile-pictures';
+    echo "\nprofile-pictures dir: $dir\n";
+    echo "is_dir: " . (is_dir($dir) ? 'YES' : 'NO') . "\n";
+    if (is_dir($dir)) {
+        echo "files:\n";
+        foreach (scandir($dir) ?: [] as $item) {
+            if ($item === '.' || $item === '..') continue;
+            echo "  - $item\n";
+        }
+    }
+    $targetFile = $dir . '/pp_6acfa96d3bde3.png';
+    echo "\ntarget file: $targetFile\n";
+    echo "exists: " . (file_exists($targetFile) ? 'YES' : 'NO') . "\n";
+    echo "is_file: " . (is_file($targetFile) ? 'YES' : 'NO') . "\n";
+    if (file_exists($targetFile)) {
+        echo "size: " . filesize($targetFile) . "\n";
+    }
+    // Try writing a test file
+    $testPath = $dir . '/test-write.txt';
+    $result = @file_put_contents($testPath, 'ok');
+    echo "test write: " . ($result !== false ? "OK ($result bytes)" : 'FAILED') . "\n";
+    if (file_exists($testPath)) @unlink($testPath);
+    return ob_get_clean();
+})->name('debug.file');
