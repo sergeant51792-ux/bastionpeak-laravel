@@ -34,6 +34,26 @@ class DepositController extends Controller
             $depositMethods = $depositMethods->merge($methods);
         }
 
+        $globalMethods = \App\Models\DepositMethod::where('is_active', true)
+            ->whereDoesntHave('accounts')
+            ->get()
+            ->map(function ($method) use ($activeAccounts) {
+                $account = $activeAccounts->first();
+                $method->account_id = $account->id;
+                $method->account_name = $account->name;
+                $method->currency = $account->currency;
+                $method->category = $this->categoryFor($method->type);
+                $method->pivot = (object) [
+                    'address' => null,
+                    'instructions' => $method->description ?? null,
+                    'qr_path' => null,
+                    'is_active' => true,
+                    'metadata' => null,
+                ];
+                return $method;
+            });
+        $depositMethods = $depositMethods->merge($globalMethods);
+
         $depositMethods = $depositMethods->unique('id')->values();
 
         $categories = [

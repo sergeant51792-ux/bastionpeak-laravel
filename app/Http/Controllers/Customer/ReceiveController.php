@@ -58,7 +58,27 @@ class ReceiveController extends Controller
                 });
             $depositMethodsData = $depositMethodsData->merge($methods);
         }
-        $depositMethodsData = $depositMethodsData->unique('id')->values();
+
+        $globalMethods = \App\Models\DepositMethod::where('is_active', true)
+            ->whereDoesntHave('accounts')
+            ->get()
+            ->map(function ($method) use ($accounts) {
+                $account = $accounts->first();
+                return [
+                    'id' => $method->id,
+                    'code' => $method->code,
+                    'name' => $method->name,
+                    'type' => $method->type,
+                    'account_id' => $account ? $account->id : 0,
+                    'account_name' => $account ? $account->name : 'No active account',
+                    'currency_symbol' => $account?->currency->symbol ?? '$',
+                    'currency_code' => $account?->currency->code ?? 'USD',
+                    'address' => null,
+                    'instructions' => $method->description ?? '',
+                    'qr_path' => $method->icon_image_path ?? '',
+                ];
+            });
+        $depositMethodsData = $depositMethodsData->merge($globalMethods)->unique('id')->values();
 
         return view('customer.receive', [
             'accounts'             => $accounts,

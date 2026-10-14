@@ -25,12 +25,19 @@
                 </thead>
                 <tbody class="divide-y divide-[var(--line)]">
                     @forelse($methods as $method)
+                        @php
+                            $isGlobal = !$method->accounts()->exists();
+                        @endphp
                         <tr class="hover:bg-[var(--line-soft)] transition-colors">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
-                                        <x-icon name="settings" class="w-5 h-5" />
-                                    </div>
+                                    @if($method->icon_image_path)
+                                        <img src="{{ Storage::url($method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
+                                    @else
+                                        <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
+                                            <x-icon name="{{ $method->icon ?: 'settings' }}" class="w-5 h-5" />
+                                        </div>
+                                    @endif
                                     <div>
                                         <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
                                         @if($method->description)
@@ -56,6 +63,19 @@
                                     </span>
                                 @endif
                             </td>
+                            <td class="px-6 py-4">
+                                @if($isGlobal)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent)]/30">
+                                        <x-icon name="share-2" class="w-3 h-3 mr-1" />
+                                        Global
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--line-soft)] text-[var(--text-muted)]">
+                                        <x-icon name="user" class="w-3 h-3 mr-1" />
+                                        Account-specific
+                                    </span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('admin.deposit-methods.edit', $method) }}" class="p-2 text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] rounded-lg transition-colors" aria-label="Edit">
@@ -73,8 +93,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-[var(--text-muted)]">
+                            <td colspan="6" class="px-6 py-12 text-center text-[var(--text-muted)]">
                                 <p class="text-sm">No deposit methods configured.</p>
+                                <p class="text-xs mt-1">Global methods (not assigned to specific accounts) will appear for all accounts.</p>
                             </td>
                         </tr>
                     @endforelse
