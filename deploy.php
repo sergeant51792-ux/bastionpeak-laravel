@@ -414,6 +414,12 @@ if ($kernel && $bootError === null) {
             if (is_dir($srcFonts)) {
                 bp_copy_dir($srcFonts, $publicDir . '/fonts');
                 bp_out("Copied fonts to $publicDir/fonts");
+            } elseif (is_file($srcFonts . '/schibsted.css')) {
+                @mkdir($publicDir . '/fonts', 0755, true);
+                bp_copy_dir($srcFonts, $publicDir . '/fonts');
+                bp_out("Copied fonts to $publicDir/fonts (via file check)");
+            } else {
+                bp_out("Fonts source not found at $srcFonts — checking if exists on disk");
             }
             break;
 
@@ -448,6 +454,12 @@ if ($kernel && $bootError === null) {
             if (is_dir($srcFonts)) {
                 bp_copy_dir($srcFonts, $publicDir . '/fonts');
                 bp_out("assets: copied fonts to $publicDir/fonts");
+            } elseif (is_file($srcFonts . '/schibsted.css')) {
+                @mkdir($publicDir . '/fonts', 0755, true);
+                bp_copy_dir($srcFonts, $publicDir . '/fonts');
+                bp_out("assets: copied fonts to $publicDir/fonts (via file check)");
+            } else {
+                bp_out("assets: fonts source not found at $srcFonts");
             }
 
             $r = runArtisan($kernel, 'config:cache');
