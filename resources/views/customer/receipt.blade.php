@@ -270,10 +270,12 @@
             display: none !important;
         }
 
-        /* Free the content from the flex container */
+        /* Reset the flex wrapper to block so the receipt can take full width */
         body > div,
+        body > div > div,
         main#main-content,
         #main-content {
+            display: block !important;
             width: 100% !important;
             max-width: 100% !important;
             padding: 0 !important;
@@ -281,8 +283,21 @@
             background: white !important;
         }
 
-        /* Receipt paper: clean sheet on print */
+        /* Receipt paper: clean sheet on print — force visible colors */
         .receipt-print-root { padding: 0 !important; }
+        .bp-paper,
+        .bp-paper *,
+        .bp-paper dt,
+        .bp-paper dd,
+        .bp-paper p,
+        .bp-paper h2,
+        .bp-paper span,
+        .bp-paper a {
+            color: #000 !important;
+            background: white !important;
+            border-color: #e0e0e0 !important;
+            box-shadow: none !important;
+        }
         .bp-paper {
             box-shadow: none !important;
             border-radius: 0 !important;
