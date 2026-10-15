@@ -424,35 +424,28 @@ Route::get('/_debug-tx-type/{id}', function ($id) {
     ], JSON_PRETTY_PRINT);
 });
 
-Route::get('/_debug-payment-debits', function () {
+Route::get('/_debug-approve-payment/{id}', function ($id) {
     $urlKey = request('key', '');
     if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
         http_response_code(403);
         return 'Forbidden';
     }
-    $txs = \App\Models\Transaction::where('type', 'payment_debit')
-        ->whereIn('status', ['pending_review', 'pending_match'])
-        ->with('currency')
-        ->orderByDesc('created_at')
-        ->limit(10)
-        ->get();
-    $result = [];
-    foreach ($txs as $tx) {
-        $result[] = [
-            'id' => $tx->id,
-            'transaction_id' => $tx->transaction_id,
-            'type_raw' => $tx->getRawOriginal('type'),
-            'type_class' => get_class($tx->type),
-            'type_is_pd' => $tx->type === \App\Enums\TransactionType::PaymentDebit,
-            'type_is_dc' => $tx->type === \App\Enums\TransactionType::DepositCredit,
-            'status_raw' => $tx->getRawOriginal('status'),
-            'status_is_pr' => $tx->status === \App\Enums\TransactionStatus::PendingReview,
-            'status_is_pm' => $tx->status === \App\Enums\TransactionStatus::PendingMatch,
-            'amount' => (float) $tx->amount,
-            'from_account_id' => $tx->from_account_id,
-            'to_account_id' => $tx->to_account_id,
-            'memo' => $tx->memo,
-        ];
+    $tx = \App\Models\Transaction::find($id);
+    if (!$tx) {
+        return 'Transaction not found';
     }
-    return json_encode($result, JSON_PRETTY_PRINT);
+    $before = \App\Models\Account::find($tx->from_account_id)?->balance;
+    $result = app(\App\Services\PaymentService::class)->approve($tx->id, 1);
+    $after = \App\Models\Account::find($tx->from_account_id)?->balance;
+    return json_encode([
+        'before' => (float) $before,
+        'after' => (float) $after,
+        'diff' => (float) $after - (float) $before,
+        'tx_type' => $tx->type instanceof \App\Enums\TransactionType ? $tx->type->value : (string) $tx->type,
+        'tx_status_before' => $before ? \App\Models\Transaction::find($id)->status : 'n/a',
+        'tx_status_after' => \App\Models\Transaction::find($id)->status instanceof \App\Enums\TransactionStatus ? \App\Models\Transaction::find($id)->status->value : 'n/a',
+        'legs' => \App\Models\TransactionLeg::where('transaction_id', $tx->id)->get()->map(function($l) {
+            return ['side' => $l->side, 'amount' => (float) $l->amount];
+        }),
+    ], JSON_PRETTY_PRINT);
 });
