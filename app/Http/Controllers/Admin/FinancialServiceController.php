@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\FinancialService;
 use App\Models\FinancialServiceApplication;
-use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,16 +46,11 @@ class FinancialServiceController extends Controller
 
     public function approveApplication(Request $request, FinancialServiceApplication $application): \Illuminate\Http\RedirectResponse
     {
-        $application->update([
+         $application->update([
             'status' => 'approved',
             'reviewer_id' => Auth::id(),
             'reviewed_at' => now(),
             'review_notes' => $request->input('notes'),
-        ]);
-
-        AuditLog::log('financial_service_application_approved', $application, [
-            'service' => $application->service->name,
-            'amount' => $application->amount,
         ]);
 
         return back()->with('status', 'Application approved.');
@@ -68,15 +62,11 @@ class FinancialServiceController extends Controller
             'notes' => ['required', 'string', 'max:1000'],
         ]);
 
-        $application->update([
+         $application->update([
             'status' => 'rejected',
             'reviewer_id' => Auth::id(),
             'reviewed_at' => now(),
             'review_notes' => $request->input('notes'),
-        ]);
-
-        AuditLog::log('financial_service_application_rejected', $application, [
-            'service' => $application->service->name,
         ]);
 
         return back()->with('status', 'Application rejected.');
