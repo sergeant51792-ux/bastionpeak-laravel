@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Account;
 use App\Models\DepositMethod;
-use Illuminate\Support\Facades\Storage;
 
 class AccountController extends Controller
 {
@@ -63,10 +62,11 @@ class AccountController extends Controller
         ];
 
         if ($request->hasFile('deposit_qr')) {
-            if ($account->deposit_qr_path && Storage::disk('public')->exists($account->deposit_qr_path)) {
-                Storage::disk('public')->delete($account->deposit_qr_path);
+            if ($account->deposit_qr_path) {
+                $fullPath = storage_path('app/public/' . $account->deposit_qr_path);
+                if (is_file($fullPath)) { unlink($fullPath); }
             }
-            $data['deposit_qr_path'] = $this->storeUploadedFile($request->file('deposit_qr'), 'deposit-qr', $account->deposit_qr_path);
+            $data['deposit_qr_path'] = $this->storeUploadedFile($request->file('deposit_qr'), 'deposit-qr');
         }
 
         $account->update($data);

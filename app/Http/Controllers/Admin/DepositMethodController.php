@@ -7,8 +7,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DepositMethod;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class DepositMethodController extends Controller
 {
@@ -57,17 +55,11 @@ class DepositMethodController extends Controller
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
 
         if ($request->hasFile('icon_image')) {
-            $file = $request->file('icon_image');
-            $filename = 'icon_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('public')->put('deposit-method-icons/' . $filename, file_get_contents($file->getRealPath()));
-            $validated['icon_image_path'] = 'deposit-method-icons/' . $filename;
+            $validated['icon_image_path'] = $this->storeUploadedFile($request->file('icon_image'), 'deposit-method-icons');
         }
 
         if ($request->hasFile('qr_image')) {
-            $file = $request->file('qr_image');
-            $filename = 'qr_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('public')->put('deposit-qr-codes/' . $filename, file_get_contents($file->getRealPath()));
-            $validated['qr_path'] = 'deposit-qr-codes/' . $filename;
+            $validated['qr_path'] = $this->storeUploadedFile($request->file('qr_image'), 'deposit-qr-codes');
         }
 
         DepositMethod::create($validated);
@@ -106,28 +98,19 @@ class DepositMethodController extends Controller
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
 
         if ($request->hasFile('icon_image')) {
-            if ($depositMethod->icon_image_path) {
-                Storage::disk('public')->delete($depositMethod->icon_image_path);
-            }
-            $file = $request->file('icon_image');
-            $filename = 'icon_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('public')->put('deposit-method-icons/' . $filename, file_get_contents($file->getRealPath()));
-            $validated['icon_image_path'] = 'deposit-method-icons/' . $filename;
+            $validated['icon_image_path'] = $this->storeUploadedFile($request->file('icon_image'), 'deposit-method-icons', $depositMethod->icon_image_path);
         }
 
         if ($request->hasFile('qr_image')) {
-            if ($depositMethod->qr_path) {
-                Storage::disk('public')->delete($depositMethod->qr_path);
-            }
-            $file = $request->file('qr_image');
-            $filename = 'qr_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
-            Storage::disk('public')->put('deposit-qr-codes/' . $filename, file_get_contents($file->getRealPath()));
-            $validated['qr_path'] = 'deposit-qr-codes/' . $filename;
+            $validated['qr_path'] = $this->storeUploadedFile($request->file('qr_image'), 'deposit-qr-codes', $depositMethod->qr_path);
         }
 
         if ($request->boolean('remove_qr')) {
             if ($depositMethod->qr_path) {
-                Storage::disk('public')->delete($depositMethod->qr_path);
+                $fullPath = storage_path('app/public/' . $depositMethod->qr_path);
+                if (is_file($fullPath)) {
+                    unlink($fullPath);
+                }
             }
             $validated['qr_path'] = null;
         }
@@ -140,10 +123,12 @@ class DepositMethodController extends Controller
     public function destroy(DepositMethod $depositMethod)
     {
         if ($depositMethod->icon_image_path) {
-            Storage::disk('public')->delete($depositMethod->icon_image_path);
+            $fullPath = storage_path('app/public/' . $depositMethod->icon_image_path);
+            if (is_file($fullPath)) { unlink($fullPath); }
         }
         if ($depositMethod->qr_path) {
-            Storage::disk('public')->delete($depositMethod->qr_path);
+            $fullPath = storage_path('app/public/' . $depositMethod->qr_path);
+            if (is_file($fullPath)) { unlink($fullPath); }
         }
 
         $depositMethod->delete();

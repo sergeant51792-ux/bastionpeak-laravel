@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\DepositMethod;
-use Illuminate\Support\Facades\Storage;
 
 class AccountDepositMethodController extends Controller
 {
@@ -46,9 +45,6 @@ class AccountDepositMethodController extends Controller
         if ($request->hasFile('qr')) {
             $existing = $account->depositMethods()->where('deposit_method_id', $validated['deposit_method_id'])->first();
             $existingQrPath = $existing?->pivot?->qr_path;
-            if ($existing && $existingQrPath && Storage::disk('public')->exists($existingQrPath)) {
-                Storage::disk('public')->delete($existingQrPath);
-            }
             $pivotData['qr_path'] = $this->storeUploadedFile($request->file('qr'), 'deposit-qr', $existingQrPath);
         }
 
@@ -79,16 +75,14 @@ class AccountDepositMethodController extends Controller
         if ($request->hasFile('qr')) {
             $existing = $account->depositMethods()->where('deposit_method_id', $depositMethod->id)->first();
             $existingQrPath = $existing?->pivot?->qr_path;
-            if ($existing && $existingQrPath && Storage::disk('public')->exists($existingQrPath)) {
-                Storage::disk('public')->delete($existingQrPath);
-            }
             $pivotData['qr_path'] = $this->storeUploadedFile($request->file('qr'), 'deposit-qr', $existingQrPath);
         }
 
         if ($request->input('remove_qr') === '1') {
             $existing = $account->depositMethods()->where('deposit_method_id', $depositMethod->id)->first();
-            if ($existing && $existing->pivot->qr_path && Storage::disk('public')->exists($existing->pivot->qr_path)) {
-                Storage::disk('public')->delete($existing->pivot->qr_path);
+            if ($existing && $existing->pivot->qr_path) {
+                $fullPath = storage_path('app/public/' . $existing->pivot->qr_path);
+                if (is_file($fullPath)) { unlink($fullPath); }
             }
             $pivotData['qr_path'] = null;
         }
