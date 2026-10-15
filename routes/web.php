@@ -395,5 +395,30 @@ Route::get('/_debug-pending-deposits', function () {
 
     $result['sample_recent_txns'] = \App\Models\Transaction::orderByDesc('created_at')->limit(5)->get(['id', 'type', 'status', 'amount', 'created_at', 'from_account_id', 'to_account_id'])->toArray();
 
+    // Admin approval query simulation
+    $result['admin_query_count'] = \App\Models\Transaction::query()
+        ->where('type', 'deposit_credit')
+        ->whereIn('status', ['pending_review', 'pending_match'])
+        ->count();
+
+    $result['admin_query_first_3'] = \App\Models\Transaction::query()
+        ->where('type', 'deposit_credit')
+        ->whereIn('status', ['pending_review', 'pending_match'])
+        ->orderByDesc('created_at')
+        ->limit(3)
+        ->get(['id', 'transaction_id', 'type', 'status', 'amount', 'from_user_id', 'to_account_id'])
+        ->toArray();
+
+    // Check the enum cast behavior
+    $testTxn = \App\Models\Transaction::where('type', 'deposit_credit')
+        ->whereIn('status', ['pending_review', 'pending_match'])
+        ->first();
+    if ($testTxn) {
+        $result['test_txn_type_class'] = get_class($testTxn->type);
+        $result['test_txn_status_class'] = get_class($testTxn->status);
+        $result['test_txn_type_value'] = $testTxn->type;
+        $result['test_txn_status_value'] = $testTxn->status;
+    }
+
     return response()->json($result);
 })->name('debug.pending');
