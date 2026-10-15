@@ -174,8 +174,8 @@
                         <p class="text-sm font-semibold text-[var(--text)]">{{ __('Language') }}</p>
                         <p class="text-xs text-[var(--text-muted)]">{{ __('Select your display language') }}</p>
                     </div>
-                    <div class="relative w-44">
-                        <select name="language" id="language-select" class="input-field appearance-none pr-10">
+                    <div class="relative">
+                        <select name="language" id="language-select" class="input-field w-full">
                             <option value="en" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'en' ? 'selected' : '' }}>English</option>
                             <option value="es" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'es' ? 'selected' : '' }}>Español</option>
                             <option value="fr" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'fr' ? 'selected' : '' }}>Français</option>
@@ -187,7 +187,6 @@
                             <option value="ar" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'ar' ? 'selected' : '' }}>العربية</option>
                             <option value="hi" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'hi' ? 'selected' : '' }}>हिन्दी</option>
                         </select>
-                        <x-icon name="chevron-down" class="w-4 h-4 text-[var(--text-muted)] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
                 </div>
         </form>
