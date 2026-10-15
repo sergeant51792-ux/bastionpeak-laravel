@@ -94,7 +94,7 @@ class ActivityController extends Controller
         $transaction->load([
             'fromAccount', 'fromAccount.currency',
             'toAccount', 'toAccount.currency',
-            'currency', 'merchant', 'legs',
+            'currency', 'merchant',
         ]);
 
         return view('customer.receipt', [
