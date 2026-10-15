@@ -49,16 +49,15 @@ class Approvals extends Page
 
     public function getQueueProperty()
     {
-        if ($this->activeTab === 'deposits') {
-            return Transaction::where('type', 'deposit_credit')
+        $query = ($this->activeTab === 'deposits')
+            ? Transaction::where('type', 'deposit_credit')
                 ->whereIn('status', ['pending_review', 'pending_match'])
-                ->orderByDesc('created_at')
-                ->get();
-        }
+            : Transaction::where('type', 'payment_debit')
+                ->whereIn('status', ['pending_review']);
 
-        return Transaction::where('type', 'payment_debit')
-            ->whereIn('status', ['pending_review'])
+        return $query->with(['fromUser', 'toUser', 'fromAccount', 'toAccount', 'currency'])
             ->orderByDesc('created_at')
+            ->limit(50)
             ->get();
     }
 
@@ -83,7 +82,7 @@ class Approvals extends Page
         }
 
         $this->openTransactionId = null;
-        $this->dispatch('transaction-updated');
+        $this->dispatch('$refresh');
     }
 
     public function reject(int $transactionId): void
@@ -98,6 +97,6 @@ class Approvals extends Page
         }
 
         $this->openTransactionId = null;
-        $this->dispatch('transaction-updated');
+        $this->dispatch('$refresh');
     }
 }
