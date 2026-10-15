@@ -13,9 +13,12 @@
                 <p class="text-sm text-[var(--text-muted)]">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
             </div>
         </div>
-        <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($transaction->status, ['approved', 'posted', 'credited']), 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($transaction->status, ['pending_review', 'pending_match']), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($transaction->status, ['rejected', 'reversed', 'cancelled'])])>
-            {{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? '—') }}
-        </span>
+@php
+    $txnStatus = $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->value : ($transaction->status ?? '');
+@endphp
+<span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($txnStatus, ['approved', 'posted', 'credited']), 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($txnStatus, ['pending_review', 'pending_match']), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($txnStatus, ['rejected', 'reversed', 'cancelled'])])>
+    {{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? '—') }}
+</span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
