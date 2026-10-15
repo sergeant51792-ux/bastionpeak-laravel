@@ -174,8 +174,8 @@
                         <p class="text-sm font-semibold text-[var(--text)]">{{ __('Language') }}</p>
                         <p class="text-xs text-[var(--text-muted)]">{{ __('Select your display language') }}</p>
                     </div>
-                    <div class="relative">
-                        <select name="language" id="language-select" class="input-field w-full">
+                    <div class="relative w-44">
+                        <select name="language" id="language-select" class="input-field">
                             <option value="en" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'en' ? 'selected' : '' }}>English</option>
                             <option value="es" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'es' ? 'selected' : '' }}>Español</option>
                             <option value="fr" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'fr' ? 'selected' : '' }}>Français</option>
@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var themeInput = document.getElementById('theme-input');
     var languageSelect = document.getElementById('language-select');
     var prefsForm = document.getElementById('preferences-form');
+    var input = document.getElementById('picture-input');
 
     function showPrefBtn() {
         if (savePrefBtn) savePrefBtn.classList.remove('hidden');
