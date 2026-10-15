@@ -101,7 +101,7 @@ class PaymentService
     public function approve(int $transactionId, int $operatorId): Transaction
     {
         $transaction = Transaction::findOrFail($transactionId);
-        if ($transaction->status !== TransactionStatus::PendingReview) {
+        if (!in_array($transaction->status, [TransactionStatus::PendingReview, TransactionStatus::PendingMatch])) {
             return $transaction;
         }
 
@@ -128,6 +128,16 @@ class PaymentService
             $account->balance = (float)$account->balance - (float)$transaction->amount;
             $account->save();
 
+            event(new \App\Events\PaymentApproved($transaction));
+
+            $this->notifications->sendToUser(
+                $transaction->from_user_id,
+                'payment_approved',
+                'Payment Processed',
+                'Your payment request has been approved.',
+                'in-app'
+            );
+
             return $transaction;
         });
     }
@@ -152,6 +162,16 @@ class PaymentService
             'rejected_at'      => now(),
             'updated_at'       => now(),
         ]);
+
+        event(new \App\Events\PaymentRejected($transaction, $reason));
+
+        $this->notifications->sendToUser(
+            $transaction->from_user_id,
+            'payment_rejected',
+            'Payment Rejected',
+            'Your payment request was rejected: ' . $reason,
+            'in-app'
+        );
 
         return $transaction;
     }

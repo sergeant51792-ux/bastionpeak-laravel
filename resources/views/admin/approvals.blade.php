@@ -225,11 +225,13 @@
                         <form method="POST" action="{{ route('admin.approvals.approve', $openTransaction) }}" class="flex-1">
                             @csrf
                                 <button type="submit" class="w-full py-2.5 bg-[var(--success)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">
-                                    @if($openTransaction->type === \App\Enums\TransactionType::DepositCredit)
-                                        Approve and credit {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
-                                    @else
-                                        Approve {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
-                                    @endif
+                            @if($openTransaction->type === \App\Enums\TransactionType::DepositCredit)
+                                Approve and credit {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
+                            @elseif($openTransaction->type === \App\Enums\TransactionType::PaymentDebit)
+                                Approve and debit {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
+                            @else
+                                Approve {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
+                            @endif
                                 </button>
                         </form>
                     </div>
