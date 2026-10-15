@@ -80,12 +80,14 @@
     </div>
 
     {{-- Receipt paper --}}
-    <div class="bp-paper mx-auto max-w-md bg-white dark:bg-gray-950 text-black dark:text-gray-100 shadow-xl rounded-none sm:rounded-lg overflow-hidden">
+    <div class="bp-paper mx-auto max-w-md bg-white dark:bg-gray-950 text-black dark:text-gray-100 shadow-xl rounded-none sm:rounded-lg overflow-hidden relative">
+        <div class="bp-watermark">BASTION PEAK</div>
         <div class="bp-paper-inner px-5 py-5">
 
             {{-- Brand + status --}}
             <div class="flex items-baseline justify-content-between mb-4 pb-2">
                 <div class="flex items-center gap-2">
+                    <x-icon name="landmark" class="w-5 h-5 text-[var(--accent)]" />
                     <span class="font-bold text-xl text-black dark:text-white">Bastion Peak</span>
                 </div>
                 <span class="font-bold text-xs uppercase" style="color: {{ $statusInfo['color'] }}">{{ $statusInfo['label'] }}</span>
@@ -270,6 +272,20 @@
             page-break-inside: avoid;
         }
         .bp-paper-inner { padding: 0.25in !important; }
+    }
+
+    .bp-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-25deg);
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--text-muted);
+        opacity: 0.05;
+        pointer-events: none;
+        white-space: nowrap;
+        letter-spacing: 0.25em;
     }
 </style>
 @endsection

@@ -68,7 +68,20 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: "Courier New", Courier, monospace; background: #f5f5f5; color: #1a1a1a; padding: 20px; }
-        .page { max-width: 794px; margin: 0 auto; background: #ffffff; padding: 24px 40px; font-size: 13px; line-height: 1.4; }
+        .page { max-width: 794px; margin: 0 auto; background: #ffffff; padding: 24px 40px; font-size: 13px; line-height: 1.4; position: relative; }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 64px;
+            font-weight: 900;
+            color: #000;
+            opacity: 0.03;
+            pointer-events: none;
+            white-space: nowrap;
+            letter-spacing: 0.3em;
+        }
         .row { display: flex; justify-content: space-between; gap: 16px; padding: 5px 0; }
         .row dt { color: #666; font-size: 11px; }
         .row dd { font-weight: bold; text-align: right; word-break: break-word; font-variant-numeric: tabular-nums; }
@@ -92,6 +105,11 @@
 </head>
 <body>
 <div class="page">
+    <div class="watermark">BASTION PEAK</div>
+
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+        <span style="font-weight: 700; font-size: 20px; color: #1E3A8A;">Bastion Peak</span>
+    </div>
     <div class="row" style="margin-bottom: 16px;">
         <dt class="label">BASTION PEAK</dt>
         <dd class="value" style="font-size: 13px;">{{ $transaction->transaction_id ?? 'TXN-' . strtoupper(substr((string) $transaction->id, 0, 8)) }}</dd>
