@@ -28,8 +28,13 @@
                     @foreach($walletBalances as $code => $wallet)
                         <div class="w-full flex-shrink-0" data-currency="{{ $code }}">
                             <div class="card-balance h-44 sm:h-48">
-                                <button id="toggle-balance" onclick="toggleHideBalance()" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white/70 hover:text-white transition-all z-10" aria-label="Toggle balance visibility">
-                                    <x-icon name="{{ $hideBalance ? 'eye-off' : 'eye' }}" class="w-4 h-4" id="toggle-eye-icon" />
+                                <button id="toggle-balance" onclick="toggleHideBalance()" class="absolute top-4 right-4 w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 z-10" aria-label="Toggle balance visibility">
+                                    <span id="eye-show-icon" class="{{ $hideBalance ? 'hidden' : '' }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </span>
+                                    <span id="eye-hide-icon" class="{{ $hideBalance ? '' : 'hidden' }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a1.5 1.5 0 1 0 2.12 2.12 1.5 1.5 0 0 0-2.12-2.12z"></path><path d="M10.75 10.75A3.72 3.72 0 0 1 12 10c1.31 0 2.39.9 2.75 2.25a3.72 3.72 0 0 1-.75 4.25A3.72 3.72 0 0 1 12 18c-1.31 0-2.39-.9-2.75-2.25a3.72 3.72 0 0 1 .5-3.5z"></path><path d="M15.09 9.91a5.36 5.36 0 0 0-2.18-2.18 5.34 5.34 0 0 0-1.62-.54 5.25 5.25 0 0 1 3.81 3.81 5.36 5.36 0 0 0-.54-1.62zM8.5 4.5A7.43 7.43 0 0 1 12 4c1.42 0 2.73.4 3.84 1.12l-1.45 2.9A5.35 5.35 0 0 0 12 7.25c-.55 0-1.05-.13-1.5-.37-.15-.07-.28-.16-.42-.25zM2 2l20 20"></path><path d="M9.9 9.9A5.3 5.3 0 0 1 12 10a5.3 5.3 0 0 1 0 4 5.3 5.3 0 0 1-.1 1.62M4.72 4.72l2.54 2.54A13.17 13.17 0 0 1 12 6c3.25 0 6.23 1.46 8.75 3.81-.35.68-.76 1.35-1.23 1.99l2.69 2.69A15.44 15.44 0 0 0 20 12a13.4 13.4 0 0 0-3-3.5 14.5 14.5 0 0 0-1.16.79l-1.36-1.36A13.83 13.83 0 0 0 12 4.5 13.83 13.83 0 0 0 4.72 4.72z"></path></svg>
+                                    </span>
                                 </button>
                                 <div class="relative z-10 flex h-full flex-col justify-between pt-10">
                                     <div>
@@ -63,9 +68,17 @@
             <div id="wallet-slider" class="relative overflow-hidden">
                 <div id="wallet-track" class="flex transition-transform duration-500 ease-out">
                     @foreach($accounts as $account)
-                        <div class="w-full flex-shrink-0" data-currency="{{ $account->currency->code }}">
-                            <div class="card-balance h-44 sm:h-48">
-                                <div class="relative z-10 flex h-full flex-col justify-between">
+                            <div class="w-full flex-shrink-0" data-currency="{{ $account->currency->code }}">
+                                <div class="card-balance h-44 sm:h-48">
+                                    <button id="toggle-balance" onclick="toggleHideBalance()" class="absolute top-4 right-4 w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 z-10" aria-label="Toggle balance visibility">
+                                        <span id="eye-show-icon" class="{{ $hideBalance ? 'hidden' : '' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        </span>
+                                        <span id="eye-hide-icon" class="{{ $hideBalance ? '' : 'hidden' }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a1.5 1.5 0 1 0 2.12 2.12 1.5 1.5 0 0 0-2.12-2.12z"></path><path d="M10.75 10.75A3.72 3.72 0 0 1 12 10c1.31 0 2.39.9 2.75 2.25a3.72 3.72 0 0 1-.75 4.25A3.72 3.72 0 0 1 12 18c-1.31 0-2.39-.9-2.75-2.25a3.72 3.72 0 0 1 .5-3.5z"></path><path d="M15.09 9.91a5.36 5.36 0 0 0-2.18-2.18 5.34 5.34 0 0 0-1.62-.54 5.25 5.25 0 0 1 3.81 3.81 5.36 5.36 0 0 0-.54-1.62zM8.5 4.5A7.43 7.43 0 0 1 12 4c1.42 0 2.73.4 3.84 1.12l-1.45 2.9A5.35 5.35 0 0 0 12 7.25c-.55 0-1.05-.13-1.5-.37-.15-.07-.28-.16-.42-.25zM2 2l20 20"></path><path d="M9.9 9.9A5.3 5.3 0 0 1 12 10a5.3 5.3 0 0 1 0 4 5.3 5.3 0 0 1-.1 1.62M4.72 4.72l2.54 2.54A13.17 13.17 0 0 1 12 6c3.25 0 6.23 1.46 8.75 3.81-.35.68-.76 1.35-1.23 1.99l2.69 2.69A15.44 15.44 0 0 0 20 12a13.4 13.4 0 0 0-3-3.5 14.5 14.5 0 0 0-1.16.79l-1.36-1.36A13.83 13.83 0 0 0 12 4.5 13.83 13.83 0 0 0 4.72 4.72z"></path></svg>
+                                        </span>
+                                    </button>
+                                    <div class="relative z-10 flex h-full flex-col justify-between">
                                     <div class="flex items-start justify-between">
                                         <div>
                                             <p class="text-xs font-medium uppercase tracking-wider text-white/60">Account</p>
@@ -289,15 +302,17 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleHideBalance() {
     var isHidden = document.body.getAttribute('data-hide-balance') === 'true';
     var newValue = isHidden ? '0' : '1';
-    var eyeIcon = document.getElementById('toggle-eye-icon');
-    if (eyeIcon) {
-        eyeIcon.setAttribute('data-icon', isHidden ? 'eye' : 'eye-off');
-    }
+    var showIcon = document.getElementById('eye-show-icon');
+    var hideIcon = document.getElementById('eye-hide-icon');
 
     if (isHidden) {
         document.body.removeAttribute('data-hide-balance');
+        if (showIcon) showIcon.classList.remove('hidden');
+        if (hideIcon) hideIcon.classList.add('hidden');
     } else {
         document.body.setAttribute('data-hide-balance', 'true');
+        if (showIcon) showIcon.classList.add('hidden');
+        if (hideIcon) hideIcon.classList.remove('hidden');
     }
 
     fetch('{{ route('profile.preferences') }}', {
@@ -310,13 +325,14 @@ function toggleHideBalance() {
         },
         body: '_token={{ csrf_token() }}&hide_balance=' + newValue + '&theme_preference={{ $user->theme_preference ?: "system" }}'
     }).catch(function() {
-        // Revert on error
         if (isHidden) {
             document.body.setAttribute('data-hide-balance', 'true');
-            if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye-off');
+            if (showIcon) showIcon.classList.add('hidden');
+            if (hideIcon) hideIcon.classList.remove('hidden');
         } else {
             document.body.removeAttribute('data-hide-balance');
-            if (eyeIcon) eyeIcon.setAttribute('data-icon', 'eye');
+            if (showIcon) showIcon.classList.remove('hidden');
+            if (hideIcon) hideIcon.classList.add('hidden');
         }
     });
 }
