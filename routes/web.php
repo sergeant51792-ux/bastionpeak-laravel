@@ -82,10 +82,7 @@ Route::middleware('web')->group(function () {
         Route::post('/notifications/mark-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-read');
         Route::get('/profile', [ProfileController::class, '__invoke'])->name('profile');
         Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Password change route removed — password changes are locked behind the
-    // forgot-password flow and 2FA. Users cannot reset their password from the
-    // profile page.
-    // Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.change');
+Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.change');
         Route::post('/profile/picture/upload', [ProfileController::class, 'uploadPicture'])->name('profile.picture.upload');
         Route::post('/profile/picture/remove', [ProfileController::class, 'removePicture'])->name('profile.picture.remove');
         Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences');
