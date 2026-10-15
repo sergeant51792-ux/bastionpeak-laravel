@@ -52,6 +52,7 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::get('deposit-methods/{depositMethod}/edit', [\App\Http\Controllers\Admin\DepositMethodController::class, 'edit'])->name('deposit-methods.edit');
     Route::put('deposit-methods/{depositMethod}', [\App\Http\Controllers\Admin\DepositMethodController::class, 'update'])->name('deposit-methods.update');
     Route::delete('deposit-methods/{depositMethod}', [\App\Http\Controllers\Admin\DepositMethodController::class, 'destroy'])->name('deposit-methods.destroy');
+    Route::post('deposit-methods/{depositMethod}/toggle', [\App\Http\Controllers\Admin\DepositMethodController::class, 'toggle'])->name('deposit-methods.toggle');
 
     Route::get('accounts/{account}', [AccountController::class, 'show'])->name('accounts.show');
     Route::post('accounts/{account}/balance', [AccountController::class, 'updateBalance'])->name('accounts.balance.update');

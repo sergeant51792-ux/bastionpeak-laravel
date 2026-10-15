@@ -53,15 +53,20 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                @if($method->is_active)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)]/30">
-                                        Active
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--line-soft)] text-[var(--text-muted)] border border-[var(--line)]">
-                                        Inactive
-                                    </span>
-                                @endif
+                                <form method="POST" action="{{ route('admin.deposit-methods.toggle', $method) }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="cursor-pointer">
+                                        @if($method->is_active)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)]/30">
+                                                Active
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--line-soft)] text-[var(--text-muted)] border border-[var(--line)]">
+                                                Inactive
+                                            </span>
+                                        @endif
+                                    </button>
+                                </form>
                             </td>
                             <td class="px-6 py-4">
                                 @if($isGlobal)

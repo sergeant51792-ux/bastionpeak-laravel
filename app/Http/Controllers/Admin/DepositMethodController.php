@@ -135,4 +135,11 @@ class DepositMethodController extends Controller
 
         return back()->with('status', 'Deposit method deleted successfully.');
     }
+
+    public function toggle(DepositMethod $depositMethod)
+    {
+        $depositMethod->update(['is_active' => !$depositMethod->is_active]);
+
+        return back()->with('status', 'Deposit method status updated.');
+    }
 }

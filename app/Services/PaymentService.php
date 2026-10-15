@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\DB;
  */
 class PaymentService
 {
+    public function __construct(
+        protected NotificationService $notifications,
+    ) {}
+
     /**
      * Submit a new payment request.
      *

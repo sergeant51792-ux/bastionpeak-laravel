@@ -320,23 +320,6 @@ class UserController extends Controller
 
         $transaction->update($data);
 
-        if ($transaction->to_account_id && $transaction->toAccount?->user_id) {
-            $this->notifications->sendToUser(
-                $transaction->toAccount->user_id,
-                'transaction_update',
-                'Transaction updated',
-                'Transaction ' . $transaction->transaction_id . ' has been processed.'
-            );
-        }
-        if ($transaction->from_account_id && $transaction->fromAccount?->user_id && $transaction->fromAccount->user_id !== ($transaction->toAccount->user_id ?? null)) {
-            $this->notifications->sendToUser(
-                $transaction->fromAccount->user_id,
-                'transaction_update',
-                'Transaction updated',
-                'Transaction ' . $transaction->transaction_id . ' has been processed.'
-            );
-        }
-
         return back()->with('status', 'Transaction updated successfully.');
     }
 

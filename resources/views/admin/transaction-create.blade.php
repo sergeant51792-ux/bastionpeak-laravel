@@ -25,7 +25,7 @@
                         <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">User ID (optional)</label>
                         <input type="number" name="user_id" placeholder="User ID" class="input-field">
                     </div>
-                @end
+                @endif
                 <div>
                     <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Account</label>
                     <select name="account_id" required class="input-field">

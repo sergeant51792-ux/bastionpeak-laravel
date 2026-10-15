@@ -136,8 +136,26 @@ class AccountController extends Controller
         return back()->with('status', 'Account balance updated successfully.');
     }
 
-    public function updateCaps(Request $request, Account $account): RedirectResponse
+    public function recalculate(Request $request, Account $account): RedirectResponse
     {
+        $oldBalance = (float) $account->balance;
+
+        $newBalance = $this->ledger->recalculateBalance($account->id);
+
+        \App\Models\AuditLog::create([
+            'admin_id'    => Auth::id(),
+            'action'      => 'account_rebalanced',
+            'target_type' => 'account',
+            'target_id'   => $account->id,
+            'old_value'   => ['balance' => $oldBalance],
+            'new_value'   => ['balance' => $newBalance],
+            'ip_address'  => $request->ip(),
+            'user_agent'  => $request->userAgent(),
+        ]);
+
+        return back()->with('status', 'Account balance recalculated from ledger: ' . $newBalance . ' ' . $account->currency->code);
+    }
+}
         $validated = $request->validate([
             'per_transaction_cap' => ['nullable', 'numeric', 'min:0'],
             'daily_cap'           => ['nullable', 'numeric', 'min:0'],
