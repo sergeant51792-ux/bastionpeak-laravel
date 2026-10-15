@@ -97,7 +97,7 @@
             </form>
         </div>
     @else
-        {{-- Authenticator on --}}
+        {{-- Authenticator on — locked --}}
         <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-4">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-xl bg-[var(--success-bg)] flex items-center justify-center text-[var(--success)] shrink-0">
@@ -114,23 +114,12 @@
                 <p class="font-mono text-sm text-[var(--text)] break-all">{{ $grouped }}</p>
             </div>
 
-            <form method="POST" action="{{ route('two-factor.disable') }}" class="space-y-2"
-                  onsubmit="return confirm('Turn off the authenticator? You will be asked for a code to sign in, send transfers and change your password no longer.');">
-                @csrf
-                @method('DELETE')
-                @error('code')
-                    <p class="text-sm text-[var(--danger)]">{{ $message }}</p>
-                @enderror
-                <div>
-                    <label for="disable-code" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Confirm with your current code</label>
-                    <input type="text" id="disable-code" name="code" required inputmode="numeric" autocomplete="one-time-code"
-                           maxlength="6" pattern="[0-9]{6}"
-                           class="input-field font-mono text-lg tracking-[0.4em]" placeholder="000000">
-                </div>
-                <button type="submit" class="w-full py-3 border border-[var(--danger)]/40 text-[var(--danger)] rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
-                    Turn off authenticator
-                </button>
-            </form>
+            <div class="bg-[var(--warning-bg)] border border-[var(--warning)]/30 rounded-xl p-4">
+                <p class="text-xs text-[var(--text-muted)]">
+                    <span class="font-semibold text-[var(--warning)]">Locked:</span>
+                    {{ __('The authenticator cannot be disabled once enabled. Contact support if you need assistance.') }}
+                </p>
+            </div>
         </div>
     @endif
 </div>

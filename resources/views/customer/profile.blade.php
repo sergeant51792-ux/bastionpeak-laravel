@@ -68,50 +68,37 @@
     <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-5">
         <h2 class="text-base font-bold text-[var(--text)]">{{ __('Security') }}</h2>
 
-        <a href="{{ route('two-factor.setup') }}" class="flex items-center gap-3 p-4 border border-[var(--line)] rounded-xl hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-colors">
-            <span class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                <x-icon name="shield-check" class="w-5 h-5" />
-            </span>
-            <span class="flex-1 min-w-0">
-                <span class="block text-sm font-semibold text-[var(--text)]">{{ __('Google Authenticator') }}</span>
-                <span class="block text-xs text-[var(--text-muted)] mt-0.5">
-                    {{ $user->hasTotp() ? 'Required for sign in, transfers and password changes' : 'Set up a one-time code for extra security' }}
+        @if($user->hasTotp())
+            {{-- TOTP locked --}}
+            <div class="flex items-center gap-3 p-4 border border-[var(--line)] rounded-xl bg-[var(--success-bg)]">
+                <span class="w-10 h-10 rounded-xl bg-[var(--success-bg)] flex items-center justify-center text-[var(--success)] shrink-0">
+                    <x-icon name="shield-check" class="w-5 h-5" />
                 </span>
-            </span>
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 {{ $user->hasTotp() ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--line-soft)] text-[var(--text-muted)]' }}">
-                {{ $user->hasTotp() ? 'On' : 'Off' }}
-            </span>
-            <x-icon name="chevron-right" class="w-5 h-5 text-[var(--text-muted)] shrink-0" />
-        </a>
-
-        <form id="password-form" method="POST" action="{{ route('password.change') }}" class="space-y-4">
-            @csrf
-            <div>
-                <label for="current_password" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Current Password') }}</label>
-                <input type="password" id="current_password" name="current_password" required
-                       class="input-field" placeholder="Enter current password">
+                <div class="flex-1 min-w-0">
+                    <span class="block text-sm font-semibold text-[var(--text)]">{{ __('Google Authenticator') }}</span>
+                    <span class="block text-xs text-[var(--text-muted)] mt-0.5">{{ __('Required for sign in, transfers and password changes') }}</span>
+                </div>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--success-bg)] text-[var(--success)] shrink-0">
+                    {{ __('On') }}
+                </span>
             </div>
-
-            <div>
-                <label for="password" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('New Password') }}</label>
-                <input type="password" id="password" name="password" required
-                       class="input-field" placeholder="Enter new password">
-                <p class="text-xs text-[var(--text-muted)] mt-1.5">Must be at least 8 characters with letters, numbers, and symbols.</p>
-            </div>
-
-            <div>
-                <label for="password_confirmation" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Confirm New Password') }}</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required
-                       class="input-field" placeholder="Re-enter new password">
-            </div>
-
-            <div class="flex items-center justify-end pt-2">
-                <button type="submit" class="w-full sm:w-auto px-8 py-3.5 btn-primary justify-center min-h-[44px]">
-                    <x-icon name="key" class="w-4 h-4" />
-                    Update Password
-                </button>
-            </div>
-        </form>
+            <p class="text-xs text-[var(--text-muted)]">{{ __('Authenticator cannot be disabled once enabled. Contact support if you need assistance.') }}</p>
+        @else
+            {{-- TOTP not yet set up --}}
+            <a href="{{ route('two-factor.setup') }}" class="flex items-center gap-3 p-4 border border-[var(--line)] rounded-xl hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-colors">
+                <span class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                    <x-icon name="shield-check" class="w-5 h-5" />
+                </span>
+                <span class="flex-1 min-w-0">
+                    <span class="block text-sm font-semibold text-[var(--text)]">{{ __('Google Authenticator') }}</span>
+                    <span class="block text-xs text-[var(--text-muted)] mt-0.5">{{ __('Set up a one-time code for extra security') }}</span>
+                </span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 bg-[var(--line-soft)] text-[var(--text-muted)]">
+                    {{ __('Off') }}
+                </span>
+                <x-icon name="chevron-right" class="w-5 h-5 text-[var(--text-muted)] shrink-0" />
+            </a>
+        @endif
     </section>
 
     {{-- Preferences --}}

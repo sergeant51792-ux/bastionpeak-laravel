@@ -260,14 +260,34 @@
 
 <style>
     @media print {
+        /* Hide all layout chrome */
+        #customer-sidebar,
+        #sidebar-overlay,
+        header,
+        .bottom-nav,
         .bp-header,
-        .bp-paper + div,
-        body > div:not(.receipt-print-root) { display: none !important; }
+        .bp-paper + div {
+            display: none !important;
+        }
+
+        /* Free the content from the flex container */
+        body > div,
+        main#main-content,
+        #main-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+        }
+
+        /* Receipt paper: clean sheet on print */
         .receipt-print-root { padding: 0 !important; }
         .bp-paper {
             box-shadow: none !important;
             border-radius: 0 !important;
             background: white !important;
+            margin: 0 !important;
             page-break-inside: avoid;
         }
         .bp-paper-inner { padding: 0.25in !important; }

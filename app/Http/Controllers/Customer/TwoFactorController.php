@@ -71,27 +71,15 @@ class TwoFactorController extends Controller
 
     /**
      * Turn the authenticator off again.
+     *
+     * 2FA is locked once enabled — the user cannot disable it themselves.
+     * Only a Super Admin may revoke the authenticator via the admin panel.
      */
     public function disable(Request $request): RedirectResponse
     {
-        $request->validate(['code' => ['required', 'digits:6']]);
-
-        $user = $request->user();
-
-        if (! $user->hasTotp() || ! $this->totp->verify($user->totp_secret, (string) $request->input('code'))) {
-            return back()->withErrors([
-                'code' => 'That code is not valid. Enter the current code from your authenticator.',
-            ]);
-        }
-
-        $user->forceFill([
-            'totp_enabled' => false,
-            'totp_secret'  => null,
-        ])->save();
-
         return redirect()
             ->route('two-factor.setup')
-            ->with('status', 'Authenticator disabled.');
+            ->with('status', 'Authenticator cannot be disabled once enabled. Contact support if you need assistance.');
     }
 
     /**
