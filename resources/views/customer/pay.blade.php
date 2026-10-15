@@ -19,7 +19,7 @@
             <label for="from_account_id" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Debit account</label>
             <x-custom-select
                 name="from_account_id"
-                :options="$accounts->mapWithKeys(fn($a) => [$a->id => $a->name . ' (' . $a->currency->symbol . ')' ])"
+                :options="$accounts->mapWithKeys(fn($a) => [$a->id => $a->name . ' (' . ($a->currency?->symbol ?? '') . ')' ])"
                 placeholder="Select account"
                 required
             />
@@ -169,11 +169,6 @@
                        class="input-field pr-4 py-3"
                        placeholder="0.00">
             </div>
-        </div>
-
-        <div>
-            <label for="created_at" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Date &amp; time</label>
-            <input type="datetime-local" id="created_at" name="created_at" value="{{ now()->format('Y-m-d\TH:i') }}" class="input-field">
         </div>
 
         <div>

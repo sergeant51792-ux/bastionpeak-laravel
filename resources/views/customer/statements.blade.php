@@ -11,7 +11,7 @@
                 <label for="account_id" class="block text-sm font-medium text-[var(--text)] mb-1.5">Account</label>
                 <x-custom-select
                     name="account_id"
-                    :options="$accounts->mapWithKeys(fn($a) => [$a->id => $a->name . ' (' . $a->currency->symbol . ')' ])"
+                    :options="$accounts->mapWithKeys(fn($a) => [$a->id => $a->name . ' (' . ($a->currency?->symbol ?? '') . ')' ])"
                     placeholder="Select account"
                     required
                 />

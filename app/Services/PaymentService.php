@@ -11,7 +11,6 @@ use App\Models\Merchant;
 use App\Models\Transaction;
 use App\Models\TransactionLeg;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -52,7 +51,6 @@ class PaymentService
         ?string $recipientName = null,
         ?string $recipientDetail = null,
         ?array $metadata = null,
-        ?Carbon $createdAt = null,
     ): Transaction {
         $account = Account::where('id', $fromAccountId)
             ->where('user_id', $userId)
@@ -71,7 +69,7 @@ class PaymentService
             $memo = trim(($paymentMethod ? '[' . $paymentMethod . '] ' : '') . ($recipientName ? $recipientName . ' - ' : '') . ($recipientDetail ?? ''));
         }
 
-        return DB::transaction(function () use ($account, $merchant, $amount, $memo, $proofFile, $idempotencyKey, $toMerchantId, $metadata, $userId, $createdAt) {
+        return DB::transaction(function () use ($account, $merchant, $amount, $memo, $proofFile, $idempotencyKey, $toMerchantId, $metadata, $userId) {
             $transaction = Transaction::create([
                 'transaction_id'    => 'TXN-' . strtoupper(uniqid()),
                 'from_account_id'   => $account->id,
@@ -91,11 +89,6 @@ class PaymentService
                 'proof_file_path'   => $proofFile,
                 'metadata'          => $metadata ?? [],
             ]);
-
-            if ($createdAt) {
-                $transaction->created_at = $createdAt;
-                $transaction->save();
-            }
 
             return $transaction;
         });

@@ -38,7 +38,7 @@ Apply for {{ $service->name }}
             <label for="account_id" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Destination Account</label>
             <select id="account_id" name="account_id" class="input-field">
                 @foreach($accounts as $account)
-                    <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->currency->code }} {{ $account->currency->symbol }})</option>
+                    <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->currency?->code ?? '' }} {{ $account->currency?->symbol ?? '' }})</option>
                 @endforeach
             </select>
         </div>
