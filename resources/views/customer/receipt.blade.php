@@ -1,299 +1,275 @@
 @extends('layouts.customer')
 
-{{--
-    Transaction receipt.
-    Every value is read from the live transaction record, so the status line,
-    the amount direction and the "processed at" stamp all update on their own
-    when the transaction moves from pending to credited / debited.
---}}
 @section('title', __('Receipt'))
 
 @php
     $decimals = $transaction->currency?->decimals ?? 2;
-    $symbol = $transaction->currency?->symbol ?? '';
-    $amount = number_format((float) $transaction->amount, $decimals);
-    $fee = number_format((float) $transaction->fee, $decimals);
-    $net = number_format((float) ($transaction->net_amount ?? $transaction->amount), $decimals);
-    $meta = is_array($metadata) ? $metadata : [];
+    $symbol   = $transaction->currency?->symbol ?? '';
+    $code     = $transaction->currency?->code ?? 'USD';
+    $amount   = number_format((float) $transaction->amount, $decimals);
+    $fee      = number_format((float) $transaction->fee, $decimals);
+    $net      = number_format((float) ($transaction->net_amount ?? $transaction->amount), $decimals);
+    $meta     = is_array($metadata) ? $metadata : [];
 
     $statusEnum = $transaction->status instanceof \App\Enums\TransactionStatus
         ? $transaction->status
         : \App\Enums\TransactionStatus::PendingReview;
 
-    // Customer-facing status wording. A single source of truth per status so the
-    // badge, the headline and the timeline can never disagree.
     $statusMap = [
-        'pending_review' => ['label' => 'Pending', 'tone' => 'pending', 'note' => 'This transaction is awaiting review. It has not been applied to your balance yet.'],
-        'pending_match'  => ['label' => 'Pending', 'tone' => 'pending', 'note' => 'This transaction is awaiting review. It has not been applied to your balance yet.'],
-        'approved'       => ['label' => 'Approved', 'tone' => 'success', 'note' => 'This transaction has been approved and processed.'],
-        'credited'       => ['label' => 'Credited', 'tone' => 'success', 'note' => 'The funds have been credited to the receiving account.'],
-        'posted'         => ['label' => 'Completed', 'tone' => 'success', 'note' => 'This transaction has been completed successfully.'],
-        'rejected'       => ['label' => 'Failed', 'tone' => 'danger', 'note' => 'This transaction was rejected. No funds moved.'],
-        'reversed'       => ['label' => 'Reversed', 'tone' => 'warning', 'note' => 'This transaction was reversed.'],
+        'pending_review' => ['label' => 'Pending',   'color' => '#D97706'],
+        'pending_match'  => ['label' => 'Pending',   'color' => '#D97706'],
+        'approved'       => ['label' => 'Approved',  'color' => '#059669'],
+        'credited'       => ['label' => 'Credited',  'color' => '#059669'],
+        'posted'         => ['label' => 'Completed', 'color' => '#059669'],
+        'rejected'       => ['label' => 'Failed',    'color' => '#DC2626'],
+        'reversed'       => ['label' => 'Reversed',  'color' => '#D97706'],
     ];
-    $statusInfo = $statusMap[$statusEnum->value] ?? ['label' => ucfirst($statusEnum->value), 'tone' => 'pending', 'note' => ''];
+    $statusInfo = $statusMap[$statusEnum->value]
+        ?? ['label' => ucfirst($statusEnum->value), 'color' => '#64748B'];
 
-    $toneClasses = [
-        'pending' => 'bg-[var(--warning-bg)] text-[var(--warning)] border-[var(--warning)]/30',
-        'success' => 'bg-[var(--success-bg)] text-[var(--success)] border-[var(--success)]/30',
-        'danger'  => 'bg-[var(--danger-bg)] text-[var(--danger)] border-[var(--danger)]/30',
-        'warning' => 'bg-[var(--warning-bg)] text-[var(--warning)] border-[var(--warning)]/30',
-    ];
-    $badgeClass = $toneClasses[$statusInfo['tone']] ?? $toneClasses['pending'];
-
-    // Direction wording: a deposit is money in, a payment is money out.
     $isDeposit = in_array($transaction->type, [
         \App\Enums\TransactionType::DepositCredit,
         \App\Enums\TransactionType::Credit,
         \App\Enums\TransactionType::Refund,
     ], true);
 
-    $typeLabel = $transaction->type instanceof \App\Enums\TransactionType
+    $typeLabel  = $transaction->type instanceof \App\Enums\TransactionType
         ? $transaction->type->customerLabel()
         : 'Transaction';
 
-    $origin = $transaction->fromAccount?->name ?: ($meta['bank_name'] ?? null);
+    $origin      = $transaction->fromAccount?->name ?: ($meta['bank_name'] ?? null);
     $destination = $transaction->toAccount?->name ?: ($transaction->fromUser?->name ?? null);
 
-    // Determine whether the money left or arrived on the customer's side.
     $creditedAt = $transaction->credited_at ?: ($transaction->reviewed_at ?? null);
-    $settledAt = match ($statusEnum->value) {
+    $settledAt  = match ($statusEnum->value) {
         'credited', 'posted', 'approved' => $creditedAt ?: $transaction->updated_at,
         'rejected'                       => $transaction->rejected_at ?: $transaction->updated_at,
         default                          => null,
     };
+
+    $channelFields = [
+        'bank_name'       => __('Bank name'),
+        'account_number'  => __('Account number'),
+        'routing_number'  => __('Routing number'),
+        'swift_code'      => __('SWIFT / BIC'),
+        'iban'            => __('IBAN'),
+        'crypto_currency' => __('Cryptocurrency'),
+        'network'         => __('Network'),
+        'wallet_address'  => __('Wallet address'),
+    ];
+    $present = collect($channelFields)
+        ->filter(fn($label, $key) => !empty($meta[$key]))
+        ->all();
+
+    $generatedAt = $issuedAt ?? now();
 @endphp
 
 @section('content')
-<div class="px-3 sm:px-4 lg:px-6 pt-4 pb-10 space-y-5 max-w-2xl mx-auto">
-    <div class="flex items-center justify-between">
-        <header class="flex items-center gap-3">
-            <a href="{{ route('activity') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
+<div class="receipt-print-root font-['Courier_New',Courier,monospace] text-sm text-[var(--text)]">
+    {{-- On-screen header --}}
+    <div class="bp-header flex items-center justify-between px-4 pt-4 pb-3 sm:px-6">
+        <div class="flex items-center gap-2">
+            <a href="{{ route('activity') }}" class="p-1 rounded hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
                 <x-icon name="arrow-left" class="w-5 h-5 text-[var(--text-muted)]" />
             </a>
-            <h1 class="text-lg font-semibold text-[var(--text)]">{{ __('Transaction receipt') }}</h1>
-        </header>
-        <a href="{{ route('activity.receipt.download', $transaction) }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="{{ __('Download PDF') }}">
+            <h1 class="font-['Courier_New',Courier,monospace] text-sm text-[var(--text-muted)] uppercase tracking-wider font-semibold">Receipt</h1>
+        </div>
+        <a href="{{ route('activity.receipt.download', $transaction) }}" class="p-1 rounded hover:bg-[var(--line-soft)] transition-colors" aria-label="{{ __('Download PDF') }}">
             <x-icon name="download" class="w-5 h-5 text-[var(--text-muted)]" />
         </a>
     </div>
 
-    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
-        {{-- Brand + status --}}
-        <div class="p-5 border-b border-[var(--line)] flex items-start justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                    <x-icon name="landmark" class="w-5 h-5" />
-                </div>
-                <div>
-                    <p class="text-xs text-[var(--text-muted)] uppercase tracking-wider font-semibold">Bastion Peak</p>
-                    <p class="text-sm font-semibold text-[var(--text)]">{{ $typeLabel }}</p>
-                </div>
-            </div>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold shrink-0 {{ $badgeClass }}">
-                @if($statusInfo['tone'] === 'pending')
-                    <x-icon name="clock" class="w-3.5 h-3.5" />
-                @elseif($statusInfo['tone'] === 'success')
-                    <x-icon name="check" class="w-3.5 h-3.5" />
-                @else
-                    <x-icon name="x" class="w-3.5 h-3.5" />
-                @endif
-                {{ $statusInfo['label'] }}
-            </span>
-        </div>
+    {{-- Receipt paper --}}
+    <div class="bp-paper mx-auto max-w-md bg-white dark:bg-gray-950 text-black dark:text-gray-100 shadow-xl rounded-none sm:rounded-lg overflow-hidden">
+        <div class="bp-paper-inner px-5 py-5">
 
-        {{-- Amount --}}
-        <div class="px-5 py-7 text-center border-b border-[var(--line)]">
-            <p class="text-xs text-[var(--text-muted)] mb-1.5">
-                {{ $isDeposit ? __('Received') : __('Sent') }}
-            </p>
-            <p class="text-3xl sm:text-4xl font-bold tracking-tight {{ $isDeposit ? 'text-[var(--success)]' : 'text-[var(--text)]' }}">
-                {{ $isDeposit ? '+' : '−' }}{{ $amount }} <span class="text-lg font-semibold">{{ $symbol }}</span>
-            </p>
-            <p class="text-xs text-[var(--text-muted)] mt-2">
-                {{ $transaction->currency?->code ?? 'USD' }}
+            {{-- Brand + status --}}
+            <div class="flex items-baseline justify-content-between mb-4 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-xl text-black dark:text-white">Bastion Peak</span>
+                </div>
+                <span class="font-bold text-xs uppercase" style="color: {{ $statusInfo['color'] }}">{{ $statusInfo['label'] }}</span>
+            </div>
+
+            {{-- Amount block --}}
+            <div class="text-center my-5 py-3">
+                <p class="text-black/50 dark:text-white/50 text-xs uppercase tracking-wider mb-1">
+                    {{ $isDeposit ? __('Received') : __('Sent') }}
+                </p>
+                <p class="font-bold text-3xl text-black dark:text-white tabular-nums">
+                    {{ $isDeposit ? '+' : '-' }}{{ $amount }} <span class="text-base font-normal text-black/60 dark:text-white/60">{{ $symbol }}</span>
+                </p>
+                <p class="text-black/40 dark:text-white/40 text-xs mt-1">{{ $code }}</p>
                 @if((float) $transaction->fee > 0)
-                    &middot; {{ __('Fee') }} {{ $fee }} {{ $symbol }}
+                    <p class="text-black/40 dark:text-white/40 text-xs mt-1">Fee: {{ $fee }} {{ $symbol }}</p>
                 @endif
-            </p>
-        </div>
-
-        {{-- Status explanation --}}
-        @if($statusInfo['note'])
-            <div class="px-5 py-3.5 border-b border-[var(--line)] bg-[var(--surface-raised)]">
-                <p class="text-xs text-[var(--text-muted)] leading-relaxed">{{ $statusInfo['note'] }}</p>
-            </div>
-        @endif
-
-        {{-- Details --}}
-        <dl class="divide-y divide-[var(--line)]">
-            <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Reference') }}</dt>
-                <dd class="text-sm font-semibold text-[var(--text)] text-right font-mono break-all">{{ $transaction->transaction_id ?? 'TXN-' . strtoupper(substr((string) $transaction->id, 0, 8)) }}</dd>
             </div>
 
-            @if($transaction->reference)
-                <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                    <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Payment reference') }}</dt>
-                    <dd class="text-sm text-[var(--text)] text-right font-mono break-all">{{ $transaction->reference }}</dd>
+            {{-- Thin divider (no card border, just a line) --}}
+            <hr class="border-0 h-px bg-black/10 dark:bg-white/10 my-3">
+
+            {{-- Details — label / value pairs --}}
+            <dl class="bp-details">
+                <div class="bp-row flex justify-content-between py-1">
+                    <dt class="text-black/40 dark:text-white/40">{{ __('Reference') }}</dt>
+                    <dd class="font-bold text-right font-mono break-all">{{ $transaction->transaction_id ?? 'TXN-' . strtoupper(substr((string) $transaction->id, 0, 8)) }}</dd>
                 </div>
-            @endif
 
-            <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Date &amp; time') }}</dt>
-                <dd class="text-sm text-[var(--text)] text-right tabular-nums">{{ $transaction->created_at->format('j M Y, H:i') }}</dd>
-            </div>
-
-            @if($settledAt)
-                <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                    <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Processed at') }}</dt>
-                    <dd class="text-sm text-[var(--text)] text-right tabular-nums">{{ $settledAt->format('j M Y, H:i') }}</dd>
-                </div>
-            @endif
-
-            <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Type') }}</dt>
-                <dd class="text-sm text-[var(--text)] text-right">{{ $transaction->type instanceof \App\Enums\TransactionType ? $transaction->type->label() : $transaction->type }}</dd>
-            </div>
-
-            @if($origin)
-                <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                    <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ $isDeposit ? __('From') : __('From account') }}</dt>
-                    <dd class="text-sm text-[var(--text)] text-right break-words">{{ $origin }}</dd>
-                </div>
-            @endif
-
-            @if($destination)
-                <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                    <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Beneficiary / to') }}</dt>
-                    <dd class="text-sm text-[var(--text)] text-right break-words">{{ $destination }}</dd>
-                </div>
-            @endif
-
-            <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Amount') }}</dt>
-                <dd class="text-sm text-[var(--text)] text-right tabular-nums">{{ $amount }} {{ $symbol }}</dd>
-            </div>
-
-            <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ __('Fee') }}</dt>
-                <dd class="text-sm text-[var(--text)] text-right tabular-nums">{{ $fee }} {{ $symbol }}</dd>
-            </div>
-
-            <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                <dt class="text-sm font-semibold text-[var(--text)] shrink-0">{{ __('Net amount') }}</dt>
-                <dd class="text-base font-bold text-[var(--text)] text-right tabular-nums">{{ $net }} {{ $symbol }}</dd>
-            </div>
-
-            @if($transaction->memo)
-                <div class="px-5 py-3.5">
-                    <dt class="text-xs text-[var(--text-muted)] mb-1">{{ __('Description') }}</dt>
-                    <dd class="text-sm text-[var(--text)] whitespace-pre-line leading-relaxed">{{ $transaction->memo }}</dd>
-                </div>
-            @endif
-        </dl>
-    </div>
-
-    {{-- Payment channel details --}}
-    @php
-        $channelFields = [
-            'bank_name'       => __('Bank name'),
-            'account_number'  => __('Account number'),
-            'routing_number'  => __('Routing number'),
-            'swift_code'      => __('SWIFT / BIC'),
-            'iban'            => __('IBAN'),
-            'crypto_currency' => __('Cryptocurrency'),
-            'network'         => __('Network'),
-            'wallet_address'  => __('Wallet address'),
-        ];
-        $present = collect($channelFields)
-            ->filter(fn($label, $key) => !empty($meta[$key]))
-            ->all();
-    @endphp
-
-    @if(!empty($present))
-        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
-            <div class="px-5 py-3.5 border-b border-[var(--line)]">
-                <h2 class="text-sm font-semibold text-[var(--text)]">{{ __('Payment details') }}</h2>
-            </div>
-            <dl class="divide-y divide-[var(--line)]">
-                @foreach($present as $key => $label)
-                    <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
-                        <dt class="text-xs text-[var(--text-muted)] shrink-0">{{ $label }}</dt>
-                        <dd class="text-sm text-[var(--text)] text-right font-mono break-all">{{ $meta[$key] }}</dd>
+                @if($transaction->reference)
+                    <div class="bp-row flex justify-content-between py-1">
+                        <dt class="text-black/40 dark:text-white/40">{{ __('Payment reference') }}</dt>
+                        <dd class="font-bold text-right font-mono break-all">{{ $transaction->reference }}</dd>
                     </div>
-                @endforeach
-            </dl>
-        </div>
-    @endif
+                @endif
 
-    {{-- Proof of payment --}}
-    @if($transaction->proof_file_path)
-        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
-            <div class="px-5 py-3.5 border-b border-[var(--line)]">
-                <h2 class="text-sm font-semibold text-[var(--text)]">{{ __('Proof of payment') }}</h2>
-            </div>
-            <div class="p-5">
-                 <a href="{{ route('storage.file', $transaction->proof_file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">
-                    <x-icon name="external-link" class="w-4 h-4" />
+                <div class="bp-row flex justify-content-between py-1">
+                    <dt class="text-black/40 dark:text-white/40">{{ __('Date &amp; time') }}</dt>
+                    <dd class="font-bold text-right tabular-nums">{{ $transaction->created_at->format('j M Y, H:i') }}</dd>
+                </div>
+
+                @if($settledAt)
+                    <div class="bp-row flex justify-content-between py-1">
+                        <dt class="text-black/40 dark:text-white/40">{{ __('Processed at') }}</dt>
+                        <dd class="font-bold text-right tabular-nums">{{ $settledAt->format('j M Y, H:i') }}</dd>
+                    </div>
+                @endif
+
+                <div class="bp-row flex justify-content-between py-1">
+                    <dt class="text-black/40 dark:text-white/40">{{ __('Type') }}</dt>
+                    <dd class="font-bold text-right">{{ $typeLabel }}</dd>
+                </div>
+
+                @if($origin)
+                    <div class="bp-row flex justify-content-between py-1">
+                        <dt class="text-black/40 dark:text-white/40">{{ $isDeposit ? __('From') : __('From account') }}</dt>
+                        <dd class="font-bold text-right break-words">{{ $origin }}</dd>
+                    </div>
+                @endif
+
+                @if($destination)
+                    <div class="bp-row flex justify-content-between py-1">
+                        <dt class="text-black/40 dark:text-white/40">{{ __('Beneficiary / to') }}</dt>
+                        <dd class="font-bold text-right break-words">{{ $destination }}</dd>
+                    </div>
+                @endif
+
+                <div class="bp-row flex justify-content-between py-1">
+                    <dt class="text-black/40 dark:text-white/40">{{ __('Amount') }}</dt>
+                    <dd class="font-bold text-right tabular-nums">{{ $amount }} {{ $symbol }}</dd>
+                </div>
+
+                @if((float) $transaction->fee > 0)
+                    <div class="bp-row flex justify-content-between py-1">
+                        <dt class="text-black/40 dark:text-white/40">{{ __('Fee') }}</dt>
+                        <dd class="font-bold text-right tabular-nums">{{ $fee }} {{ $symbol }}</dd>
+                    </div>
+                @endif
+
+                <div class="bp-row flex justify-content-between py-1 font-semibold border-t border-black/10 dark:border-white/10 mt-1 pt-2">
+                    <dt class="text-black/40 dark:text-white/40">{{ __('Net amount') }}</dt>
+                    <dd class="font-bold text-right tabular-nums">{{ $net }} {{ $symbol }}</dd>
+                </div>
+
+                @if($transaction->memo)
+                    <div class="bp-row flex justify-content-between py-1">
+                        <dt class="text-black/40 dark:text-white/40">{{ __('Description') }}</dt>
+                        <dd class="font-bold text-right whitespace-pre-line break-words">{{ $transaction->memo }}</dd>
+                    </div>
+                @endif
+            </dl>
+
+            {{-- Payment channel details --}}
+            @if(!empty($present))
+                <hr class="border-0 h-px bg-black/10 dark:bg-white/10 my-3">
+                <h2 class="text-black/50 dark:text-white/50 text-xs uppercase tracking-wider font-semibold mb-2">{{ __('Payment details') }}</h2>
+                <dl class="bp-details">
+                    @foreach($present as $key => $label)
+                        <div class="bp-row flex justify-content-between py-1">
+                            <dt class="text-black/40 dark:text-white/40">{{ $label }}</dt>
+                            <dd class="font-bold text-right font-mono break-all">{{ $meta[$key] }}</dd>
+                        </div>
+                    @endforeach
+                </dl>
+            @endif
+
+            {{-- Proof of payment --}}
+            @if($transaction->proof_file_path)
+                <hr class="border-0 h-px bg-black/10 dark:bg-white/10 my-3">
+                <h2 class="text-black/50 dark:text-white/50 text-xs uppercase tracking-wider font-semibold mb-2">{{ __('Proof of payment') }}</h2>
+                <a href="{{ route('storage.file', $transaction->proof_file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center text-xs font-bold text-blue-600 dark:text-blue-400 hover:opacity-80">
                     {{ __('Open attachment') }}
                 </a>
-            </div>
-        </div>
-    @endif
-
-    {{-- Rejection reason --}}
-    @if($statusEnum === \App\Enums\TransactionStatus::Rejected && $transaction->rejection_reason)
-        <div class="bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-2xl p-5">
-            <h2 class="text-sm font-semibold text-[var(--danger)] mb-1.5">{{ __('Reason for failure') }}</h2>
-            <p class="text-sm text-[var(--text)] leading-relaxed whitespace-pre-line">{{ $transaction->rejection_reason }}</p>
-        </div>
-    @endif
-
-    {{-- Timeline --}}
-    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
-        <div class="px-5 py-3.5 border-b border-[var(--line)]">
-            <h2 class="text-sm font-semibold text-[var(--text)]">{{ __('Activity') }}</h2>
-        </div>
-        <ol class="px-5 py-4 space-y-3">
-            <li class="flex items-start gap-3">
-                <span class="mt-1 w-2 h-2 rounded-full bg-[var(--accent)] shrink-0"></span>
-                <div class="min-w-0">
-                    <p class="text-sm text-[var(--text)]">{{ __('Request submitted') }}</p>
-                    <p class="text-xs text-[var(--text-muted)] tabular-nums">{{ $transaction->created_at->format('j M Y, H:i') }}</p>
-                </div>
-            </li>
-            @if($settledAt)
-                <li class="flex items-start gap-3">
-                    <span class="mt-1 w-2 h-2 rounded-full {{ $statusInfo['tone'] === 'danger' ? 'bg-[var(--danger)]' : ($statusInfo['tone'] === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--success)]') }} shrink-0"></span>
-                    <div class="min-w-0">
-                        <p class="text-sm text-[var(--text)]">{{ $statusInfo['label'] }}</p>
-                        <p class="text-xs text-[var(--text-muted)] tabular-nums">{{ $settledAt->format('j M Y, H:i') }}</p>
-                    </div>
-                </li>
-            @else
-                <li class="flex items-start gap-3">
-                    <span class="mt-1 w-2 h-2 rounded-full bg-[var(--line)] shrink-0"></span>
-                    <div class="min-w-0">
-                        <p class="text-sm text-[var(--text-muted)]">{{ __('Awaiting confirmation') }}</p>
-                    </div>
-                </li>
             @endif
-        </ol>
+
+            {{-- Rejection reason --}}
+            @if($statusEnum === \App\Enums\TransactionStatus::Rejected && $transaction->rejection_reason)
+                <hr class="border-0 h-px bg-black/10 dark:bg-white/10 my-3">
+                <h2 class="text-red-600 dark:text-red-400 text-xs uppercase tracking-wider font-semibold mb-1">{{ __('Reason for failure') }}</h2>
+                <p class="text-xs text-black/70 dark:text-white/70 whitespace-pre-line">{{ $transaction->rejection_reason }}</p>
+            @endif
+
+            {{-- Timeline --}}
+            <hr class="border-0 h-px bg-black/10 dark:bg-white/10 my-3">
+            <h2 class="text-black/50 dark:text-white/50 text-xs uppercase tracking-wider font-semibold mb-2">{{ __('Activity') }}</h2>
+            <ul class="bp-timeline">
+                <li class="flex gap-2 mb-2 text-xs">
+                    <span class="w-1 h-1 rounded-full bg-blue-500 shrink-0 mt-1"></span>
+                    <div>
+                        <p class="font-bold text-black dark:text-white">{{ __('Request submitted') }}</p>
+                        <p class="text-black/40 dark:text-white/40 tabular-nums">{{ $transaction->created_at->format('j M Y, H:i') }}</p>
+                    </div>
+                </li>
+                @if($settledAt)
+                    <li class="flex gap-2 mb-2 text-xs">
+                        <span class="w-1 h-1 rounded-full shrink-0 mt-1" style="background-color: {{ $statusInfo['color'] }}"></span>
+                        <div>
+                            <p class="font-bold text-black dark:text-white">{{ $statusInfo['label'] }}</p>
+                            <p class="text-black/40 dark:text-white/40 tabular-nums">{{ $settledAt->format('j M Y, H:i') }}</p>
+                        </div>
+                    </li>
+                @else
+                    <li class="flex gap-2 mb-2 text-xs">
+                        <span class="w-1 h-1 rounded-full bg-black/30 dark:bg-white/30 shrink-0 mt-1"></span>
+                        <div>
+                            <p class="text-black/40 dark:text-white/40">{{ __('Awaiting confirmation') }}</p>
+                        </div>
+                    </li>
+                @endif
+            </ul>
+
+            {{-- Footer --}}
+            <hr class="border-0 h-px bg-black/10 dark:bg-white/10 my-3">
+            <p class="text-black/40 dark:text-white/40 text-xs mb-1">{{ __('Receipt generated') }} {{ $generatedAt->format('j M Y, H:i') }}</p>
+            <p class="text-black/40 dark:text-white/40 text-xs leading-relaxed">
+                {{ __('This document confirms the transaction record held by Bastion Peak. Please retain it for your records. Contact support if any detail appears incorrect.') }}
+            </p>
+
+        </div>
     </div>
 
-    {{-- Footer --}}
-    <div class="text-center space-y-3 pt-1">
-        <p class="text-xs text-[var(--text-muted)]">
-            {{ __('Receipt generated') }} {{ $issuedAt->format('j M Y, H:i') }}
-        </p>
-        <p class="text-xs text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">
-            {{ __('This document confirms the transaction record held by Bastion Peak. Please retain it for your records. Contact support if any detail appears incorrect.') }}
-        </p>
-        <button onclick="window.print()" class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--accent)] border border-[var(--accent)]/30 rounded-lg hover:bg-[var(--accent-subtle)] transition-colors">
+    {{-- Print button --}}
+    <div class="mt-6 text-center">
+        <button onclick="window.print()" class="inline-flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:opacity-80">
             <x-icon name="printer" class="w-4 h-4" />
             {{ __('Print receipt') }}
         </button>
     </div>
 </div>
+
+<style>
+    @media print {
+        .bp-header,
+        .bp-paper + div,
+        body > div:not(.receipt-print-root) { display: none !important; }
+        .receipt-print-root { padding: 0 !important; }
+        .bp-paper {
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            background: white !important;
+            color: black !important;
+            page-break-inside: avoid;
+        }
+        .bp-paper-inner { padding: 0.25in !important; }
+    }
+</style>
 @endsection
