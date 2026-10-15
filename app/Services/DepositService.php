@@ -81,6 +81,18 @@ class DepositService
             return $transaction;
         }
 
+        if (!$transaction->to_account_id) {
+            $transaction->update([
+                'status'           => TransactionStatus::Rejected,
+                'operator_id'      => $operatorId,
+                'rejection_reason' => 'No destination account configured — cannot auto-approve.',
+                'rejected_at'      => now(),
+                'updated_at'       => now(),
+            ]);
+            event(new \App\Events\DepositRejected($transaction, 'No destination account configured — cannot auto-approve.'));
+            return $transaction;
+        }
+
         return DB::transaction(function () use ($transaction, $operatorId) {
             $account = Account::where('id', $transaction->to_account_id)
                 ->lockForUpdate()
@@ -104,6 +116,8 @@ class DepositService
 
             $account->balance = (float)$account->balance + (float)$transaction->amount;
             $account->save();
+
+            event(new \App\Events\DepositApproved($transaction));
 
             return $transaction;
         });
@@ -130,6 +144,8 @@ class DepositService
             'updated_at'       => now(),
         ]);
 
+        event(new \App\Events\DepositRejected($transaction, $reason));
+
         return $transaction;
     }
 
@@ -146,8 +162,15 @@ class DepositService
 
         DB::transaction(function () use ($transactionIds, $operatorId, &$approved) {
             foreach ($transactionIds as $transactionId) {
-                $this->approve((int)$transactionId, $operatorId);
-                $approved++;
+                $transaction = Transaction::find((int)$transactionId);
+                if ($transaction && in_array($transaction->status, [TransactionStatus::PendingReview, TransactionStatus::PendingMatch])) {
+                    $originalStatus = $transaction->status;
+                    $this->approve((int)$transactionId, $operatorId);
+                    $transaction->refresh();
+                    if ($transaction->status === TransactionStatus::Credited) {
+                        $approved++;
+                    }
+                }
             }
         });
 
