@@ -370,3 +370,30 @@ Route::get('/_run-migrate', function () {
     \Artisan::call('migrate', ['--force' => true]);
     return 'Migrations completed. Output: ' . \Artisan::output();
 })->name('run.migrate');
+
+Route::get('/_debug-pending-deposits', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+
+    $result = [];
+
+    $result['total_deposit_credit'] = \App\Models\Transaction::where('type', 'deposit_credit')->count();
+    $result['total_pending_review'] = \App\Models\Transaction::where('status', 'pending_review')->count();
+    $result['total_pending_match'] = \App\Models\Transaction::where('status', 'pending_match')->count();
+    $result['deposit_credit_with_pending'] = \App\Models\Transaction::where('type', 'deposit_credit')
+        ->whereIn('status', ['pending_review', 'pending_match'])
+        ->count();
+
+    $result['sample_deposit_credit_statuses'] = \App\Models\Transaction::where('type', 'deposit_credit')
+        ->selectRaw('status, count(*) as count')
+        ->groupBy('status')
+        ->get()
+        ->toArray();
+
+    $result['sample_recent_txns'] = \App\Models\Transaction::orderByDesc('created_at')->limit(5)->get(['id', 'type', 'status', 'amount', 'created_at', 'from_account_id', 'to_account_id'])->toArray();
+
+    return response()->json($result);
+})->name('debug.pending');
