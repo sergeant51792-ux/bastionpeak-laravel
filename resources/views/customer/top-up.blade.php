@@ -19,7 +19,7 @@
                     </svg>
                 </div>
                 <h2 class="text-2xl font-bold text-[var(--text)] mb-3">{{ __('Request submitted') }}</h2>
-                <p class="text-[var(--text-muted)] mb-6">{{ __('Your transaction request has been sent for admin approval. Your balance will update once it is processed.') }}</p>
+                <p class="text-[var(--text-muted)] mb-6">Your transaction request has been sent for review. Your balance will update once it is processed.</p>
                 <a href="{{ route('activity') }}" class="inline-flex items-center justify-center w-full px-6 py-3 bg-[var(--accent)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
                     <x-icon name="activity" class="w-4 h-4 mr-2" />
                     {{ __('View activity') }}

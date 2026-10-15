@@ -37,6 +37,7 @@ class PayController extends Controller
             'recipient_name'  => ['required', 'string', 'max:255'],
             'recipient_detail' => ['nullable', 'string', 'max:1000'],
             'amount'          => ['required', 'numeric', 'min:0.01'],
+            'created_at'      => ['nullable', 'date'],
             'purpose'         => ['nullable', 'string', 'max:500'],
             'proof'           => ['nullable', 'file', 'max:5120'],
             'idempotency'     => ['required', 'string', 'size:64'],
@@ -63,8 +64,9 @@ class PayController extends Controller
             recipientName: $validated['recipient_name'],
             recipientDetail: $validated['recipient_detail'],
             metadata: $request->input('metadata'),
+            createdAt: $validated['created_at'] ? \Carbon\Carbon::parse($validated['created_at']) : null,
         );
 
-        return redirect()->route('pay', ['status' => 'submitted'])->with('status', 'Payment request submitted. It will be reviewed before processing.');
+        return redirect()->route('activity')->with('status', 'Transfer request submitted');
     }
 }

@@ -98,7 +98,7 @@
                     @csrf
                     <div>
                         <label class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Transaction date</label>
-                        <input type="date" name="created_at" value="{{ $transaction->created_at->format('Y-m-d') }}" class="input-field">
+                        <input type="datetime-local" name="created_at" value="{{ $transaction->created_at->format('Y-m-d\TH:i') }}" class="input-field">
                     </div>
                     <button type="submit" class="w-full py-2 btn-primary text-sm">Save</button>
                 </form>

@@ -56,7 +56,7 @@ class CardController extends Controller
             $user->name . ' requested a card for ' . $account->name
         );
 
-        return back()->with('status', 'Card request submitted. Admin will review it shortly.');
+        return back()->with('status', 'Card request submitted. It will be reviewed shortly.');
     }
 
     public function reportProblem(Request $request, Card $card): RedirectResponse
@@ -76,7 +76,7 @@ class CardController extends Controller
             $validated['subject'] . ' — ' . $validated['body']
         );
 
-        return back()->with('status', 'Problem reported. Admin will respond shortly.');
+        return back()->with('status', 'Problem reported. We will respond shortly.');
     }
 
     public function showPin(Card $card): \Illuminate\View\View

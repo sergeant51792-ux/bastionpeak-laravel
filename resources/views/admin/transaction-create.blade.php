@@ -61,8 +61,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Date</label>
-                    <input type="date" name="created_at" value="{{ old('created_at', now()->format('Y-m-d')) }}" class="input-field">
+                    <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Date &amp; time</label>
+                    <input type="datetime-local" name="created_at" value="{{ old('created_at', now()->format('Y-m-d\TH:i')) }}" class="input-field">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Memo</label>

@@ -172,6 +172,11 @@
         </div>
 
         <div>
+            <label for="created_at" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Date &amp; time</label>
+            <input type="datetime-local" id="created_at" name="created_at" value="{{ now()->format('Y-m-d\TH:i') }}" class="input-field">
+        </div>
+
+        <div>
             <label for="proof" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Supporting document <span class="text-[var(--text-muted)] font-normal">(optional)</span></label>
             <div class="border-2 border-dashed border-[var(--line)] rounded-xl p-6 text-center hover:border-[var(--accent)] transition-colors">
                 <x-icon name="file-text" class="w-8 h-8 mx-auto mb-2 text-[var(--text-muted)]" />
