@@ -37,7 +37,12 @@ class SendDepositApprovedNotification implements ShouldQueue
     public function handle(DepositApproved $event): void
     {
         $transaction = $event->transaction;
+
         $customerId = $transaction->to_user_id ?? $transaction->from_user_id;
+        if (!$customerId) {
+            $accountId = $transaction->to_account_id ?? $transaction->from_account_id;
+            $customerId = \App\Models\Account::where('id', $accountId)->value('user_id');
+        }
 
         $title = 'Deposit approved';
         $body  = 'Your deposit of ' . $transaction->formattedAmount() . ' has been approved and credited to your account.';

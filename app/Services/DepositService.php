@@ -81,7 +81,8 @@ class DepositService
             return $transaction;
         }
 
-        if (!$transaction->to_account_id) {
+        $targetAccountId = $transaction->to_account_id ?? $transaction->from_account_id;
+        if (!$targetAccountId) {
             $transaction->update([
                 'status'           => TransactionStatus::Rejected,
                 'operator_id'      => $operatorId,
@@ -93,8 +94,8 @@ class DepositService
             return $transaction;
         }
 
-        return DB::transaction(function () use ($transaction, $operatorId) {
-            $account = Account::where('id', $transaction->to_account_id)
+        return DB::transaction(function () use ($transaction, $operatorId, $targetAccountId) {
+            $account = Account::where('id', $targetAccountId)
                 ->lockForUpdate()
                 ->firstOrFail();
 
@@ -164,7 +165,6 @@ class DepositService
             foreach ($transactionIds as $transactionId) {
                 $transaction = Transaction::find((int)$transactionId);
                 if ($transaction && in_array($transaction->status, [TransactionStatus::PendingReview, TransactionStatus::PendingMatch])) {
-                    $originalStatus = $transaction->status;
                     $this->approve((int)$transactionId, $operatorId);
                     $transaction->refresh();
                     if ($transaction->status === TransactionStatus::Credited) {

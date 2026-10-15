@@ -37,7 +37,12 @@ class SendDepositRejectedNotification implements ShouldQueue
     public function handle(DepositRejected $event): void
     {
         $transaction = $event->transaction;
+
         $customerId = $transaction->to_user_id ?? $transaction->from_user_id;
+        if (!$customerId) {
+            $accountId = $transaction->to_account_id ?? $transaction->from_account_id;
+            $customerId = \App\Models\Account::where('id', $accountId)->value('user_id');
+        }
         $reason = $transaction->rejection_reason ?: 'Please contact support for details.';
         $title  = 'Deposit declined';
         $body   = 'Your deposit of ' . $transaction->formattedAmount() . ' was declined. Reason: ' . $reason;
