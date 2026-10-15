@@ -12,7 +12,7 @@
         id="{{ $id }}-input"
         name="{{ $name ?? 'select' }}"
         value="{{ $valueStr }}"
-        @if(isset($required)) required @endif
+        @if(isset($required) || isset($dataRequired)) required data-required="1" @endif
     >
 
     <button

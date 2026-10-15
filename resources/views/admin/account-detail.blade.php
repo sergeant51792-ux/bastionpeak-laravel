@@ -35,7 +35,7 @@
                         <button type="submit" class="px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Update balance</button>
                     </form>
 
-                    <form method="POST" action="{{ route('admin.accounts.status.update', $account) }}" class="flex gap-2">
+                    <form method="POST" action="{{ route('admin.accounts.status.update', $account) }}" class="flex flex-col gap-2">
                         @csrf
                         <select name="status" class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                             <option value="active" {{ $account->status === 'active' ? 'selected' : '' }}>Active</option>
@@ -43,6 +43,15 @@
                             <option value="locked" {{ $account->status === 'locked' ? 'selected' : '' }}>Locked</option>
                             <option value="closed" {{ $account->status === 'closed' ? 'selected' : '' }}>Closed</option>
                         </select>
+                        @if(in_array($account->status, ['frozen', 'locked']))
+                            @if($account->notes)
+                                <textarea name="notes" rows="2" readonly class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm resize-none" placeholder="Reason for freeze/lock">{{ $account->notes }}</textarea>
+                            @else
+                                <textarea name="notes" rows="2" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm resize-none" placeholder="Add note (optional)"></textarea>
+                            @endif
+                        @else
+                            <textarea name="notes" rows="2" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm resize-none" placeholder="Add note (optional)"></textarea>
+                        @endif
                         <button type="submit" class="px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Update status</button>
                     </form>
                 </div>

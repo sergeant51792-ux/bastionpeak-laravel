@@ -305,6 +305,7 @@ class UserController extends Controller
 
         if (isset($data['created_at'])) {
             $transaction->created_at = \Carbon\Carbon::parse($data['created_at']);
+            $transaction->save();
             unset($data['created_at']);
         }
 

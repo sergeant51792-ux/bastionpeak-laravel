@@ -47,6 +47,12 @@ class PayController extends Controller
             ->where('user_id', $user->id)
             ->firstOrFail();
 
+        if ($account->status !== 'active') {
+            return back()->withErrors([
+                'from_account_id' => 'The selected account is ' . $account->status . '. Please choose an active account.',
+            ])->withInput();
+        }
+
         $proofPath = null;
         if ($request->hasFile('proof')) {
             $proofPath = $this->storeUploadedFile($request->file('proof'), 'uploads/proofs');

@@ -78,10 +78,14 @@ class AccountController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', 'in:active,frozen,locked,closed'],
+            'notes'  => ['nullable', 'string'],
         ]);
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($account, $validated) {
-            $account->update(['status' => $validated['status']]);
+            $account->update([
+                'status' => $validated['status'],
+                'notes'  => $validated['notes'] ?? $account->notes,
+            ]);
             \App\Models\AuditLog::create([
                 'admin_id'    => Auth::id(),
                 'action'      => 'account_status_changed',
@@ -155,9 +159,10 @@ class AccountController extends Controller
 
         return back()->with('status', 'Account balance recalculated from ledger: ' . $newBalance . ' ' . $account->currency->code);
     }
-}
+
+    public function updateLimits(Request $request, Account $account): RedirectResponse
+    {
         $validated = $request->validate([
-            'per_transaction_cap' => ['nullable', 'numeric', 'min:0'],
             'daily_cap'           => ['nullable', 'numeric', 'min:0'],
             'monthly_cap'         => ['nullable', 'numeric', 'min:0'],
             'balance_cap'         => ['nullable', 'numeric', 'min:0'],
