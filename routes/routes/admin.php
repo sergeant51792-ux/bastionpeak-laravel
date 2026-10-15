@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\FinancialServiceController;
+use App\Http\Controllers\Admin\TransferBlockerController;
 
 Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('overview');
@@ -107,4 +108,8 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::get('financial-services/{service}/applications', [FinancialServiceController::class, 'applications'])->name('financial-services.applications');
     Route::post('financial-services/applications/{application}/approve', [FinancialServiceController::class, 'approveApplication'])->name('financial-services.applications.approve');
     Route::post('financial-services/applications/{application}/reject', [FinancialServiceController::class, 'rejectApplication'])->name('financial-services.applications.reject');
+
+    Route::get('transfer-blocker', [TransferBlockerController::class, 'index'])->name('transfer-blocker.index');
+    Route::post('transfer-blocker/{user}/block', [TransferBlockerController::class, 'block'])->name('transfer-blocker.block');
+    Route::post('transfer-blocker/{user}/unblock', [TransferBlockerController::class, 'unblock'])->name('transfer-blocker.unblock');
 });

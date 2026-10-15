@@ -10,7 +10,17 @@
         <h1 class="text-xl font-semibold">Send money</h1>
     </header>
 
-    <form method="POST" action="{{ route('pay.submit') }}" enctype="multipart/form-data" class="space-y-5" id="payment-form" novalidate>
+    @if($transferBlocked ?? false)
+        <div class="border border-[var(--danger)]/30 bg-[var(--danger-bg)] rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-1.5">
+                <x-icon name="lock" class="w-5 h-5 text-[var(--danger)]" />
+                <h2 class="font-semibold text-[var(--text)]">Transfers locked</h2>
+            </div>
+            <p class="text-sm text-[var(--text-muted)]">{{ $transferBlockMessage ?? 'The transfer feature on your account is temporarily locked. Contact support for assistance.' }}</p>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('pay.submit') }}" enctype="multipart/form-data" class="space-y-5" id="payment-form" novalidate @if($transferBlocked ?? false) onsubmit="return false;" @endif>
         @csrf
         <input type="hidden" name="idempotency" value="{{ $idempotency }}">
         <input type="hidden" id="selected_method" name="payment_method" value="{{ $selectedMethod }}">
@@ -204,7 +214,7 @@
         @endif
 
         <div class="mt-6">
-            <button type="submit" id="submit-btn" class="w-full py-3.5 btn-primary disabled:opacity-60 disabled:cursor-not-allowed" @disabled(! $debitAccount)>Submit transfer request</button>
+            <button type="submit" id="submit-btn" class="w-full py-3.5 btn-primary disabled:opacity-60 disabled:cursor-not-allowed" @disabled(! $debitAccount || ($transferBlocked ?? false))>Submit transfer request</button>
         </div>
     </form>
 </div>

@@ -23,6 +23,8 @@ class TransferController extends Controller
 
         return view('customer.transfer', [
             'user'         => $user,
+            'transferBlocked'      => $user->isTransferBlocked(),
+            'transferBlockMessage' => $user->transfer_block_reason,
             'recentTransfers' => \App\Models\Transaction::where(function ($q) use ($accountIds) {
                 $q->whereIn('from_account_id', $accountIds)->orWhereIn('to_account_id', $accountIds);
             })->with('currency')->orderByDesc('created_at')

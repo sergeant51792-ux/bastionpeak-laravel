@@ -62,6 +62,7 @@
                         ['route' => 'admin.approvals', 'icon' => 'check-circle', 'label' => 'Approvals'],
                         ['route' => 'admin.transactions.index', 'icon' => 'list', 'label' => 'Transactions'],
                         ['route' => 'admin.users.index', 'icon' => 'users', 'label' => 'Users'],
+                        ['route' => 'admin.transfer-blocker.index', 'icon' => 'lock', 'label' => 'Transfer Blocker'],
                         ['route' => 'admin.cards.index', 'icon' => 'credit-card', 'label' => 'Cards'],
                         ['route' => 'admin.card-requests.index', 'icon' => 'file-text', 'label' => 'Card Requests'],
                         ['route' => 'admin.deposit-methods.index', 'icon' => 'wallet', 'label' => 'Deposit Methods'],

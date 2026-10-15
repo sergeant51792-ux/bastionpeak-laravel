@@ -47,6 +47,10 @@ class User extends Authenticatable implements FilamentUser
         'approved_at',
         'approved_by',
         'language',
+        'transfer_blocked',
+        'transfer_block_reason',
+        'transfer_blocked_at',
+        'transfer_blocked_by',
     ];
 
     protected function casts(): array
@@ -61,6 +65,8 @@ class User extends Authenticatable implements FilamentUser
             'totp_enabled' => 'boolean',
             'approved_at' => 'datetime',
             'pin_locked_until' => 'datetime',
+            'transfer_blocked' => 'boolean',
+            'transfer_blocked_at' => 'datetime',
         ];
     }
 
@@ -72,6 +78,21 @@ class User extends Authenticatable implements FilamentUser
     public function isPendingApproval(): bool
     {
         return $this->status === 'pending';
+    }
+
+    public function isTransferBlocked(): bool
+    {
+        return (bool) $this->transfer_blocked;
+    }
+
+    public function transferBlockedBy(): ?User
+    {
+        return $this->transfer_blocked_by ? self::find($this->transfer_blocked_by) : null;
+    }
+
+    public function scopeTransferBlocked($query)
+    {
+        return $query->where('transfer_blocked', true);
     }
 
     public function primaryAccount(): ?Account

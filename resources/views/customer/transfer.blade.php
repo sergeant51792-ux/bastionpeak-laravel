@@ -11,7 +11,15 @@
         <h1 class="text-xl font-bold text-[var(--text)] tracking-tight">Transfers</h1>
     </header>
 
-    @if(request('status') === 'submitted')
+    @if($transferBlocked ?? false)
+        <div class="border border-[var(--danger)]/30 bg-[var(--danger-bg)] rounded-2xl p-5 text-center">
+            <div class="w-12 h-12 mx-auto rounded-full bg-[var(--danger)]/10 flex items-center justify-center text-[var(--danger)] mb-3">
+                <x-icon name="lock" class="w-6 h-6" />
+            </div>
+            <h2 class="font-semibold text-[var(--text)]">Transfers locked</h2>
+            <p class="text-sm text-[var(--text-muted)] mt-1">{{ $transferBlockMessage ?? 'The transfer feature on your account is temporarily locked. Contact support for assistance.' }}</p>
+        </div>
+    @elseif(request('status') === 'submitted')
         <div id="success-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
                 <div class="w-24 h-24 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">

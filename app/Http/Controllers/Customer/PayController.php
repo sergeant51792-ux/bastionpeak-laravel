@@ -29,6 +29,8 @@ class PayController extends Controller
             'debitAccount'    => $this->resolveDebitAccount($user, $request),
             'idempotency'     => bin2hex(random_bytes(32)),
             'selectedMethod'  => $selectedMethod,
+            'transferBlocked'      => $user->isTransferBlocked(),
+            'transferBlockMessage' => $user->transfer_block_reason,
         ]);
     }
 
@@ -36,6 +38,10 @@ class PayController extends Controller
     {
         $user = Auth::user();
         abort_if(! $user instanceof User, 403);
+
+        if ($user->isTransferBlocked()) {
+            abort(403, $user->transfer_block_reason ?: 'Transfers are locked on this account. Contact support for assistance.');
+        }
 
         $validated = $request->validate([
             'from_account_id' => ['nullable', 'integer'],
