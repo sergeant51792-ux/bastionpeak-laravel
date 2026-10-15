@@ -418,7 +418,24 @@ Route::get('/_debug-pending-deposits', function () {
         $result['test_txn_status_class'] = get_class($testTxn->status);
         $result['test_txn_type_value'] = $testTxn->type;
         $result['test_txn_status_value'] = $testTxn->status;
+        $result['test_txn_currency_id'] = $testTxn->currency_id;
+        $result['test_txn_from_account_id'] = $testTxn->from_account_id;
+        $result['test_txn_to_account_id'] = $testTxn->to_account_id;
+        $result['test_txn_from_user_id'] = $testTxn->from_user_id;
+        $result['test_txn_to_user_id'] = $testTxn->to_user_id;
+        $result['test_txn_amount'] = $testTxn->amount;
+        $result['test_txn_has_currency'] = $testTxn->currency ? 'yes' : 'no';
+        $result['test_txn_has_from_user'] = $testTxn->fromUser ? 'yes' : 'no';
     }
+
+    // Check for ANY null currency_id in pending deposit_credit transactions
+    $result['null_currency_count'] = \App\Models\Transaction::where('type', 'deposit_credit')
+        ->whereIn('status', ['pending_review', 'pending_match'])
+        ->whereNull('currency_id')
+        ->count();
+
+    // Check for any invalid type values
+    $result['distinct_types'] = \App\Models\Transaction::distinct()->pluck('type')->toArray();
 
     return response()->json($result);
 })->name('debug.pending');
