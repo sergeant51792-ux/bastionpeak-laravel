@@ -36,15 +36,16 @@
                     </button>
                 </form>
             @else
-                <form method="POST" action="{{ route('admin.users.freeze', $user) }}" class="ml-2 inline" onsubmit="return confirm('Freeze this user account?')">
+                <form method="POST" action="{{ route('admin.users.freeze', $user) }}" class="ml-2 inline" onsubmit="return confirmFreeze()">
                     @csrf
+                    <input type="hidden" name="reason" id="freeze-reason" value="">
                     <button type="submit" class="p-2 bg-[var(--accent-subtle)] text-[var(--accent)] rounded-lg text-xs font-medium hover:bg-[var(--accent-subtle)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" title="Freeze account">
                         <x-icon name="pause" class="w-4 h-4" />
                     </button>
                 </form>
-                <form method="POST" action="{{ route('admin.users.block', $user) }}" class="ml-1 inline" onsubmit="return confirm('Block this user account?')" title="Block account">
+                <form method="POST" action="{{ route('admin.users.block', $user) }}" class="ml-1 inline" onsubmit="return confirmBlock()">
                     @csrf
-                    <input type="hidden" name="reason" value="Blocked by admin">
+                    <input type="hidden" name="reason" id="block-reason" value="Account locked by administrator">
                     <button type="submit" class="p-2 bg-[var(--danger-bg)] text-[var(--danger)] rounded-lg text-xs font-medium hover:bg-[var(--danger-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                         <x-icon name="lock" class="w-4 h-4" />
                     </button>
@@ -565,6 +566,24 @@ function toggleTxnEdit(id) {
     if (row) {
         row.classList.toggle('hidden');
     }
+}
+
+function confirmFreeze() {
+    var reason = prompt('Enter a reason for freezing this account (optional):', 'Frozen due to policy violation');
+    if (reason !== null) {
+        document.getElementById('freeze-reason').value = reason || 'Frozen by administrator';
+        return confirm('Freeze this account? The user will be unable to add money, receive, or transfer funds.');
+    }
+    return false;
+}
+
+function confirmBlock() {
+    var reason = prompt('Enter a reason for locking this account (optional):', 'Account locked by administrator');
+    if (reason !== null) {
+        document.getElementById('block-reason').value = reason || 'Account locked by administrator';
+        return confirm('Lock this account? The user will not be able to sign in.');
+    }
+    return false;
 }
 </script>
 @endpush

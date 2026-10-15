@@ -57,13 +57,13 @@ Route::middleware('web')->group(function () {
         Route::get('/dashboard', [HomeController::class, '__invoke'])->name('dashboard');
 
         Route::get('/activity', [ActivityController::class, '__invoke'])->name('activity');
-        Route::get('/transfer', [TransferController::class, '__invoke'])->name('transfer');
-        Route::get('/top-up', [TopUpController::class, '__invoke'])->name('top-up');
-        Route::post('/top-up', [TopUpController::class, 'submit'])->name('top-up.submit');
-        Route::get('/pay', [PayController::class, '__invoke'])->name('pay');
-        Route::post('/pay', [PayController::class, 'submit'])->name('pay.submit');
+        Route::get('/transfer', [TransferController::class, '__invoke'])->name('transfer')->middleware('account.status');
+        Route::get('/top-up', [TopUpController::class, '__invoke'])->name('top-up')->middleware('account.status');
+        Route::post('/top-up', [TopUpController::class, 'submit'])->name('top-up.submit')->middleware('account.status');
+        Route::get('/pay', [PayController::class, '__invoke'])->name('pay')->middleware('account.status');
+        Route::post('/pay', [PayController::class, 'submit'])->name('pay.submit')->middleware('account.status');
         Route::get('/accounts/{account}', [AccountController::class, 'show'])->name('accounts.show');
-        Route::get('/receive', [ReceiveController::class, '__invoke'])->name('receive');
+        Route::get('/receive', [ReceiveController::class, '__invoke'])->name('receive')->middleware('account.status');
         Route::get('/messages', [MessageController::class, '__invoke'])->name('messages');
         Route::post('/messages', [MessageController::class, 'send'])->name('messages.send');
         Route::post('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('messages.read');

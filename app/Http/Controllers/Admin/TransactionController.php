@@ -104,7 +104,7 @@ class TransactionController extends Controller
             ]);
 
             if (!empty($validated['created_at'])) {
-                $transaction->created_at = $validated['created_at'];
+                $transaction->created_at = \Carbon\Carbon::parse($validated['created_at']);
                 $transaction->save();
             }
 

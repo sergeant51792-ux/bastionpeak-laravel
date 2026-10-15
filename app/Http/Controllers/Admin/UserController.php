@@ -184,21 +184,25 @@ class UserController extends Controller
 
     public function block(Request $request, User $user): RedirectResponse
     {
+        $validated = $request->validate([
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
         $user->update(['status' => 'locked']);
         AuditLog::create([
             'admin_id' => Auth::id(),
-            'action' => 'user_block',
+            'action' => 'user_lock',
             'target_type' => 'user',
             'target_id' => $user->id,
-            'new_value' => ['reason' => $request->input('reason', 'Blocked by admin')],
+            'new_value' => ['reason' => $validated['reason'] ?? 'Account locked by administrator'],
         ]);
         $this->notifications->sendToUser(
             $user->id,
             'security_alert',
-            'Account blocked',
-            'Your account has been blocked by an administrator.'
+            'Account locked',
+            'This account has been locked.'
         );
-        return back()->with('status', 'User account blocked.');
+        return back()->with('status', 'User account locked.');
     }
 
     public function freeze(Request $request, User $user): RedirectResponse
@@ -219,7 +223,7 @@ class UserController extends Controller
             $user->id,
             'security_alert',
             'Account frozen',
-            'Your account has been temporarily frozen.'
+            'This account has been temporarily frozen. Reason: ' . ($validated['reason'] ?? 'Frozen by administrator')
         );
         return back()->with('status', 'User account frozen.');
     }
@@ -300,7 +304,7 @@ class UserController extends Controller
         $data = array_filter($validated, fn($v) => $v !== null && $v !== '');
 
         if (isset($data['created_at'])) {
-            $transaction->created_at = $data['created_at'];
+            $transaction->created_at = \Carbon\Carbon::parse($data['created_at']);
             unset($data['created_at']);
         }
 

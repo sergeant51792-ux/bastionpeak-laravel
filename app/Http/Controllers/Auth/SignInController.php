@@ -44,7 +44,7 @@ class SignInController extends Controller
             ])->onlyInput('email');
         }
 
-        if (in_array($user->status, ['blocked', 'frozen', 'suspended'], true)) {
+        if (in_array($user->status, ['blocked', 'frozen', 'suspended', 'locked'], true)) {
             return back()->withErrors([
                 'email' => 'This account is not available right now. Please contact support.',
             ])->onlyInput('email');
