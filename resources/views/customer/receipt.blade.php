@@ -18,9 +18,9 @@
     $statusMap = [
         'pending_review' => ['label' => 'Pending',   'color' => '#D97706'],
         'pending_match'  => ['label' => 'Pending',   'color' => '#D97706'],
-        'approved'       => ['label' => 'Approved',  'color' => '#059669'],
-        'credited'       => ['label' => 'Credited',  'color' => '#059669'],
-        'posted'         => ['label' => 'Completed', 'color' => '#059669'],
+        'approved'       => ['label' => 'Successful', 'color' => '#059669'],
+        'credited'       => ['label' => 'Successful', 'color' => '#059669'],
+        'posted'         => ['label' => 'Successful', 'color' => '#059669'],
         'rejected'       => ['label' => 'Failed',    'color' => '#DC2626'],
         'reversed'       => ['label' => 'Reversed',  'color' => '#D97706'],
     ];
@@ -268,10 +268,11 @@
             box-shadow: none !important;
             border-radius: 0 !important;
             background: white !important;
-            color: black !important;
             page-break-inside: avoid;
         }
         .bp-paper-inner { padding: 0.25in !important; }
+        .bp-watermark { opacity: 0.03 !important; }
+        * { color-adjust: exact !important; }
     }
 
     .bp-watermark {
