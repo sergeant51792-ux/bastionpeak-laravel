@@ -87,7 +87,7 @@ class PaymentService
                 'reference'         => 'PAY-' . strtoupper(uniqid()),
                 'idempotency_key'   => $idempotencyKey,
                 'proof_file_path'   => $proofFile,
-                'metadata'          => $metadata,
+                'metadata'          => $metadata ?? [],
             ]);
 
             return $transaction;

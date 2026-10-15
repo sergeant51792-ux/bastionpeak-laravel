@@ -75,6 +75,7 @@ class TransactionController extends Controller
             'memo'              => ['nullable', 'string', 'max:500'],
             'reference'         => ['nullable', 'string', 'max:255'],
             'status'            => ['nullable', 'in:pending_review,pending_match,approved,rejected,credited,reversed,posted'],
+            'created_at'        => ['nullable', 'date'],
             'idempotency_key'   => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -101,6 +102,11 @@ class TransactionController extends Controller
                 'operator_type'     => Auth::getProvider() ? get_class(Auth::user()) : null,
                 'credited_at'       => $status === 'posted' ? now() : null,
             ]);
+
+            if (!empty($validated['created_at'])) {
+                $transaction->created_at = $validated['created_at'];
+                $transaction->save();
+            }
 
             TransactionLeg::create([
                 'transaction_id'  => $transaction->id,

@@ -93,6 +93,18 @@
 
         <div class="space-y-6">
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
+                <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Edit date</h2>
+                <form method="POST" action="{{ route('admin.transactions.update', $transaction) }}" class="space-y-3">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Transaction date</label>
+                        <input type="date" name="created_at" value="{{ $transaction->created_at->format('Y-m-d') }}" class="input-field">
+                    </div>
+                    <button type="submit" class="w-full py-2 btn-primary text-sm">Save</button>
+                </form>
+            </div>
+
+            <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
                 <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Actions</h2>
                 <div class="space-y-3">
                     @if($transaction->isReversible())

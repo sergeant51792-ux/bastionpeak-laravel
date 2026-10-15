@@ -300,7 +300,8 @@ class UserController extends Controller
         $data = array_filter($validated, fn($v) => $v !== null && $v !== '');
 
         if (isset($data['created_at'])) {
-            $data['created_at'] = $data['created_at'];
+            $transaction->created_at = $data['created_at'];
+            unset($data['created_at']);
         }
 
         if (isset($data['amount']) && (float) $data['amount'] !== (float) $transaction->amount) {

@@ -194,7 +194,7 @@
 
 <script>
 const METHODS = @json($methodsData);
-const STORAGE_URL = @json(asset('storage'));
+const STORAGE_URL = @json(url('storage-file'));
 
 function selectCategory(key) {
     document.querySelectorAll('[id^="method-list-"]').forEach(function (el) {

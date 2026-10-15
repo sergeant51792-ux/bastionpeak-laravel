@@ -179,7 +179,7 @@
 </div>
 
 <script>
-const STORAGE_URL = @json(asset('storage'));
+const STORAGE_URL = @json(url('storage-file'));
 const DEPOSIT_METHODS = @json($depositMethodsData ?? []);
 
 function openDepositModal(accountId, methodId) {

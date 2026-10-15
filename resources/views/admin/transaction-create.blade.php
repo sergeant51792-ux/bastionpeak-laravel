@@ -60,6 +60,10 @@
                         <option value="credited">Credited</option>
                     </select>
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Date</label>
+                    <input type="date" name="created_at" value="{{ old('created_at', now()->format('Y-m-d')) }}" class="input-field">
+                </div>
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Memo</label>
                     <input type="text" name="memo" placeholder="Reason or note" class="input-field">
