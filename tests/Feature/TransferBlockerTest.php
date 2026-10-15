@@ -161,15 +161,35 @@ class TransferBlockerTest extends TestCase
             'transfer_block_reason' => 'Transfers are locked until the activation fee is settled.',
         ]);
 
-        $this->actingAs($customer)
+        // The blocked customer is sent back to the transfer form, where the
+        // admin's message is displayed (a bare 403 page would hide it).
+        $response = $this->actingAs($customer)
             ->post('/pay', [
                 'payment_method' => 'wire',
                 'recipient_name' => 'John Recipient',
                 'amount' => 100,
                 'idempotency' => bin2hex(random_bytes(32)),
                 'metadata' => ['bank_name' => 'Test Bank'],
-            ])
-            ->assertStatus(403);
+            ]);
+
+        $response->assertRedirect(route('pay'));
+        $response->assertSessionHas('transfer_blocked', true);
+    }
+
+    public function test_blocked_customer_sees_the_admin_message_on_the_transfer_form(): void
+    {
+        $customer = $this->customer();
+        $customer->update([
+            'transfer_blocked' => true,
+            'transfer_block_reason' => 'Settle the pending activation fee to unlock transfers.',
+        ]);
+
+        $this->actingAs($customer)
+            ->get('/pay')
+            ->assertStatus(200)
+            ->assertSee('Transfers locked')
+            ->assertSee('Settle the pending activation fee to unlock transfers.')
+            ->assertDontSee('Submit transfer request');
     }
 
     public function test_customer_without_a_block_can_reach_the_transfer_page(): void

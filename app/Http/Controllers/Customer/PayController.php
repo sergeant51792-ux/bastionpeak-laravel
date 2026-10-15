@@ -40,7 +40,11 @@ class PayController extends Controller
         abort_if(! $user instanceof User, 403);
 
         if ($user->isTransferBlocked()) {
-            abort(403, $user->transfer_block_reason ?: 'Transfers are locked on this account. Contact support for assistance.');
+            // Send the customer back to the transfer form, where the admin's
+            // message is shown. A bare 403 page would hide it entirely.
+            return redirect()
+                ->route('pay')
+                ->with('transfer_blocked', true);
         }
 
         $validated = $request->validate([

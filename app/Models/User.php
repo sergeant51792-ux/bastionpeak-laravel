@@ -85,9 +85,9 @@ class User extends Authenticatable implements FilamentUser
         return (bool) $this->transfer_blocked;
     }
 
-    public function transferBlockedBy(): ?User
+    public function transferBlocker(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->transfer_blocked_by ? self::find($this->transfer_blocked_by) : null;
+        return $this->belongsTo(User::class, 'transfer_blocked_by');
     }
 
     public function scopeTransferBlocked($query)

@@ -33,7 +33,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {{-- Block form --}}
         <div class="lg:col-span-2" id="block-form">
-            <form method="POST" action="{{ route('admin.transfer-blocker.block', ['user' => $selectedUser?->id]) }}"
+            <form method="POST"
+                  data-block-url="{{ route('admin.transfer-blocker.block', ['user' => '__USER__']) }}"
+                  action="{{ route('admin.transfer-blocker.index') }}"
                   onsubmit="return ensureSelectedUser(event)"
                   class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-4">
                 @csrf
@@ -106,7 +108,7 @@
                         <p class="text-sm text-[var(--text)] whitespace-pre-line">{{ $blocked->transfer_block_reason }}</p>
                     </div>
                     <p class="text-xs text-[var(--text-muted)] mt-2">
-                        Locked {{ $blocked->transfer_blocked_at?->diffForHumans() }}@if($blocked->transferBlockedBy()) by {{ $blocked->transferBlockedBy()->name }}@endif
+                        Locked {{ $blocked->transfer_blocked_at?->diffForHumans() }}@if($blocked->transferBlocker) by {{ $blocked->transferBlocker->name }}@endif
                     </p>
                 </div>
             @empty
@@ -228,16 +230,17 @@
     }
 
     function ensureSelectedUser(event) {
+        const form = event.target;
         const select = document.getElementById('user_id');
+        const base = form.dataset.blockUrl;
+
         if (!select.value) {
             event.preventDefault();
             alert('Select the user account you want to block.');
             return false;
         }
 
-        const form = event.target;
-        const base = "{{ route('admin.transfer-blocker.block', ['user' => '__USER__']) }}";
-        form.action = base.replace('__USER__', select.value);
+        form.action = base.replace('__USER__', encodeURIComponent(select.value));
         return true;
     }
 </script>

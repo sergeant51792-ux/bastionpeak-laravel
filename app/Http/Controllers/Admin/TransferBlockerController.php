@@ -42,6 +42,7 @@ class TransferBlockerController extends Controller
 
         $blockedUsers = User::transferBlocked()
             ->whereHas('roles', fn ($q) => $q->where('name', 'Customer'))
+            ->with('transferBlocker')
             ->orderByDesc('transfer_blocked_at')
             ->get();
 
