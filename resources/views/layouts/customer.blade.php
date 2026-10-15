@@ -152,8 +152,8 @@
                         {{ __('Financial Services') }}
                     </a>
                     <a href="{{ route('messages') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('messages')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
-                        <x-icon name="message-square" class="w-5 h-5" />
-                        {{ __('Messages') }}
+                        <x-icon name="life-ring" class="w-5 h-5" />
+                        {{ __('Support') }}
                     </a>
                     <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('profile')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
                         <x-icon name="user" class="w-5 h-5" />
