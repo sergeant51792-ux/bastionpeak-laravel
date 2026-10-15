@@ -103,7 +103,6 @@
                                             <x-icon name="{{ $method->category === 'crypto' ? 'bitcoin' : ($method->category === 'giftcard' ? 'gift' : 'landmark') }}" class="w-5 h-5" />
                                         @endif
                                     </div>
-                                    </div>
                                     <div>
                                         <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
                                         <p class="text-xs text-[var(--text-muted)] mt-0.5">

@@ -11,6 +11,47 @@
         <h1 class="text-xl font-semibold text-[var(--text)]">Receive money</h1>
     </header>
 
+    @if(isset($globalMethods) && $globalMethods->isNotEmpty())
+        @php
+            $cryptoMethods = $globalMethods->whereIn('type', ['crypto'])->values();
+            $giftcardMethods = $globalMethods->whereIn('type', ['giftcard', 'gift_card'])->values();
+            $transferMethods = $globalMethods->whereNotIn('type', ['crypto', 'giftcard', 'gift_card'])->values();
+        @endphp
+
+        @if($cryptoMethods->isNotEmpty())
+            <div class="space-y-4">
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">Cryptocurrency</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    @foreach($cryptoMethods as $method)
+                        @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $accounts->first()?->id ?? 0])
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        @if($giftcardMethods->isNotEmpty())
+            <div class="space-y-4">
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">Gift card</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    @foreach($giftcardMethods as $method)
+                        @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $accounts->first()?->id ?? 0])
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        @if($transferMethods->isNotEmpty())
+            <div class="space-y-4">
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">Bank transfer</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    @foreach($transferMethods as $method)
+                        @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $accounts->first()?->id ?? 0])
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @endif
+
     @foreach($accounts as $account)
         @php
             $depositMethods = $account->depositMethods()->wherePivot('is_active', true)->get();
@@ -23,28 +64,7 @@
             @if($depositMethods->isNotEmpty())
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @foreach($depositMethods as $method)
-                        <button type="button"
-                                onclick="openDepositModal({{ $account->id }}, {{ $method->id }})"
-                                class="text-left border border-[var(--line)] rounded-xl p-4 hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-all group">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                                    @if($method->icon_image_path)
-                                        <img src="{{ asset('storage/' . $method->icon_image_path) }}" alt="{{ $method->name }}" class="w-6 h-6 object-contain">
-                                    @elseif($method->type === 'crypto')
-                                        <x-icon name="bitcoin" class="w-5 h-5" />
-                                    @elseif($method->type === 'giftcard' || $method->type === 'gift_card')
-                                        <x-icon name="gift" class="w-5 h-5" />
-                                    @else
-                                        <x-icon name="landmark" class="w-5 h-5" />
-                                    @endif
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
-                                    <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ ucfirst($method->type) }}</p>
-                                </div>
-                                <x-icon name="chevron-right" class="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--accent)] transition-colors" />
-                            </div>
-                        </button>
+                        @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $account->id])
                     @endforeach
                 </div>
             @else

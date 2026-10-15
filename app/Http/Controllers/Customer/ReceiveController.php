@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Account;
+use App\Models\DepositMethod;
 
 class ReceiveController extends Controller
 {
@@ -36,6 +37,13 @@ class ReceiveController extends Controller
             $selectedAccount->load('depositMethods');
         }
 
+        $globalMethods = DepositMethod::where('is_active', true)
+            ->where(function ($q) {
+                $q->where('is_global', true)
+                  ->orWhereDoesntHave('accounts');
+            })
+            ->get();
+
         $depositMethodsData = collect();
         foreach ($accounts as $account) {
             $methods = $account->depositMethods()
@@ -54,39 +62,36 @@ class ReceiveController extends Controller
                         'address' => $method->pivot->address ?? '',
                         'instructions' => $method->pivot->instructions ?? '',
                         'qr_path' => $method->pivot->qr_path ?? '',
+                        'icon_image_path' => $method->icon_image_path ?? '',
                     ];
                 });
             $depositMethodsData = $depositMethodsData->merge($methods);
         }
 
-        $globalMethods = \App\Models\DepositMethod::where('is_active', true)
-            ->where(function ($q) {
-                $q->where('is_global', true)
-                  ->orWhereDoesntHave('accounts');
-            })
-            ->get()
-            ->map(function ($method) use ($accounts) {
-                $account = $accounts->first();
-                return [
-                    'id' => $method->id,
-                    'code' => $method->code,
-                    'name' => $method->name,
-                    'type' => $method->type,
-                    'account_id' => $account ? $account->id : 0,
-                    'account_name' => $account ? $account->name : 'No active account',
-                    'currency_symbol' => $account?->currency->symbol ?? '$',
-                    'currency_code' => $account?->currency->code ?? 'USD',
-                    'address' => $method->address ?? '',
-                    'instructions' => $method->instructions ?? $method->description ?? '',
-                    'qr_path' => $method->qr_path ?? '',
-                    'icon_image_path' => $method->icon_image_path ?? '',
-                ];
-            });
-        $depositMethodsData = $depositMethodsData->merge($globalMethods)->unique('id')->values();
+        foreach ($globalMethods as $method) {
+            $account = $accounts->first();
+            $depositMethodsData->push([
+                'id' => $method->id,
+                'code' => $method->code,
+                'name' => $method->name,
+                'type' => $method->type,
+                'account_id' => $account ? $account->id : 0,
+                'account_name' => $account ? $account->name : 'No active account',
+                'currency_symbol' => $account?->currency->symbol ?? '$',
+                'currency_code' => $account?->currency->code ?? 'USD',
+                'address' => $method->address ?? '',
+                'instructions' => $method->instructions ?? $method->description ?? '',
+                'qr_path' => $method->qr_path ?? '',
+                'icon_image_path' => $method->icon_image_path ?? '',
+            ]);
+        }
+
+        $depositMethodsData = $depositMethodsData->unique('id')->values();
 
         return view('customer.receive', [
             'accounts'             => $accounts,
             'selectedAccount'      => $selectedAccount,
+            'globalMethods'        => $globalMethods,
             'depositMethodsData'   => $depositMethodsData,
         ]);
     }
