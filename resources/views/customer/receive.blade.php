@@ -146,7 +146,7 @@
                         <input type="hidden" id="form_deposit_method" name="deposit_method" value="">
                         <input type="hidden" id="form_amount" name="amount" value="">
                         <input type="hidden" name="note" value="Deposit request via Receive">
-                        <button type="submit" class="w-full py-3 btn-primary text-sm font-medium min-h-[44px]">
+                        <button type="button" onclick="showProcessingState()" class="w-full py-3 btn-primary text-sm font-medium min-h-[44px]">
                             Confirm request
                         </button>
                     </form>
@@ -271,6 +271,16 @@ function showProcessingState() {
     const modal = document.getElementById('deposit-modal');
     const amount = document.getElementById('modal-amount').value;
 
+    if (!amount || parseFloat(amount) <= 0) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)] mb-3';
+        errorDiv.textContent = 'Please enter a valid amount.';
+        const detailsDiv = document.getElementById('modal-step-details');
+        detailsDiv.insertBefore(errorDiv, detailsDiv.firstChild);
+        setTimeout(() => errorDiv.remove(), 3000);
+        return;
+    }
+
     document.getElementById('form_account_id').value = modal.dataset.accountId;
     document.getElementById('form_deposit_method').value = modal.dataset.methodCode;
     document.getElementById('form_amount').value = amount;
@@ -279,14 +289,6 @@ function showProcessingState() {
     document.getElementById('modal-step-processing').classList.remove('hidden');
 
     document.getElementById('receive-form').submit();
-}
-
-function showProcessingStateFallback() {
-    const modal = document.getElementById('deposit-modal');
-    const amount = document.getElementById('modal-amount').value;
-    modal.dataset.amount = amount;
-    document.getElementById('modal-step-details').classList.add('hidden');
-    document.getElementById('modal-step-processing').classList.remove('hidden');
 }
 
 function afterFormSubmit(errorMsg) {
