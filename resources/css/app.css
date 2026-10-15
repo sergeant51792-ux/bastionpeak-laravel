@@ -535,6 +535,45 @@ body[data-hide-balance="true"] .balance-hidden {
   color: var(--text-muted);
 }
 
+.input-symbol-prefix {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0 0.75rem;
+  transition: all 0.15s ease;
+}
+
+.input-symbol-prefix:focus-within {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-symbol-prefix .symbol {
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+.input-symbol-prefix input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 0.75rem 0;
+  min-height: 44px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.input-symbol-prefix input::placeholder {
+  color: #94A3B8;
+}
+
 /* Mobile-first refinements */
 @media (max-width: 640px) {
   .card-balance {

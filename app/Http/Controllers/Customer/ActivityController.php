@@ -21,7 +21,8 @@ class ActivityController extends Controller
 
         $query = Transaction::where(function ($q) use ($accountIds) {
             $q->whereIn('from_account_id', $accountIds)->orWhereIn('to_account_id', $accountIds);
-        })->with(['fromAccount', 'toAccount', 'merchant', 'currency']);
+        })->whereNotIn('status', ['rejected', 'reversed'])
+          ->with(['fromAccount', 'toAccount', 'merchant', 'currency']);
 
         if ($request->filled('filter')) {
             $filter = $request->filter;

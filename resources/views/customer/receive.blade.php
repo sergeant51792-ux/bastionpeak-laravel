@@ -101,14 +101,9 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3 text-sm">
-                        <input type="checkbox" id="modal-any-amount" class="rounded border-[var(--line)] text-[var(--accent)] focus:ring-[var(--accent)]">
-                        <label for="modal-any-amount" class="text-[var(--text-muted)]">Any amount</label>
-                    </div>
-
-                    <button onclick="showDepositDetails()" class="w-full py-3 btn-primary text-sm font-medium min-h-[44px]">
-                        Continue
-                    </button>
+                     <button onclick="showDepositDetails()" class="w-full py-3 btn-primary text-sm font-medium min-h-[44px]">
+                         Continue
+                     </button>
                 </div>
 
                 {{-- Step 2: Details with QR/Image --}}
@@ -144,27 +139,40 @@
                         </div>
                     </div>
 
-                    <button onclick="showProcessingState()" class="w-full py-3 btn-primary text-sm font-medium min-h-[44px]">
-                        I've sent the payment
-                    </button>
+                    <form id="receive-form" method="POST" action="{{ route('deposit.submit') }}" class="flex flex-col gap-2">
+                        @csrf
+                        <input type="hidden" name="idempotency" value="{{ bin2hex(random_bytes(32)) }}">
+                        <input type="hidden" id="form_account_id" name="account_id" value="">
+                        <input type="hidden" id="form_deposit_method" name="deposit_method" value="">
+                        <input type="hidden" id="form_amount" name="amount" value="">
+                        <input type="hidden" name="note" value="Deposit request via Receive">
+                        <button type="submit" class="w-full py-3 btn-primary text-sm font-medium min-h-[44px]">
+                            Confirm request
+                        </button>
+                    </form>
                 </div>
 
-                 {{-- Step 3: Processing (success green state) --}}
-                 <div id="modal-step-processing" class="hidden text-center py-8">
-                <div class="w-24 h-24 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">
-                    <svg class="w-12 h-12 text-[var(--success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
-                    </svg>
+                {{-- Step 3: Confirmed --}}
+                <div id="modal-step-processing" class="hidden text-center py-10 px-4">
+                    <div class="w-28 h-28 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">
+                        <svg class="w-12 h-12 text-[var(--success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-[var(--text)] mb-2">Request submitted</h3>
+                    <p class="text-sm text-[var(--text-muted)] mb-6">
+                        Your deposit request is being reviewed by our team.<br>
+                        You'll be notified once it's approved.
+                    </p>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="closeDepositModal()" class="w-full py-3 bg-[var(--accent)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
+                            Done
+                        </button>
+                        <a href="{{ route('activity') }}" class="w-full text-center text-sm text-[var(--accent)] hover:underline transition-colors">
+                            View activity
+                        </a>
+                    </div>
                 </div>
-                ...
-                <div class="w-full bg-[var(--line-soft)] rounded-full h-1.5 mb-2">
-                    <div class="bg-[var(--success)] h-1.5 rounded-full" style="width: 100%"></div>
-                     </div>
-                     <p class="text-xs text-[var(--text-muted)]">Progress: 100%</p>
-                     <button onclick="closeDepositModal()" class="mt-5 text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">
-                         Close
-                     </button>
-                 </div>
             </div>
         </div>
     </div>
@@ -180,13 +188,11 @@ function openDepositModal(accountId, methodId) {
     document.body.style.overflow = 'hidden';
 
     // Reset modal steps
-    document.getElementById('modal-step-amount').classList.remove('hidden');
-    document.getElementById('modal-step-details').classList.add('hidden');
-    document.getElementById('modal-step-processing').classList.add('hidden');
+     document.getElementById('modal-step-amount').classList.remove('hidden');
+     document.getElementById('modal-step-details').classList.add('hidden');
+     document.getElementById('modal-step-processing').classList.add('hidden');
 
-    // Reset amount
-    document.getElementById('modal-amount').value = '';
-    document.getElementById('modal-any-amount').checked = false;
+     document.getElementById('modal-amount').value = '';
 
     // Populate from data
     const method = DEPOSIT_METHODS.find(m => m.id === methodId);
@@ -233,20 +239,18 @@ function closeDepositModal() {
 function showDepositDetails() {
     const modal = document.getElementById('deposit-modal');
     const amount = document.getElementById('modal-amount').value;
-    const anyAmount = document.getElementById('modal-any-amount').checked;
 
-    if (!anyAmount && (!amount || parseFloat(amount) <= 0)) {
-        // Show error
+    if (!amount || parseFloat(amount) <= 0) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)] mb-3';
-        errorDiv.textContent = 'Please enter a valid amount or select "Any amount".';
+        errorDiv.textContent = 'Please enter a valid amount.';
         const amountDiv = document.getElementById('modal-step-amount');
         amountDiv.insertBefore(errorDiv, amountDiv.firstChild);
         setTimeout(() => errorDiv.remove(), 3000);
         return;
     }
 
-    modal.dataset.amount = anyAmount ? '' : amount;
+    modal.dataset.amount = amount;
 
     document.getElementById('modal-step-amount').classList.add('hidden');
     document.getElementById('modal-step-details').classList.remove('hidden');
@@ -264,8 +268,38 @@ function copyModalAddress() {
 }
 
 function showProcessingState() {
+    const modal = document.getElementById('deposit-modal');
+    const amount = document.getElementById('modal-amount').value;
+
+    document.getElementById('form_account_id').value = modal.dataset.accountId;
+    document.getElementById('form_deposit_method').value = modal.dataset.methodCode;
+    document.getElementById('form_amount').value = amount;
+
     document.getElementById('modal-step-details').classList.add('hidden');
     document.getElementById('modal-step-processing').classList.remove('hidden');
+
+    document.getElementById('receive-form').submit();
+}
+
+function showProcessingStateFallback() {
+    const modal = document.getElementById('deposit-modal');
+    const amount = document.getElementById('modal-amount').value;
+    modal.dataset.amount = amount;
+    document.getElementById('modal-step-details').classList.add('hidden');
+    document.getElementById('modal-step-processing').classList.remove('hidden');
+}
+
+function afterFormSubmit(errorMsg) {
+    if (errorMsg) {
+        const details = document.getElementById('modal-step-details');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)] mb-3';
+        errorDiv.textContent = errorMsg;
+        details.insertBefore(errorDiv, details.firstChild);
+        setTimeout(() => errorDiv.remove(), 3000);
+        document.getElementById('modal-step-processing').classList.add('hidden');
+        document.getElementById('modal-step-details').classList.remove('hidden');
+    }
 }
 
 // Close modal on Escape
