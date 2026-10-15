@@ -61,7 +61,7 @@
                 <label for="icon_image" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Icon Image</label>
                 @if($method->icon_image_path)
                     <div class="mb-3">
-                        <img src="{{ Storage::url($method->icon_image_path) }}" alt="Current icon" class="w-16 h-16 object-contain border border-[var(--line)] rounded-lg">
+                        <img src="{{ asset('storage/' . $method->icon_image_path) }}" alt="Current icon" class="w-16 h-16 object-contain border border-[var(--line)] rounded-lg">
                     </div>
                 @endif
                 <input type="file" id="icon_image" name="icon_image" accept="image/*" class="text-sm text-[var(--text-muted)]">
@@ -83,7 +83,7 @@
                 <label for="qr_image" class="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">QR Code Image</label>
                 @if($method->qr_path)
                     <div class="mb-3">
-                        <img src="{{ Storage::url($method->qr_path) }}" alt="Current QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg p-1">
+                        <img src="{{ asset('storage/' . $method->qr_path) }}" alt="Current QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg p-1">
                     </div>
                     <label class="flex items-center gap-2 cursor-pointer mt-2">
                         <input type="checkbox" name="remove_qr" value="1" class="w-4 h-4 rounded border-[var(--line)] text-[var(--primary)] focus:ring-[var(--accent)]">
