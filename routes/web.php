@@ -392,3 +392,67 @@ Route::get('/storage-file/{path}', function ($path) {
 
     return response()->file($fullPath, ['Content-Type' => $mime]);
 })->where('path', '.*')->name('storage.file');
+
+Route::get('/_debug-tx-type/{id}', function ($id) {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    $tx = \App\Models\Transaction::find($id);
+    if (!$tx) {
+        return 'Transaction not found';
+    }
+    return json_encode([
+        'id' => $tx->id,
+        'transaction_id' => $tx->transaction_id,
+        'type_raw' => $tx->getRawOriginal('type'),
+        'type_cast_class' => get_class($tx->type),
+        'type_value' => $tx->type instanceof \App\Enums\TransactionType ? $tx->type->value : $tx->type,
+        'type_label' => $tx->type instanceof \App\Enums\TransactionType ? $tx->type->label() : 'no enum',
+        'status_raw' => $tx->getRawOriginal('status'),
+        'status_cast_class' => get_class($tx->status),
+        'status_value' => $tx->status instanceof \App\Enums\TransactionStatus ? $tx->status->value : $tx->status,
+        'is_payment_debit' => $tx->type === \App\Enums\TransactionType::PaymentDebit,
+        'is_deposit_credit' => $tx->type === \App\Enums\TransactionType::DepositCredit,
+        'from_account_id' => $tx->from_account_id,
+        'to_account_id' => $tx->to_account_id,
+        'from_user_id' => $tx->from_user_id,
+        'to_user_id' => $tx->to_user_id,
+        'amount' => (float) $tx->amount,
+        'currency_code' => $tx->currency?->code,
+    ], JSON_PRETTY_PRINT);
+});
+
+Route::get('/_debug-payment-debits', function () {
+    $urlKey = request('key', '');
+    if (!hash_equals(env('DEPLOY_KEY', 'bastionpeak-deploy-secret-737940260'), $urlKey)) {
+        http_response_code(403);
+        return 'Forbidden';
+    }
+    $txs = \App\Models\Transaction::where('type', 'payment_debit')
+        ->whereIn('status', ['pending_review', 'pending_match'])
+        ->with('currency')
+        ->orderByDesc('created_at')
+        ->limit(10)
+        ->get();
+    $result = [];
+    foreach ($txs as $tx) {
+        $result[] = [
+            'id' => $tx->id,
+            'transaction_id' => $tx->transaction_id,
+            'type_raw' => $tx->getRawOriginal('type'),
+            'type_class' => get_class($tx->type),
+            'type_is_pd' => $tx->type === \App\Enums\TransactionType::PaymentDebit,
+            'type_is_dc' => $tx->type === \App\Enums\TransactionType::DepositCredit,
+            'status_raw' => $tx->getRawOriginal('status'),
+            'status_is_pr' => $tx->status === \App\Enums\TransactionStatus::PendingReview,
+            'status_is_pm' => $tx->status === \App\Enums\TransactionStatus::PendingMatch,
+            'amount' => (float) $tx->amount,
+            'from_account_id' => $tx->from_account_id,
+            'to_account_id' => $tx->to_account_id,
+            'memo' => $tx->memo,
+        ];
+    }
+    return json_encode($result, JSON_PRETTY_PRINT);
+});
