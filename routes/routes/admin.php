@@ -70,11 +70,11 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('transactions/create/{user?}', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::post('transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
     Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     Route::match(['POST', 'PATCH', 'PUT'], 'transactions/{transaction}', [UserController::class, 'updateTransaction'])->name('transactions.update');
     Route::delete('transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::post('transactions/{transaction}/reverse', [TransactionController::class, 'reverse'])->name('transactions.reverse');
-    Route::post('transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
 
     Route::get('merchants', [MerchantController::class, 'index'])->name('merchants.index');
     Route::get('merchants/{merchant}', [MerchantController::class, 'show'])->name('merchants.show');

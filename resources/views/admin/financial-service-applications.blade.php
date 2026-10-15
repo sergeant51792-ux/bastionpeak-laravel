@@ -93,12 +93,13 @@
 <script>
 let currentRejectId = null;
 
-function openRejectModal(id) {
-    currentRejectId = id;
-    const form = document.getElementById('reject-form');
-    form.action = '/admin/financial-services/applications/' + id + '/reject';
-    document.getElementById('reject-modal').classList.remove('hidden');
-}
+    function openRejectModal(id) {
+        currentRejectId = id;
+        const form = document.getElementById('reject-form');
+        form.action = @json(route('admin.financial-services.applications.reject', ['application' => ':id']));
+        form.action = form.action.replace(':id', id);
+        document.getElementById('reject-modal').classList.remove('hidden');
+    }
 
 function closeRejectModal() {
     document.getElementById('reject-modal').classList.add('hidden');

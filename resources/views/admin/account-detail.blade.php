@@ -190,24 +190,29 @@
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
                 <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Recent transactions</h2>
                 <div class="border border-[var(--line)] rounded-xl overflow-hidden">
-                    @forelse($ledger as $txn)
-                        <div class="flex items-center gap-3 p-3 border-b border-[var(--line)] last:border-0">
-                            <span class="txn-icon w-8 h-8">
-                                <x-icon name="{{ $txn->type === 'deposit' || $txn->type === 'deposit_credit' ? 'arrow-down-circle' : 'arrow-up-circle' }}" class="w-4 h-4" />
+                @forelse($ledger as $txn)
+                    @php
+                        $isDeposit = $txn->type instanceof \App\Enums\TransactionType
+                            ? $txn->type === \App\Enums\TransactionType::DepositCredit
+                            : in_array($txn->type, ['deposit', 'deposit_credit']);
+                        $statusValue = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : $txn->status;
+                    @endphp
+                    <div class="flex items-center gap-3 p-3 border-b border-[var(--line)] last:border-0">
+                        <span class="txn-icon w-8 h-8">
+                            <x-icon name="{{ $isDeposit ? 'arrow-down-circle' : 'arrow-up-circle' }}" class="w-4 h-4" />
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-[var(--text)] truncate">{{ $txn->memo ?: $txn->type }}</p>
+                            <p class="text-xs text-[var(--text-muted)]">{{ $txn->created_at->format('d M Y, H:i') }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium {{ ((int) $txn->from_account_id === (int) $account->id) ? 'text-[var(--danger)]' : 'text-[var(--success)]' }}">
+                                {{ ((int) $txn->from_account_id === (int) $account->id) ? '-' : '+' }}{{ number_format((float) $txn->amount, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol ?? '' }}
+                            </p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs {{ $statusValue === 'posted' || $statusValue === 'credited' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--warning-bg)] text-[var(--warning)]' }}">
+                                {{ ucfirst($statusValue) }}
                             </span>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-[var(--text)] truncate">{{ $txn->memo ?: $txn->type }}</p>
-                                <p class="text-xs text-[var(--text-muted)]">{{ $txn->created_at->format('d M Y, H:i') }}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium {{ ($txn->from_account_id === $account->id) ? 'text-[var(--danger)]' : 'text-[var(--success)]' }}">
-
-                                    {{ $txn->from_account_id === $account->id ? '-' : '+' }}{{ number_format((float) $txn->amount, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol ?? '' }}
-                                </p>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs {{ $txn->status === 'posted' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--warning-bg)] text-[var(--warning)]' }}">
-                                    {{ ucfirst($txn->status) }}
-                                </span>
-                            </div>
+                        </div>
                         </div>
                     @empty
                         <p class="text-sm text-[var(--text-muted)] p-4">No transactions yet.</p>

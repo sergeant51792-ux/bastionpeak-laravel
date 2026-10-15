@@ -58,19 +58,24 @@
             <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
                 @php
                     $sidebarItems = [
+                        ['route' => 'admin.overview', 'icon' => 'layout-dashboard', 'label' => 'Overview'],
                         ['route' => 'admin.approvals', 'icon' => 'check-circle', 'label' => 'Approvals'],
+                        ['route' => 'admin.transactions.index', 'icon' => 'list', 'label' => 'Transactions'],
                         ['route' => 'admin.users.index', 'icon' => 'users', 'label' => 'Users'],
                         ['route' => 'admin.cards.index', 'icon' => 'credit-card', 'label' => 'Cards'],
-                        ['route' => 'admin.messages.index', 'icon' => 'message-square', 'label' => 'Messages'],
+                        ['route' => 'admin.card-requests.index', 'icon' => 'file-text', 'label' => 'Card Requests'],
+                        ['route' => 'admin.merchants.index', 'icon' => 'building-2', 'label' => 'Merchants'],
                         ['route' => 'admin.deposit-methods.index', 'icon' => 'wallet', 'label' => 'Deposit Methods'],
+                        ['route' => 'admin.messages.index', 'icon' => 'message-square', 'label' => 'Messages'],
+                        ['route' => 'admin.financial-services.index', 'icon' => 'bank', 'label' => 'Financial Services'],
+                        ['route' => 'admin.reports.index', 'icon' => 'chart-bar', 'label' => 'Reports'],
+                        ['route' => 'admin.audit-log.index', 'icon' => 'shield-check', 'label' => 'Audit Log'],
+                        ['route' => 'admin.settings.index', 'icon' => 'settings', 'label' => 'Settings'],
                     ];
                 @endphp
                 @foreach($sidebarItems as $item)
                     @php
                         $isActive = request()->routeIs($item['route']) || request()->routeIs($item['route'] . '.*');
-                        if ($item['route'] === 'admin.users.index' && request()->routeIs('admin.overview')) {
-                            $isActive = true;
-                        }
                     @endphp
                     <a href="{{ route($item['route']) }}" class="sidebar-link @if($isActive) active @endif flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors">
                         <x-icon name="{{ $item['icon'] }}" class="w-5 h-5 flex-shrink-0" />

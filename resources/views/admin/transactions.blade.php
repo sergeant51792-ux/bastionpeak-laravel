@@ -3,9 +3,9 @@
 @section('title', 'Transactions')
 @section('content')
 <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+    <form method="GET" action="{{ route('admin.transactions.index') }}" class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div class="flex flex-wrap items-center gap-3">
-            <input type="search" placeholder="Search transactions..." class="px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm w-48 sm:w-64 min-h-[44px]">
+            <input type="search" name="search" value="{{ request('search') }}" placeholder="Search transactions..." class="px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm w-48 sm:w-64 min-h-[44px]">
             <x-custom-select
                 name="type"
                 placeholder="All types"
@@ -29,13 +29,12 @@
                     'reversed' => 'Reversed',
                 ]"
             />
+            <button type="submit" class="px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-medium hover:bg-[var(--line-soft)] transition-colors min-h-[44px]">Apply</button>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
-            <button class="flex-1 px-4 py-2.5 bg-[var(--success)] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-sm min-h-[44px]">Credit</button>
-            <button class="flex-1 px-4 py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-sm min-h-[44px]">Debit</button>
-            <button class="flex-1 px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-all min-h-[44px]">Export</button>
+            <a href="{{ route('admin.transactions.export') }}" class="flex-1 px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-all min-h-[44px]">Export</a>
         </div>
-    </div>
+    </form>
 
     <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-x-auto -mx-4 lg:mx-0">
         <table class="w-full text-sm min-w-[640px]">

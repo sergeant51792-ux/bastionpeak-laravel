@@ -514,7 +514,7 @@
                                     @if(is_null($message->read_at) && $message->sender_id !== Auth::id())
                                         <span class="w-2 h-2 rounded-full bg-[var(--accent)]"></span>
                                     @endif
-                                    <form method="POST" action="{{ route('messages.destroy', $message) }}" class="inline" onsubmit="return confirm('Delete this message?')">
+                                    <form method="POST" action="{{ route('admin.messages.thread.destroy', $message) }}" class="inline" onsubmit="return confirm('Delete this message?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-xs text-[var(--text-muted)] hover:text-[var(--danger)] transition-colors">Delete</button>
