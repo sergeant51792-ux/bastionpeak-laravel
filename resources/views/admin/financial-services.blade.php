@@ -24,7 +24,7 @@
                 @if($service->criteria)
                     <div class="mt-2 p-2 bg-[var(--line-soft)] rounded-lg">
                         <p class="text-xs text-[var(--text-muted)]">Criteria:</p>
-                        <pre class="text-xs text-[var(--text)] mt-1">{{ json_encode(json_decode($service->criteria), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                        <pre class="text-xs text-[var(--text)] mt-1">{{ json_encode($service->criteria, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
                     </div>
                 @endif
                 <a href="{{ route('admin.financial-services.applications', $service->id) }}" class="mt-3 block text-sm font-medium text-[var(--accent)]">View Applications →</a>
