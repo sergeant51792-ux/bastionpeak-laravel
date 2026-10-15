@@ -140,7 +140,7 @@
             </div>
             <div class="border border-[var(--line)] rounded-xl divide-y divide-[var(--line)] overflow-hidden">
                 @foreach($inProgress as $txn)
-                    <a href="{{ route('activity', ['filter' => 'in_review']) }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
+                    <a href="{{ route('activity.receipt', $txn) }}" class="flex items-center gap-3 p-4 hover:bg-[var(--line-soft)] transition-colors">
                         <span class="txn-icon w-10 h-10">
                             <x-icon name="clock" class="w-4 h-4" />
                         </span>

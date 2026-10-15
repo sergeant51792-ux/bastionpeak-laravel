@@ -137,6 +137,7 @@ class DepositController extends Controller
                 'user_note' => $validated['note'] ?? null,
                 'proof_file' => $proofPath,
             ],
+            idempotencyKey: $validated['idempotency'],
         );
 
         return redirect()->route('deposit', ['status' => 'submitted']);

@@ -51,6 +51,7 @@ class PaymentService
         ?string $recipientName = null,
         ?string $recipientDetail = null,
         ?array $metadata = null,
+        ?string $idempotencyKey = null,
     ): Transaction {
         $account = Account::where('id', $fromAccountId)
             ->where('user_id', $userId)
@@ -62,7 +63,34 @@ class PaymentService
             $this->validatePayment($fromAccountId, $toMerchantId, $amount);
         }
 
-        $idempotencyKey = 'pay-req-' . $userId . '-' . $fromAccountId . '-' . ($toMerchantId ?? 'external') . '-' . md5(uniqid((string)mt_rand(), true));
+        $idempotencyKey = $idempotencyKey
+            ?: 'pay-req-' . $userId . '-' . $fromAccountId . '-' . bin2hex(random_bytes(16));
+
+        // Idempotent replay: a repeated POST returns the original transaction.
+        $existing = \App\Support\TransactionIdentifiers::findForIdempotencyKey($idempotencyKey);
+        if ($existing) {
+            return $existing;
+        }
+
+        // A reload produces a new form key, so also catch an identical request
+        // that is still pending inside the duplicate window.
+        $duplicate = \App\Support\TransactionIdentifiers::recentDuplicate([
+            'user_id'    => $userId,
+            'account_id' => $account->id,
+            'type'       => 'payment_debit',
+            'amount'     => $amount,
+        ]);
+
+        if ($duplicate) {
+            \Illuminate\Support\Facades\Log::info('Duplicate payment submission absorbed', [
+                'user_id'         => $userId,
+                'original_txn'    => $duplicate->transaction_id,
+                'amount'          => $amount,
+                'idempotency_key' => $idempotencyKey,
+            ]);
+
+            return $duplicate;
+        }
 
         $memo = $purpose;
         if ($recipientName || $recipientDetail || $paymentMethod) {
@@ -71,7 +99,7 @@ class PaymentService
 
         return DB::transaction(function () use ($account, $merchant, $amount, $memo, $proofFile, $idempotencyKey, $toMerchantId, $metadata, $userId) {
             $transaction = Transaction::create([
-                'transaction_id'    => 'TXN-' . strtoupper(uniqid()),
+                'transaction_id'    => \App\Support\TransactionIdentifiers::uniqueTransactionId(),
                 'from_account_id'   => $account->id,
                 'to_account_id'     => $account->id,
                 'from_user_id'      => $userId,
@@ -84,7 +112,7 @@ class PaymentService
                 'fee'               => 0,
                 'net_amount'        => $amount,
                 'memo'              => $memo,
-                'reference'         => 'PAY-' . strtoupper(uniqid()),
+                'reference'         => \App\Support\TransactionIdentifiers::uniqueReference('PAY'),
                 'idempotency_key'   => $idempotencyKey,
                 'proof_file_path'   => $proofFile,
                 'metadata'          => $metadata ?? [],

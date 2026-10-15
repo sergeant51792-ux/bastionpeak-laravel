@@ -59,7 +59,58 @@ class PayController extends Controller
             'metadata'        => ['nullable', 'array'],
         ]);
 
-        $account = $this->resolveDebitAccount($user, $request, isset($validated['from_account_id']) ? (int) $validated['from_account_id'] : null);
+        // Persist any proof now so it survives the OTP round-trip.
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofPath = $this->storeUploadedFile($request->file('proof'), 'uploads/proofs');
+        }
+        $validated['proof_path'] = $proofPath;
+
+        // An authenticator code is required before a transfer can be sent.
+        if ($user->hasTotp() && ! TwoFactorController::isApproved('transfer')) {
+            return TwoFactorController::requireOtp($request, 'transfer', $validated);
+        }
+
+        return $this->processStashedTransfer($request->merge($validated));
+    }
+
+    /**
+     * Send the verified transfer. Called either directly (no authenticator) or
+     * from the OTP challenge once the code has been confirmed.
+     */
+    public function processStashedTransfer(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        abort_if(! $user instanceof User, 403);
+
+        $data = [
+            'from_account_id'   => $request->input('from_account_id'),
+            'payment_method'    => $request->input('payment_method'),
+            'recipient_name'    => $request->input('recipient_name'),
+            'recipient_detail'  => $request->input('recipient_detail'),
+            'amount'            => $request->input('amount'),
+            'purpose'           => $request->input('purpose'),
+            'idempotency'       => $request->input('idempotency'),
+            'metadata'          => $request->input('metadata'),
+            'proof_path'        => $request->input('proof_path'),
+        ];
+
+        $validator = validator($data, [
+            'payment_method'  => ['required', 'string', 'max:100'],
+            'recipient_name'  => ['required', 'string', 'max:255'],
+            'recipient_detail' => ['nullable', 'string', 'max:1000'],
+            'amount'          => ['required', 'numeric', 'min:0.01'],
+            'purpose'         => ['nullable', 'string', 'max:500'],
+            'idempotency'     => ['required', 'string', 'size:64'],
+            'metadata'        => ['nullable', 'array'],
+            'proof_path'      => ['nullable', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('pay')->withErrors($validator)->withInput();
+        }
+
+        $account = $this->resolveDebitAccount($user, $request, isset($data['from_account_id']) ? (int) $data['from_account_id'] : null);
 
         if (! $account) {
             return back()->withErrors([
@@ -67,22 +118,18 @@ class PayController extends Controller
             ])->withInput();
         }
 
-        $proofPath = null;
-        if ($request->hasFile('proof')) {
-            $proofPath = $this->storeUploadedFile($request->file('proof'), 'uploads/proofs');
-        }
-
         $this->payments->submitRequest(
             userId: $user->id,
             fromAccountId: $account->id,
             toMerchantId: null,
-            amount: (float) $validated['amount'],
-            purpose: $validated['purpose'] ?? $validated['payment_method'] . ' payment',
-            proofFile: $proofPath,
-            paymentMethod: $validated['payment_method'],
-            recipientName: $validated['recipient_name'],
-            recipientDetail: $validated['recipient_detail'],
+            amount: (float) $data['amount'],
+            purpose: $data['purpose'] ?? $data['payment_method'] . ' payment',
+            proofFile: $data['proof_path'] ?? null,
+            paymentMethod: $data['payment_method'],
+            recipientName: $data['recipient_name'],
+            recipientDetail: $data['recipient_detail'],
             metadata: $request->input('metadata'),
+            idempotencyKey: $data['idempotency'],
         );
 
         return redirect()->route('pay', ['status' => 'submitted'])->with('status', 'Transfer request submitted successfully.');

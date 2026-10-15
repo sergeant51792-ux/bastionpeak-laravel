@@ -25,21 +25,23 @@ class ProfileController extends Controller
         ]);
     }
 
+    /**
+     * Profile details are read-only for customers; only appearance preferences
+     * may be changed here. Identity fields are ignored so a crafted POST cannot
+     * change them.
+     */
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
 
         $validated = $request->validate([
-            'name'                 => ['required', 'string', 'max:255'],
-            'email'                => ['required', 'string', 'email', 'unique:users,email,' . $user->id],
-            'phone'                => ['nullable', 'string', 'max:30'],
-            'theme_preference'     => ['nullable', 'in:system,light,dark'],
-            'hide_balance'         => ['sometimes', 'boolean'],
+            'theme_preference' => ['nullable', 'in:system,light,dark'],
+            'hide_balance'     => ['sometimes', 'boolean'],
         ]);
 
         $user->update($validated);
 
-        return back()->with('status', 'Profile updated.');
+        return back()->with('status', 'Preferences updated.');
     }
 
     public function updatePassword(Request $request): RedirectResponse
@@ -49,8 +51,33 @@ class ProfileController extends Controller
             'password'         => ['required', 'confirmed', Password::min(8)->letters()->numbers()->symbols()],
         ]);
 
-        $request->user()->update([
-            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        // An authenticator code is required before the password changes.
+        if ($user->hasTotp() && ! \App\Http\Controllers\Customer\TwoFactorController::isApproved('password')) {
+            return \App\Http\Controllers\Customer\TwoFactorController::requireOtp($request, 'password', [
+                'password' => $request->input('password'),
+            ]);
+        }
+
+        return $this->applyStashedPassword($request);
+    }
+
+    /**
+     * Apply the verified password change.
+     */
+    public function applyStashedPassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'password' => ['required', 'string', Password::min(8)->letters()->numbers()->symbols()],
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($request->input('password')),
         ]);
 
         return back()->with('status', 'Password updated.');

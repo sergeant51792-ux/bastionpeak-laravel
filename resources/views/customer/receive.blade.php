@@ -79,17 +79,19 @@
 </div>
 
 {{-- Deposit Modal --}}
-<div id="deposit-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm">
-    <div class="flex items-center justify-center min-h-screen p-4">
-         <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-5">
-                    <h2 id="modal-title" class="text-lg font-semibold text-[var(--text)]">Receive via Bank Transfer</h2>
-                    <button type="button" onclick="closeDepositModal()" class="p-2 text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
-                        <x-icon name="x" class="w-5 h-5" />
-                    </button>
-                </div>
+<div id="deposit-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm overflow-y-auto">
+    <div class="flex items-center justify-center min-h-full p-4">
+         <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-lg mx-auto flex flex-col max-h-[calc(100vh-2rem)]">
+            {{-- Fixed header --}}
+            <div class="flex items-center justify-between p-6 pb-4 flex-shrink-0">
+                <h2 id="modal-title" class="text-lg font-semibold text-[var(--text)]">Receive via Bank Transfer</h2>
+                <button type="button" onclick="closeDepositModal()" class="p-2 text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                    <x-icon name="x" class="w-5 h-5" />
+                </button>
+            </div>
 
+            {{-- Scrollable body --}}
+            <div class="px-6 pb-6 overflow-y-auto flex-1">
                 {{-- Step 1: Amount Input --}}
                 <div id="modal-step-amount" class="space-y-5">
                     <div>
@@ -139,7 +141,8 @@
                         </div>
                     </div>
 
-                    <form id="receive-form" method="POST" action="{{ route('deposit.submit') }}" class="flex flex-col gap-2">
+                    {{-- Sticky footer: stays visible however long the instructions are --}}
+                    <form id="receive-form" method="POST" action="{{ route('deposit.submit') }}" class="sticky bottom-0 -mx-6 px-6 pt-3 pb-1 bg-[var(--surface)] border-t border-[var(--line)]">
                         @csrf
                         <input type="hidden" name="idempotency" value="{{ bin2hex(random_bytes(32)) }}">
                         <input type="hidden" id="form_account_id" name="account_id" value="">

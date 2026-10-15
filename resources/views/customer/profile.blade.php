@@ -18,13 +18,12 @@
         </div>
     @endif
 
-    {{-- Profile Picture & Info --}}
+    {{-- Profile Picture (display only) --}}
     <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <h2 class="text-base font-bold text-[var(--text)] mb-4">{{ __('Profile') }}</h2>
 
         <div class="flex items-center gap-5">
-            <div class="relative">
-                <span class="avatar-ring w-20 h-20">
+            <span class="avatar-ring w-20 h-20">
                 @if($user->profile_picture_url)
                     <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name ?? 'Profile' }}" class="w-full h-full object-cover">
                 @else
@@ -33,68 +32,57 @@
                     @endphp
                     <span class="avatar-initials text-2xl">{{ $initials }}</span>
                 @endif
-                </span>
-                <label for="picture-input" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-dark)] border-2 border-white/70 flex items-center justify-center text-white transition-colors cursor-pointer min-w-[44px] min-h-[44px]">
-                    <x-icon name="camera" class="w-3.5 h-3.5" />
-                    <input type="file" id="picture-input" name="picture" accept="image/*" class="hidden">
-                </label>
-            </div>
-
-            <div class="flex flex-col gap-2 ml-auto">
-                @if($user->profile_picture)
-                    <form method="POST" action="{{ route('profile.picture.remove') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="w-full px-4 py-2 text-xs font-semibold rounded-lg min-h-[40px] transition-colors" style="color: var(--danger); border-color: rgba(220, 38, 38, 0.25);">
-                            Remove photo
-                        </button>
-                    </form>
-                @endif
-                <label for="picture-input" class="cursor-pointer w-full px-4 py-2 text-xs font-semibold text-center text-[var(--accent)] hover:text-[var(--accent-dark)] border border-[var(--accent)]/30 rounded-lg min-h-[40px] flex items-center justify-center transition-colors">
-                    Change photo
-                </label>
-            </div>
+            </span>
         </div>
+
+        <p class="text-xs text-[var(--text-muted)] mt-4">
+            {{ __('Your profile details are managed by your account administrator. Contact support if any detail needs to be corrected.') }}
+        </p>
     </section>
 
-    {{-- Personal Information Form --}}
+    {{-- Personal Information (read only) --}}
     <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-bold text-[var(--text)]">{{ __('Personal Information') }}</h2>
-            <div class="flex gap-2">
-                <button type="button" id="cancel-edit" class="hidden px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text)] transition-colors min-h-[44px]">{{ __('Cancel') }}</button>
-                <button type="submit" id="save-profile" form="profile-form" class="hidden px-6 py-2.5 btn-primary text-sm font-medium justify-center min-h-[44px]">{{ __('Save Changes') }}</button>
-                <button type="button" id="edit-profile-btn" class="px-6 py-2.5 bg-[var(--accent)] text-white rounded-xl text-sm font-medium hover:bg-[var(--accent-dark)] transition-colors min-h-[44px]">{{ __('Edit Profile') }}</button>
-            </div>
-        </div>
+        <h2 class="text-base font-bold text-[var(--text)] mb-4">{{ __('Personal Information') }}</h2>
 
-        <form id="profile-form" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-4">
-            @csrf
-            <div>
-                <label for="name" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Full Name') }}</label>
-                <input type="text" id="name" name="name" value="{{ $user->name }}" required
-                       class="input-field" placeholder="Enter your name" disabled>
+        <dl class="divide-y divide-[var(--line)]">
+            <div class="flex items-baseline justify-between gap-4 py-3">
+                <dt class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">{{ __('Full Name') }}</dt>
+                <dd class="text-sm font-semibold text-[var(--text)] text-right break-words">{{ $user->name }}</dd>
             </div>
-            <div>
-                <label for="email" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Email Address') }}</label>
-                <input type="email" id="email" name="email" value="{{ $user->email }}" required
-                       class="input-field" placeholder="Enter your email" readonly>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+                <dt class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">{{ __('Email Address') }}</dt>
+                <dd class="text-sm font-semibold text-[var(--text)] text-right break-all">{{ $user->email }}</dd>
             </div>
-            <div>
-                <label for="phone" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Phone Number') }}</label>
-                <input type="tel" id="phone" name="phone" value="{{ $user->phone ?? '' }}"
-                       class="input-field" placeholder="Enter your phone number" disabled>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+                <dt class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">{{ __('Phone Number') }}</dt>
+                <dd class="text-sm font-semibold text-[var(--text)] text-right break-all">{{ $user->phone ?: '—' }}</dd>
             </div>
-            <div>
-                <label for="address" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">{{ __('Address') }}</label>
-                <input type="text" id="address" name="address" value="{{ $user->address ?? '' }}"
-                       class="input-field" placeholder="Enter your address" disabled>
+            <div class="flex items-baseline justify-between gap-4 py-3">
+                <dt class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">{{ __('Address') }}</dt>
+                <dd class="text-sm font-semibold text-[var(--text)] text-right break-words">{{ $user->address ?: '—' }}</dd>
             </div>
-        </form>
+        </dl>
     </section>
 
     {{-- Security --}}
     <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-5">
         <h2 class="text-base font-bold text-[var(--text)]">{{ __('Security') }}</h2>
+
+        <a href="{{ route('two-factor.setup') }}" class="flex items-center gap-3 p-4 border border-[var(--line)] rounded-xl hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-colors">
+            <span class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                <x-icon name="shield-check" class="w-5 h-5" />
+            </span>
+            <span class="flex-1 min-w-0">
+                <span class="block text-sm font-semibold text-[var(--text)]">{{ __('Google Authenticator') }}</span>
+                <span class="block text-xs text-[var(--text-muted)] mt-0.5">
+                    {{ $user->hasTotp() ? 'Required for sign in, transfers and password changes' : 'Set up a one-time code for extra security' }}
+                </span>
+            </span>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 {{ $user->hasTotp() ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--line-soft)] text-[var(--text-muted)]' }}">
+                {{ $user->hasTotp() ? 'On' : 'Off' }}
+            </span>
+            <x-icon name="chevron-right" class="w-5 h-5 text-[var(--text-muted)] shrink-0" />
+        </a>
 
         <form id="password-form" method="POST" action="{{ route('password.change') }}" class="space-y-4">
             @csrf
@@ -203,36 +191,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var editBtn = document.getElementById('edit-profile-btn');
-    var cancelBtn = document.getElementById('cancel-edit');
-    var saveProfileBtn = document.getElementById('save-profile');
-    var formInputs = document.querySelectorAll('#profile-form input:not([type=hidden])');
-
-    if (editBtn) {
-        editBtn.addEventListener('click', function () {
-            formInputs.forEach(function (input) { input.removeAttribute('disabled'); });
-            editBtn.classList.add('hidden');
-            cancelBtn.classList.remove('hidden');
-            saveProfileBtn.classList.remove('hidden');
-        });
-    }
-
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function () {
-            formInputs.forEach(function (input) { input.setAttribute('disabled', 'disabled'); });
-            editBtn.classList.remove('hidden');
-            cancelBtn.classList.add('hidden');
-            saveProfileBtn.classList.add('hidden');
-        });
-    }
-
     var savePrefBtn = document.getElementById('save-preferences-btn');
     var hideToggle = document.getElementById('hide-balance-toggle');
     var themeOptions = document.querySelectorAll('.theme-option');
     var themeInput = document.getElementById('theme-input');
     var languageSelect = document.getElementById('language-select');
     var prefsForm = document.getElementById('preferences-form');
-    var input = document.getElementById('picture-input');
 
     function showPrefBtn() {
         if (savePrefBtn) savePrefBtn.classList.remove('hidden');

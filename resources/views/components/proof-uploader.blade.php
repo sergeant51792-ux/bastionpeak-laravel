@@ -46,7 +46,7 @@
             </div>
         @else
             <div class="flex flex-col items-center gap-2">
-                <x-icon name="file-upload" class="h-8 w-8 text-[var(--text-muted)]" />
+                <x-icon name="upload" class="h-8 w-8 text-[var(--text-muted)]" />
                 <p class="text-sm text-[var(--text-muted)]">Drag & drop or tap to upload</p>
                 <p class="text-xs text-[var(--text-muted)]">{{ $maxSize }} max</p>
             </div>

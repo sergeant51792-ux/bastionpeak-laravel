@@ -19,8 +19,12 @@
             : 'Transaction');
 @endphp
 
+@php
+    $receiptUrl = route('activity.receipt', $transaction);
+@endphp
+
 @if($isMobile)
-<a href="{{ route('activity') }}" class="flex items-center gap-3 p-4 border-b border-[var(--line)] last:border-0 transition-colors">
+<a href="{{ $receiptUrl }}" class="flex items-center gap-3 p-4 border-b border-[var(--line)] last:border-0 transition-colors">
     <span class="txn-icon w-10 h-10">
         <x-icon name="{{ $iconName }}" class="w-4 h-4" />
     </span>
@@ -36,7 +40,7 @@
     </div>
 </a>
 @else
-<a href="{{ route('activity') }}" class="flex items-center gap-4 p-4 border-b border-[var(--line)] last:border-0 transition-colors">
+<a href="{{ $receiptUrl }}" class="flex items-center gap-4 p-4 border-b border-[var(--line)] last:border-0 transition-colors">
     <span class="{{ $iconClass }} w-10 h-10">
         <x-icon name="{{ $iconName }}" class="w-4 h-4" />
     </span>

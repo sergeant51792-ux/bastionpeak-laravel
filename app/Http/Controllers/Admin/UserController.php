@@ -304,7 +304,9 @@ class UserController extends Controller
         $data = array_filter($validated, fn($v) => $v !== null && $v !== '');
 
         if (isset($data['created_at'])) {
-            $transaction->created_at = \Carbon\Carbon::parse($data['created_at']);
+            // datetime-local gives a naive value; interpret it in the app timezone
+            // so the stored wall-clock time matches what the admin selected.
+            $transaction->created_at = \Carbon\Carbon::parse($data['created_at'], config('app.timezone'));
             $transaction->save();
             unset($data['created_at']);
         }
@@ -536,7 +538,7 @@ class UserController extends Controller
             ]);
         }
 
-        $this->notifications->sendToUser($user->id, 'welcome', 'Welcome to Bastion Peak', 'Your account has been created.');
+        // No notification is sent when an account is created.
 
         return redirect()->route('admin.users.index')->with('status', 'User created successfully.');
     }

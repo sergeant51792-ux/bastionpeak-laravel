@@ -20,6 +20,7 @@ use App\Http\Controllers\Customer\CardController;
 use App\Http\Controllers\Customer\StatementController;
 use App\Http\Controllers\Customer\FinancialServiceController;
 use App\Http\Controllers\Customer\DepositController;
+use App\Http\Controllers\Customer\TwoFactorController;
 
 Route::middleware('web')->group(function () {
     Route::get('/signin', [SignInController::class, 'showSignIn'])->name('signin');
@@ -57,6 +58,13 @@ Route::middleware('web')->group(function () {
         Route::get('/dashboard', [HomeController::class, '__invoke'])->name('dashboard');
 
         Route::get('/activity', [ActivityController::class, '__invoke'])->name('activity');
+        Route::get('/activity/{transaction}', [ActivityController::class, 'receipt'])->name('activity.receipt');
+
+        Route::get('/security/two-factor', [TwoFactorController::class, 'setup'])->name('two-factor.setup');
+        Route::post('/security/two-factor', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
+        Route::delete('/security/two-factor', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
+        Route::get('/verify/otp', [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+        Route::post('/verify/otp', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
         Route::get('/transfer', [TransferController::class, '__invoke'])->name('transfer')->middleware('account.status');
         Route::get('/top-up', [TopUpController::class, '__invoke'])->name('top-up')->middleware('account.status');
         Route::post('/top-up', [TopUpController::class, 'submit'])->name('top-up.submit')->middleware('account.status');

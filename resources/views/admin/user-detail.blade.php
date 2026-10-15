@@ -448,10 +448,10 @@
                                                      <option value="reversed" {{ $txn->status === \App\Enums\TransactionStatus::Reversed ? 'selected' : '' }}>Reversed</option>
                                                  </select>
                                              </div>
-                                             <div>
-                                                 <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Date</label>
-                                                 <input type="date" name="created_at" value="{{ old('created_at', $txn->created_at ? $txn->created_at->format('Y-m-d') : '') }}" class="input-field w-full">
-                                             </div>
+                                              <div>
+                                                  <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Date &amp; time</label>
+                                                  <input type="datetime-local" name="created_at" value="{{ old('created_at', $txn->created_at ? $txn->created_at->format('Y-m-d\TH:i') : '') }}" class="input-field w-full">
+                                              </div>
                                              <div class="md:col-span-2">
                                                  <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Memo</label>
                                                  <input type="text" name="memo" value="{{ old('memo', $txn->memo) }}" class="input-field w-full" placeholder="Reason or note">

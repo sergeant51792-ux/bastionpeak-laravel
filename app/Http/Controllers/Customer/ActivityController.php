@@ -51,4 +51,35 @@ class ActivityController extends Controller
             'accounts'     => $user->accounts()->with('currency')->get(),
         ]);
     }
+
+    /**
+     * Printable receipt for a single transaction. The status shown is read from
+     * the live record, so a pending receipt becomes credited / debited on its own.
+     */
+    public function receipt(Request $request, Transaction $transaction): \Illuminate\View\View
+    {
+        $user = Auth::user();
+        $accountIds = $user->accounts()->pluck('accounts.id');
+
+        // Only the owner of either side of the transaction may open the receipt.
+        $ownsTransaction = ($transaction->from_account_id && $accountIds->contains($transaction->from_account_id))
+            || ($transaction->to_account_id && $accountIds->contains($transaction->to_account_id));
+
+        abort_unless($ownsTransaction, 403);
+
+        $transaction->load([
+            'fromAccount', 'fromAccount.currency',
+            'toAccount', 'toAccount.currency',
+            'currency', 'merchant', 'legs',
+        ]);
+
+        $isIncoming = $transaction->isIncoming();
+
+        return view('customer.receipt', [
+            'transaction'  => $transaction,
+            'isIncoming'   => $isIncoming,
+            'metadata'     => $transaction->metadata ?? [],
+            'issuedAt'     => now(),
+        ]);
+    }
 }

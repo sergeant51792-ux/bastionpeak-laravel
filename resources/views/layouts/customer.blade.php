@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="var(--primary)">
+    <meta name="theme-color" content="#1E3A8A">
     <title>@yield('title', 'Home') — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -90,11 +90,11 @@
     <body class="bg-[var(--bg)] text-[var(--text)]">
     <script>
          (function() {
-            @auth
-            var dbTheme = '{{ auth()->user()->theme_preference ?: "light" }}';
-            @else
-            var dbTheme = 'light';
-            @endauth
+             @auth
+             var dbTheme = '{{ auth()->user()->theme_preference ?: "dark" }}';
+             @else
+             var dbTheme = 'dark';
+             @endauth
             var localStorageTheme = localStorage.getItem('theme');
             var theme = localStorageTheme || dbTheme;
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -152,7 +152,7 @@
                         {{ __('Financial Services') }}
                     </a>
                     <a href="{{ route('messages') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('messages')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
-                        <x-icon name="life-ring" class="w-5 h-5" />
+                        <x-icon name="life-buoy" class="w-5 h-5" />
                         {{ __('Support') }}
                     </a>
                     <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors @if(request()->routeIs('profile')) text-[var(--primary)] bg-[var(--accent-subtle)] @else text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--line-soft)] @endif">
