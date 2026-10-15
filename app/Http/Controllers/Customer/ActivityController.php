@@ -58,6 +58,30 @@ class ActivityController extends Controller
      */
     public function receipt(Request $request, Transaction $transaction): \Illuminate\View\View
     {
+        return $this->loadForReceipt($transaction);
+    }
+
+    /**
+     * Download the receipt as a PDF file.
+     */
+    public function downloadReceipt(Request $request, Transaction $transaction): \Illuminate\Http\Response
+    {
+        $viewData = $this->loadForReceipt($transaction);
+
+        $pdf = \PDF::loadView('customer.receipt-pdf', $viewData->getData());
+
+        $reference = $transaction->transaction_id ?? 'TXN-' . strtoupper(substr((string) $transaction->id, 0, 8));
+        $filename = 'receipt_' . $reference . '_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Shared logic: authorise access, eager-load relations, and prepare the
+     * view data for both the on-screen receipt and the PDF download.
+     */
+    protected function loadForReceipt(Transaction $transaction): \Illuminate\View\View
+    {
         $user = Auth::user();
         $accountIds = $user->accounts()->pluck('accounts.id');
 
@@ -73,11 +97,9 @@ class ActivityController extends Controller
             'currency', 'merchant', 'legs',
         ]);
 
-        $isIncoming = $transaction->isIncoming();
-
         return view('customer.receipt', [
             'transaction'  => $transaction,
-            'isIncoming'   => $isIncoming,
+            'isIncoming'   => $transaction->isIncoming(),
             'metadata'     => $transaction->metadata ?? [],
             'issuedAt'     => now(),
         ]);

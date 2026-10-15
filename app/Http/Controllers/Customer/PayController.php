@@ -118,7 +118,7 @@ class PayController extends Controller
             ])->withInput();
         }
 
-        $this->payments->submitRequest(
+        $transaction = $this->payments->submitRequest(
             userId: $user->id,
             fromAccountId: $account->id,
             toMerchantId: null,
@@ -132,7 +132,9 @@ class PayController extends Controller
             idempotencyKey: $data['idempotency'],
         );
 
-        return redirect()->route('pay', ['status' => 'submitted'])->with('status', 'Transfer request submitted successfully.');
+        return redirect()->route('pay', ['status' => 'submitted'])
+            ->with('status', 'Transfer request submitted successfully.')
+            ->with('submitted_transaction_id', $transaction->id);
     }
 
     /**

@@ -29,6 +29,11 @@
     </header>
 
     @if(request('status') === 'submitted')
+        @php
+            $txn = session('submitted_transaction_id')
+                ? \App\Models\Transaction::find(session('submitted_transaction_id'))
+                : null;
+        @endphp
         <div id="success-popup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
                 <div class="w-24 h-24 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">
@@ -38,6 +43,32 @@
                 </div>
                 <h2 class="text-2xl font-bold text-[var(--text)] mb-3">{{ __('Request submitted') }}</h2>
                 <p class="text-[var(--text-muted)] mb-6">Your transaction request has been sent for review. Your balance will update once it is processed.</p>
+
+                @if($txn)
+                    <div class="bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl p-4 mb-6 text-left">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs text-[var(--text-muted)] uppercase font-semibold">{{ __('Receipt') }}</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--warning-bg)] text-[var(--warning)]">
+                                {{ $txn->customerStatusLabel() }}
+                            </span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-xs text-[var(--text-muted)]">{{ __('Reference') }}</span>
+                                <span class="text-xs font-mono text-[var(--text)]">{{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr((string) $txn->id, 0, 8)) }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-xs text-[var(--text-muted)]">{{ __('Date &amp; time') }}</span>
+                                <span class="text-xs text-[var(--text)] tabular-nums">{{ $txn->created_at->format('j M Y, H:i') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-xs text-[var(--text-muted)]">{{ __('Amount') }}</span>
+                                <span class="text-xs font-semibold text-[var(--text)] tabular-nums">+{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <a href="{{ route('activity') }}" class="inline-flex items-center justify-center w-full px-6 py-3 bg-[var(--accent)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
                     <x-icon name="activity" class="w-4 h-4 mr-2" />
                     {{ __('View activity') }}

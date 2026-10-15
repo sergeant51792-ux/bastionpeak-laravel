@@ -120,7 +120,7 @@
                                 'ADA' => 'ADA (Cardano)',
                             ]"
                             placeholder="Select cryptocurrency"
-                            data-required
+                            :required
                         />
                     </div>
                     <div>
@@ -136,7 +136,7 @@
                                 'Ethereum' => 'Ethereum Network',
                             ]"
                             placeholder="Select network"
-                            data-required
+                            :required
                         />
                     </div>
                     <div>
@@ -224,34 +224,65 @@
     @endif
 </div>
 
-{{-- Processing overlay: thick green progress bar --}}
+{{-- Processing overlay: mature modern green bold thick --}}
 <div id="processing-overlay" class="fixed inset-0 z-[80] hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-sm p-8 text-center animate-scale-in">
-        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-[var(--success-bg)] border-4 border-[var(--success)]/20 flex items-center justify-center">
-            <svg class="w-10 h-10 text-[var(--success)] animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3.5"></circle>
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-2xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
+        <div class="w-28 h-28 mx-auto mb-6 rounded-full bg-gradient-to-br from-[var(--success-bg)] to-[var(--success-bg)]/50 border-8 border-[var(--success)]/20 flex items-center justify-center">
+            <svg class="w-12 h-12 text-[var(--success)] animate-pulse" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></path>
                 <path class="opacity-90" fill="currentColor" d="M12 3a9 9 0 0 1 9 9h-3.5A5.5 5.5 0 0 0 12 6.5V3z"></path>
             </svg>
         </div>
-        <h2 class="text-xl font-bold text-[var(--text)] mb-2">Processing transfer</h2>
-        <p class="text-sm text-[var(--text-muted)] mb-6">Please do not close or refresh this page while we process your request.</p>
+        <h2 class="text-2xl font-bold text-[var(--text)] mb-2">Processing your transfer</h2>
+        <p class="text-sm text-[var(--text-muted)] mb-6">Please wait while we securely transmit your request.</p>
         <div class="bp-progress-track">
             <div class="bp-progress-fill"></div>
         </div>
-        <p class="text-xs text-[var(--text-muted)] mt-3">Securely transmitting your request</p>
+        <p class="text-xs text-[var(--text-muted)] mt-3 font-medium">Securely transmitting your request</p>
     </div>
 </div>
 
 @if(request('status') === 'submitted')
+     @php
+         $txn = session('submitted_transaction_id')
+             ? \App\Models\Transaction::find(session('submitted_transaction_id'))
+             : null;
+     @endphp
     <div id="success-popup" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-md p-8 text-center animate-scale-in">
+        <div class="bg-[var(--surface)] border border-[var(--line)] rounded-3xl shadow-xl w-full max-w-md mx-4 p-8 text-center animate-scale-in">
             <div class="w-24 h-24 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6 border-4 border-[var(--success)]/10">
                 <svg class="w-12 h-12 text-[var(--success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
                 </svg>
             </div>
-            <h2 class="text-2xl font-bold text-[var(--text)] mb-3">Transfer request submitted</h2>
+            <h2 class="text-2xl font-bold text-[var(--text)] mb-3">{{ __('Transfer request submitted') }}</h2>
             <p class="text-[var(--text-muted)] mb-6">Your transfer request has been sent for review. Your balance will update once it is processed.</p>
+
+            @if($txn)
+                <div class="bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl p-4 mb-6 text-left">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs text-[var(--text-muted)] uppercase font-semibold">{{ __('Receipt') }}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--warning-bg)] text-[var(--warning)]">
+                            {{ $txn->customerStatusLabel() }}
+                        </span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-xs text-[var(--text-muted)]">{{ __('Reference') }}</span>
+                            <span class="text-xs font-mono text-[var(--text)]">{{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr((string) $txn->id, 0, 8)) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-[var(--text-muted)]">{{ __('Date &amp; time') }}</span>
+                            <span class="text-xs text-[var(--text)] tabular-nums">{{ $txn->created_at->format('j M Y, H:i') }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-[var(--text-muted)]">{{ __('Amount') }}</span>
+                            <span class="text-xs font-semibold text-[var(--text)] tabular-nums">−{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <a href="{{ route('activity') }}" class="inline-flex items-center justify-center w-full px-6 py-3 bg-[var(--accent)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
                 <x-icon name="activity" class="w-4 h-4 mr-2" />
                 View activity
@@ -302,19 +333,28 @@
 <script>
     function selectMethod(method) {
         document.getElementById('selected_method').value = method;
-        document.querySelectorAll('.method-form').forEach(form => {
+        document.querySelectorAll('.method-form').forEach(function (form) {
             form.classList.add('hidden');
             form.classList.remove('block');
+            form.querySelectorAll('input, textarea, select').forEach(function (input) {
+                input.disabled = true;
+            });
         });
-        document.querySelectorAll('.method-btn').forEach(btn => {
+        document.querySelectorAll('.method-btn').forEach(function (btn) {
             btn.classList.remove('border-[var(--accent)]', 'bg-[var(--accent-subtle)]', 'text-[var(--accent)]');
             btn.classList.add('border-[var(--line)]', 'text-[var(--text-muted)]');
         });
         var activeForm = document.querySelector('.method-form#method-form-' + method);
         activeForm.classList.remove('hidden');
         activeForm.classList.add('block');
-        document.querySelector('[data-method="' + method + '"]').classList.remove('border-[var(--line)]', 'text-[var(--text-muted)]');
-        document.querySelector('[data-method="' + method + '"]').classList.add('border-[var(--accent)]', 'bg-[var(--accent-subtle)]', 'text-[var(--accent)]');
+        activeForm.querySelectorAll('input, textarea, select').forEach(function (input) {
+            input.disabled = false;
+        });
+        var activeBtn = document.querySelector('[data-method="' + method + '"]');
+        if (activeBtn) {
+            activeBtn.classList.remove('border-[var(--line)]', 'text-[var(--text-muted)]');
+            activeBtn.classList.add('border-[var(--accent)]', 'bg-[var(--accent-subtle)]', 'text-[var(--accent)]');
+        }
     }
 
     function clearMethodErrors() {
@@ -348,7 +388,7 @@
             }
         }
 
-        activeForm.querySelectorAll('[data-required]').forEach(el => {
+        activeForm.querySelectorAll('input[data-required], textarea[data-required], select[data-required]').forEach(function (el) {
             var value = (el.value || '').trim();
             if (el.type === 'hidden') {
                 var trigger = el.closest('.custom-select');

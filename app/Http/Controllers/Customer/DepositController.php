@@ -125,7 +125,7 @@ class DepositController extends Controller
             $proofPath = $this->storeUploadedFile($request->file('proof'), 'uploads/proofs');
         }
 
-        $this->deposits->submitRequest(
+        $transaction = $this->deposits->submitRequest(
             userId: $user->id,
             accountId: $account->id,
             amount: (float) $validated['amount'],
@@ -140,6 +140,7 @@ class DepositController extends Controller
             idempotencyKey: $validated['idempotency'],
         );
 
-        return redirect()->route('deposit', ['status' => 'submitted']);
+        return redirect()->route('deposit', ['status' => 'submitted'])
+            ->with('submitted_transaction_id', $transaction->id);
     }
 }

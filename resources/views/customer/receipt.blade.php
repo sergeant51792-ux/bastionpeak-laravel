@@ -66,12 +66,17 @@
 
 @section('content')
 <div class="px-3 sm:px-4 lg:px-6 pt-4 pb-10 space-y-5 max-w-2xl mx-auto">
-    <header class="flex items-center gap-3">
-        <a href="{{ route('activity') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
-            <x-icon name="arrow-left" class="w-5 h-5 text-[var(--text-muted)]" />
+    <div class="flex items-center justify-between">
+        <header class="flex items-center gap-3">
+            <a href="{{ route('activity') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
+                <x-icon name="arrow-left" class="w-5 h-5 text-[var(--text-muted)]" />
+            </a>
+            <h1 class="text-lg font-semibold text-[var(--text)]">{{ __('Transaction receipt') }}</h1>
+        </header>
+        <a href="{{ route('activity.receipt.download', $transaction) }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="{{ __('Download PDF') }}">
+            <x-icon name="download" class="w-5 h-5 text-[var(--text-muted)]" />
         </a>
-        <h1 class="text-lg font-semibold text-[var(--text)]">{{ __('Transaction receipt') }}</h1>
-    </header>
+    </div>
 
     <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
         {{-- Brand + status --}}
@@ -229,7 +234,7 @@
                 <h2 class="text-sm font-semibold text-[var(--text)]">{{ __('Proof of payment') }}</h2>
             </div>
             <div class="p-5">
-                <a href="{{ url('storage-file/' . $transaction->proof_file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">
+                 <a href="{{ route('storage.file', $transaction->proof_file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">
                     <x-icon name="external-link" class="w-4 h-4" />
                     {{ __('Open attachment') }}
                 </a>
@@ -278,13 +283,17 @@
     </div>
 
     {{-- Footer --}}
-    <div class="text-center space-y-1 pt-1">
+    <div class="text-center space-y-3 pt-1">
         <p class="text-xs text-[var(--text-muted)]">
             {{ __('Receipt generated') }} {{ $issuedAt->format('j M Y, H:i') }}
         </p>
         <p class="text-xs text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">
             {{ __('This document confirms the transaction record held by Bastion Peak. Please retain it for your records. Contact support if any detail appears incorrect.') }}
         </p>
+        <button onclick="window.print()" class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--accent)] border border-[var(--accent)]/30 rounded-lg hover:bg-[var(--accent-subtle)] transition-colors">
+            <x-icon name="printer" class="w-4 h-4" />
+            {{ __('Print receipt') }}
+        </button>
     </div>
 </div>
 @endsection
