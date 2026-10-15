@@ -46,7 +46,7 @@ class FinancialServiceController extends Controller
 
     public function approveApplication(Request $request, FinancialServiceApplication $application): \Illuminate\Http\RedirectResponse
     {
-         $application->update([
+        $application->update([
             'status' => 'approved',
             'reviewer_id' => Auth::id(),
             'reviewed_at' => now(),
@@ -58,15 +58,11 @@ class FinancialServiceController extends Controller
 
     public function rejectApplication(Request $request, FinancialServiceApplication $application): \Illuminate\Http\RedirectResponse
     {
-        $request->validate([
-            'notes' => ['required', 'string', 'max:1000'],
-        ]);
-
-         $application->update([
+        $application->update([
             'status' => 'rejected',
             'reviewer_id' => Auth::id(),
             'reviewed_at' => now(),
-            'review_notes' => $request->input('notes'),
+            'review_notes' => $request->input('notes', 'Rejected by admin'),
         ]);
 
         return back()->with('status', 'Application rejected.');

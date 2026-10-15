@@ -1,13 +1,11 @@
 @extends('layouts.admin')
 
-@section('title')
-{{ $service->name }} Applications
-@endsection
+@section('title', 'Applications')
 
 @section('content')
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold">{{ $service->name }} Applications</h1>
+        <h1 class="text-xl font-bold text-[var(--text)] tracking-tight">{{ $service->name }} Applications</h1>
         <a href="{{ route('admin.financial-services.index') }}" class="text-sm text-[var(--accent)]">← Back to services</a>
     </div>
 
@@ -48,62 +46,31 @@
                                 <span class="text-xs px-2 py-1 rounded-full
                                     @if($app->status === 'approved') bg-[var(--success-bg)] text-[var(--success)]
                                     @elseif($app->status === 'rejected') bg-[var(--danger-bg)] text-[var(--danger)]
-                                    @elseif($app->status === 'pending_review') bg-[var(--warning-bg)] text-[var(--warning)]
+                                    @elseif($app->status === 'pending') bg-[var(--warning-bg)] text-[var(--warning)]
                                     @else bg-[var(--line-soft)] text-[var(--text-muted)] @endif">
                                     {{ ucfirst($app->status) }}
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-right">
-                                @if($app->status === 'submitted')
-                                    <form method="POST" action="{{ route('admin.financial-services.applications.approve', $app->id) }}" class="inline-block">
+                                @if($app->status === 'pending')
+                                    <form method="POST" action="{{ route('admin.financial-services.applications.approve', $app->id) }}" class="inline-block mr-2">
                                         @csrf
                                         <button type="submit" class="text-xs text-[var(--success)] hover:text-[var(--success)]/80 font-medium">Approve</button>
                                     </form>
-                                    <button onclick="openRejectModal({{ $app->id }})" type="button" class="text-xs text-[var(--danger)] hover:text-[var(--danger)]/80 font-medium">Reject</button>
+                                    <form method="POST" action="{{ route('admin.financial-services.applications.reject', $app->id) }}" class="inline-block">
+                                        @csrf
+                                        <input type="hidden" name="notes" value="Rejected by admin">
+                                        <button type="submit" class="text-xs text-[var(--danger)] hover:text-[var(--danger)]/80 font-medium">Reject</button>
+                                    </form>
                                 @else
                                     <span class="text-xs text-[var(--text-muted)]">—</span>
                                 @endif
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     @endif
 </div>
-
-{{-- Reject Modal --}}
-<div id="reject-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden p-4">
-    <div class="bg-[var(--surface)] rounded-2xl w-full max-w-md p-6">
-        <h3 class="text-lg font-semibold text-[var(--text)] mb-4">Reject Application</h3>
-        <form id="reject-form" method="POST" class="space-y-4">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium text-[var(--text)] mb-1">Reason</label>
-                <textarea name="notes" required rows="3" class="input-field" placeholder="Why is this being rejected?"></textarea>
-            </div>
-            <div class="flex gap-3">
-                <button type="button" onclick="closeRejectModal()" class="flex-1 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm hover:bg-[var(--line-soft)]">Cancel</button>
-                <button type="submit" class="flex-1 py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90">Reject</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-let currentRejectId = null;
-
-    function openRejectModal(id) {
-        currentRejectId = id;
-        const form = document.getElementById('reject-form');
-        form.action = @json(route('admin.financial-services.applications.reject', ['application' => ':id']));
-        form.action = form.action.replace(':id', id);
-        document.getElementById('reject-modal').classList.remove('hidden');
-    }
-
-function closeRejectModal() {
-    document.getElementById('reject-modal').classList.add('hidden');
-    currentRejectId = null;
-}
-</script>
 @endsection
