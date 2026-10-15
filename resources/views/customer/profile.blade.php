@@ -131,7 +131,7 @@
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-bold text-[var(--text)]">{{ __('Preferences') }}</h2>
             <button type="button" id="save-preferences-btn" class="hidden px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium min-h-[44px]">
-                Save Settings
+                {{ __('Save Settings') }}
             </button>
         </div>
         <form id="preferences-form" method="POST" action="{{ route('profile.preferences') }}" class="space-y-5">
@@ -169,24 +169,27 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between py-2">
-                <div>
-                <p class="text-sm font-semibold text-[var(--text)]">{{ __('Language') }}</p>
-                <p class="text-xs text-[var(--text-muted)]">{{ __('Select your display language') }}</p>
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <p class="text-sm font-semibold text-[var(--text)]">{{ __('Language') }}</p>
+                        <p class="text-xs text-[var(--text-muted)]">{{ __('Select your display language') }}</p>
+                    </div>
+                    <div class="relative w-44">
+                        <select name="language" id="language-select" class="input-field appearance-none pr-10">
+                            <option value="en" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'en' ? 'selected' : '' }}>English</option>
+                            <option value="es" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'es' ? 'selected' : '' }}>Español</option>
+                            <option value="fr" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'fr' ? 'selected' : '' }}>Français</option>
+                            <option value="de" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'de' ? 'selected' : '' }}>Deutsch</option>
+                            <option value="zh" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'zh' ? 'selected' : '' }}>中文</option>
+                            <option value="ja" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'ja' ? 'selected' : '' }}>日本語</option>
+                            <option value="pt" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'pt' ? 'selected' : '' }}>Português</option>
+                            <option value="ru" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'ru' ? 'selected' : '' }}>Русский</option>
+                            <option value="ar" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'ar' ? 'selected' : '' }}>العربية</option>
+                            <option value="hi" {{ (($user->language ?? session('locale') ?? app()->getLocale())) === 'hi' ? 'selected' : '' }}>हिन्दी</option>
+                        </select>
+                        <x-icon name="chevron-down" class="w-4 h-4 text-[var(--text-muted)] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
                 </div>
-                <select name="language" id="language-select" class="input-field w-40">
-                    <option value="en" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'en' ? 'selected' : '' }}>English</option>
-                    <option value="es" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'es' ? 'selected' : '' }}>Español</option>
-                    <option value="fr" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'fr' ? 'selected' : '' }}>Français</option>
-                    <option value="de" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'de' ? 'selected' : '' }}>Deutsch</option>
-                    <option value="zh" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'zh' ? 'selected' : '' }}>中文</option>
-                    <option value="ja" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'ja' ? 'selected' : '' }}>日本語</option>
-                    <option value="pt" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'pt' ? 'selected' : '' }}>Português</option>
-                    <option value="ru" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'ru' ? 'selected' : '' }}>Русский</option>
-                    <option value="ar" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'ar' ? 'selected' : '' }}>العربية</option>
-                    <option value="hi" {{ ($user->language ?? session('locale') ?? app()->getLocale()) === 'hi' ? 'selected' : '' }}>हिन्दी</option>
-                </select>
-            </div>
         </form>
     </section>
 
@@ -194,7 +197,7 @@
     <form method="POST" action="{{ route('signout') }}" class="pt-2">
         @csrf
         <button type="submit" class="w-full py-3.5 btn-danger min-h-[44px]">
-            Log out
+            {{ __('Sign out') }}
         </button>
     </form>
 </div>

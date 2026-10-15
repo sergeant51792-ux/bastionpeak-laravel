@@ -57,5 +57,15 @@
     "Cancel": "Cancel",
     "Address": "Address",
     "Reference (optional)": "Reference (optional)",
-    "Payment reference or note": "Payment reference or note"
+    "Payment reference or note": "Payment reference or note",
+    "Receive money": "Receive money",
+    "Cryptocurrency": "Cryptocurrency",
+    "Gift card": "Gift card",
+    "Bank transfer": "Bank transfer",
+    "No deposit methods configured for this account.": "No deposit methods configured for this account.",
+    "Amount": "Amount",
+    "Copied!": "Copied!",
+    "Instructions": "Instructions",
+    "Account": "Account",
+    "Currency": "Currency"
 }

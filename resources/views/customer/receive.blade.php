@@ -8,7 +8,7 @@
         <a href="{{ route('home') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--line-soft)] transition-colors" aria-label="Back">
             <x-icon name="arrow-left" class="w-5 h-5 text-[var(--text-muted)]" />
         </a>
-        <h1 class="text-xl font-semibold text-[var(--text)]">Receive money</h1>
+        <h1 class="text-xl font-semibold text-[var(--text)]">{{ __('Receive money') }}</h1>
     </header>
 
     @if(isset($globalMethods) && $globalMethods->isNotEmpty())
@@ -20,7 +20,7 @@
 
         @if($cryptoMethods->isNotEmpty())
             <div class="space-y-4">
-                <h2 class="text-sm font-semibold text-[var(--text-muted)]">Cryptocurrency</h2>
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">{{ __('Cryptocurrency') }}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @foreach($cryptoMethods as $method)
                         @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $accounts->first()?->id ?? 0])
@@ -31,7 +31,7 @@
 
         @if($giftcardMethods->isNotEmpty())
             <div class="space-y-4">
-                <h2 class="text-sm font-semibold text-[var(--text-muted)]">Gift card</h2>
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">{{ __('Gift card') }}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @foreach($giftcardMethods as $method)
                         @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $accounts->first()?->id ?? 0])
@@ -42,7 +42,7 @@
 
         @if($transferMethods->isNotEmpty())
             <div class="space-y-4">
-                <h2 class="text-sm font-semibold text-[var(--text-muted)]">Bank transfer</h2>
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">{{ __('Bank transfer') }}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @foreach($transferMethods as $method)
                         @include('customer.partials.receive-method-button', ['method' => $method, 'accountId' => $accounts->first()?->id ?? 0])
@@ -70,7 +70,7 @@
             @else
                 <div class="border border-dashed border-[var(--line)] rounded-xl p-5 text-center">
                     <x-icon name="wallet" class="w-8 h-8 mx-auto mb-2 text-[var(--text-muted)]" />
-                    <p class="text-sm text-[var(--text-muted)]">No deposit methods configured for this account.</p>
+                    <p class="text-sm text-[var(--text-muted)]">{{ __('No deposit methods configured for this account.') }}</p>
                 </div>
             @endif
         </div>
@@ -93,7 +93,7 @@
                 {{-- Step 1: Amount Input --}}
                 <div id="modal-step-amount" class="space-y-5">
                     <div>
-                        <label for="modal-amount" class="block text-sm font-semibold text-[var(--text)] mb-2">Amount</label>
+                        <label for="modal-amount" class="block text-sm font-semibold text-[var(--text)] mb-2">{{ __('Amount') }}</label>
                         <div class="input-symbol-prefix">
                             <span id="modal-symbol" class="symbol font-medium">$</span>
                             <input type="text" inputmode="decimal" id="modal-amount" name="amount"
@@ -120,21 +120,21 @@
                                 </button>
                             </div>
                         </div>
-                        <span id="modal-copied" class="hidden fixed top-4 right-1/2 translate-x-1/2 px-3 py-1.5 bg-[var(--primary)] text-white text-xs rounded-lg shadow-lg z-50">Copied!</span>
+                        <span id="modal-copied" class="hidden fixed top-4 right-1/2 translate-x-1/2 px-3 py-1.5 bg-[var(--primary)] text-white text-xs rounded-lg shadow-lg z-50">{{ __('Copied!') }}</span>
                     </div>
 
                     <div id="modal-instructions-container" class="hidden">
-                        <p class="text-xs text-[var(--text-muted)] mb-1 uppercase tracking-wider font-medium">Instructions</p>
+                        <p class="text-xs text-[var(--text-muted)] mb-1 uppercase tracking-wider font-medium">{{ __('Instructions') }}</p>
                         <p id="modal-instructions" class="text-sm text-[var(--text)] leading-relaxed whitespace-pre-line"></p>
                     </div>
 
                     <div id="modal-account-info" class="flex justify-center gap-6 pt-3 border-t border-[var(--line)]">
                         <div class="text-center">
-                            <p class="text-xs text-[var(--text-muted)]">Account</p>
+                            <p class="text-xs text-[var(--text-muted)]">{{ __('Account') }}</p>
                             <p id="modal-account-name" class="text-sm font-semibold text-[var(--text)]"></p>
                         </div>
                         <div class="text-center">
-                            <p class="text-xs text-[var(--text-muted)]">Currency</p>
+                            <p class="text-xs text-[var(--text-muted)]">{{ __('Currency') }}</p>
                             <p id="modal-currency" class="text-sm font-semibold text-[var(--text)]"></p>
                         </div>
                     </div>
