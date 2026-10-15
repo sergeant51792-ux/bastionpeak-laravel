@@ -105,7 +105,7 @@
                         <label class="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">QR code</label>
                         @if($attached && $attached->pivot->qr_path)
                             <div class="flex items-center gap-2 mb-2">
-                                <img src="{{ asset('storage/' . $attached->pivot->qr_path) }}" alt="QR" class="w-24 h-24 object-contain border border-[var(--line)] rounded-xl">
+                                <img src="{{ url('storage-file/' . $attached->pivot->qr_path) }}" alt="QR" class="w-24 h-24 object-contain border border-[var(--line)] rounded-xl">
                                 <button type="button" onclick="removeQr(this)" data-id="{{ $attached->pivot->id ?? '' }}" class="p-1 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Remove QR">
                                     <x-icon name="x" class="w-4 h-4" />
                                 </button>

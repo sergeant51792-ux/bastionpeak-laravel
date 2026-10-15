@@ -160,7 +160,7 @@
                                     @if($configuredMethod->pivot->qr_path)
                                         <div>
                                             <span class="text-xs text-[var(--text-muted)]">QR code:</span>
-                                            <img src="{{ asset('storage/' . $configuredMethod->pivot->qr_path) }}" alt="Deposit QR" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg mt-1">
+                                            <img src="{{ url('storage-file/' . $configuredMethod->pivot->qr_path) }}" alt="Deposit QR" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg mt-1">
                                         </div>
                                     @endif
                                     @if($configuredMethod->pivot->instructions)
@@ -200,9 +200,9 @@
                                 $extension = strtolower(pathinfo($proof, PATHINFO_EXTENSION));
                             @endphp
                             @if(in_array($extension, ['jpg', 'jpeg', 'png']))
-                                <img src="{{ asset('storage/' . $proof) }}" alt="Supporting document" class="max-w-full max-h-80 rounded-lg border border-[var(--line)]">
+                                <img src="{{ url('storage-file/' . $proof) }}" alt="Supporting document" class="max-w-full max-h-80 rounded-lg border border-[var(--line)]">
                             @else
-                                <a href="{{ asset('storage/' . $proof) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm font-medium hover:border-[var(--accent)] transition-all">
+                                <a href="{{ url('storage-file/' . $proof) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm font-medium hover:border-[var(--accent)] transition-all">
                                     <x-icon name="file-text" class="w-4 h-4" />
                                     View document
                                 </a>

@@ -370,3 +370,25 @@ Route::get('/_run-migrate', function () {
     \Artisan::call('migrate', ['--force' => true]);
     return 'Migrations completed. Output: ' . \Artisan::output();
 })->name('run.migrate');
+
+Route::get('/storage-file/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    if (!file_exists($fullPath)) {
+        $publicHtmlPath = base_path('../public_html/storage/' . $path);
+        if (file_exists($publicHtmlPath)) {
+            $fullPath = $publicHtmlPath;
+        } else {
+            abort(404);
+        }
+    }
+
+    $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+    $mimeMap = [
+        'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png',
+        'gif' => 'image/gif', 'webp' => 'image/webp', 'pdf' => 'application/pdf',
+        'svg' => 'image/svg+xml', 'txt' => 'text/plain', 'csv' => 'text/csv',
+    ];
+    $mime = $mimeMap[$extension] ?? 'application/octet-stream';
+
+    return response()->file($fullPath, ['Content-Type' => $mime]);
+})->where('path', '.*')->name('storage.file');

@@ -32,7 +32,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     @if($method->icon_image_path)
-                                        <img src="{{ asset('storage/' . $method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
+                                        <img src="{{ url('storage-file/' .$method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
                                     @else
                                         <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
                                             <x-icon name="{{ $method->icon ?: 'settings' }}" class="w-5 h-5" />

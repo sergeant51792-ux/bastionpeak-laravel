@@ -12,7 +12,7 @@
     <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
             @if($method->icon_image_path)
-                <img src="{{ asset('storage/' . $method->icon_image_path) }}" alt="{{ $method->name }}" class="w-6 h-6 object-contain">
+                <img src="{{ url('storage-file/' .$method->icon_image_path) }}" alt="{{ $method->name }}" class="w-6 h-6 object-contain">
             @else
                 <x-icon name="{{ $iconName }}" class="w-5 h-5" />
             @endif

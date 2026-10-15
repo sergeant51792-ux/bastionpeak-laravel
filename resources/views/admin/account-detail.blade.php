@@ -90,7 +90,7 @@
                         <label class="text-xs text-[var(--text-muted)] font-semibold uppercase mb-1.5">QR Code Image</label>
                         @if($account->deposit_qr_path)
                             <div class="mb-3">
-                                <img src="{{ asset('storage/' . $account->deposit_qr_path) }}" alt="Current QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg">
+                                <img src="{{ url('storage-file/' .$account->deposit_qr_path) }}" alt="Current QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg">
                             </div>
                         @endif
                         <input type="file" name="deposit_qr" accept="image/*" class="text-sm text-[var(--text-muted)]">
@@ -114,7 +114,7 @@
                             <div class="border border-[var(--line)] rounded-xl p-4">
                                 <div class="flex items-center gap-3">
                                     @if($method->icon_image_path)
-                                        <img src="{{ asset('storage/' . $method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
+                                        <img src="{{ url('storage-file/' .$method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
                                     @else
                                         <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
                                             <x-icon name="{{ $method->icon ?: 'settings' }}" class="w-5 h-5" />
@@ -134,7 +134,7 @@
                                 @if($method->qr_path)
                                     <div class="mt-2">
                                         <p class="text-xs text-[var(--text-muted)] font-semibold uppercase mb-1">QR Code</p>
-                                        <img src="{{ asset('storage/' . $method->qr_path) }}" alt="QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg">
+                                        <img src="{{ url('storage-file/' .$method->qr_path) }}" alt="QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg">
                                     </div>
                                 @endif
                                 @if($method->instructions)
@@ -158,7 +158,7 @@
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center gap-3">
                                         @if($method->icon_image_path)
-                                            <img src="{{ asset('storage/' . $method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
+                                            <img src="{{ url('storage-file/' .$method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
                                         @else
                                             <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)]">
                                                 <x-icon name="{{ $method->icon ?: 'settings' }}" class="w-5 h-5" />
