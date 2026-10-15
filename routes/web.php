@@ -437,5 +437,37 @@ Route::get('/_debug-pending-deposits', function () {
     // Check for any invalid type values
     $result['distinct_types'] = \App\Models\Transaction::distinct()->pluck('type')->toArray();
 
+    // Simulate the exact admin query with eager loading
+    try {
+        $result['admin_query_with_relations'] = \App\Models\Transaction::query()
+            ->where('type', 'deposit_credit')
+            ->whereIn('status', ['pending_review', 'pending_match'])
+            ->with(['fromUser', 'toUser', 'fromAccount', 'toAccount.depositMethods', 'currency'])
+            ->orderByDesc('created_at')
+            ->limit(3)
+            ->get(['id', 'transaction_id', 'type', 'status', 'amount', 'from_account_id', 'to_account_id', 'from_user_id', 'to_user_id', 'currency_id', 'memo', 'metadata', 'proof_file_path', 'reviewed_at', 'credited_at', 'rejected_at', 'created_at'])
+            ->map(function ($t) {
+                return [
+                    'id' => $t->id,
+                    'type' => get_class($t->type) . ':' . ($t->type instanceof \App\Enums\TransactionType ? $t->type->value : 'N/A'),
+                    'status' => get_class($t->status) . ':' . ($t->status instanceof \App\Enums\TransactionStatus ? $t->status->value : 'N/A'),
+                    'fromUser' => $t->fromUser ? $t->fromUser->name : 'null',
+                    'toUser' => $t->toUser ? $t->toUser->name : 'null',
+                    'fromAccount' => $t->fromAccount ? $t->fromAccount->name : 'null',
+                    'toAccount' => $t->toAccount ? $t->toAccount->name : 'null',
+                    'currency' => $t->currency ? $t->currency->code : 'null',
+                    'amount' => $t->amount,
+                    'memo' => $t->memo,
+                    'metadata' => $t->metadata,
+                    'has_proof' => $t->proof_file_path ? 'yes' : 'no',
+                    'created_at' => $t->created_at,
+                    'errors' => [],
+                ];
+            })->toArray();
+    } catch (\Throwable $e) {
+        $result['admin_query_error'] = $e->getMessage();
+        $result['admin_query_error_trace'] = $e->getTraceAsString();
+    }
+
     return response()->json($result);
 })->name('debug.pending');
