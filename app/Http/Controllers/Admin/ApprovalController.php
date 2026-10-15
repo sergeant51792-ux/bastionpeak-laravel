@@ -50,6 +50,15 @@ class ApprovalController extends Controller
                 ->findOrFail($openId);
         }
 
+        // Debug: log what we're seeing
+        if (config('app.debug')) {
+            logger()->info('Admin approvals page loaded', [
+                'tab' => $tab,
+                'queue_count' => $queue->count(),
+                'total_in_db' => Transaction::where('type', 'deposit_credit')->whereIn('status', ['pending_review', 'pending_match'])->count(),
+            ]);
+        }
+
         return view('admin.approvals', [
             'queue'          => $queue,
             'tab'            => $tab,
