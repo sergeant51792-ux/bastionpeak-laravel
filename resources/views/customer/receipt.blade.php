@@ -85,7 +85,7 @@
         <div class="bp-paper-inner px-5 py-5">
 
             {{-- Brand + status --}}
-            <div class="flex items-baseline justify-content-between mb-4 pb-2">
+            <div class="flex items-baseline justify-between mb-4 pb-2">
                 <div class="flex items-center gap-2">
                     <x-icon name="landmark" class="w-5 h-5 text-[var(--accent)]" />
                     <span class="font-bold text-xl text-black dark:text-white">Bastion Peak</span>
@@ -112,72 +112,72 @@
 
             {{-- Details — label / value pairs --}}
             <dl class="bp-details">
-                <div class="bp-row flex justify-content-between py-1">
+                <div class="bp-row flex justify-between py-1">
                     <dt class="text-black/40 dark:text-white/40">{{ __('Reference') }}</dt>
                     <dd class="font-bold text-right font-mono break-all">{{ $transaction->transaction_id ?? 'TXN-' . strtoupper(substr((string) $transaction->id, 0, 8)) }}</dd>
                 </div>
 
                 @if($transaction->reference)
-                    <div class="bp-row flex justify-content-between py-1">
+                    <div class="bp-row flex justify-between py-1">
                         <dt class="text-black/40 dark:text-white/40">{{ __('Payment reference') }}</dt>
                         <dd class="font-bold text-right font-mono break-all">{{ $transaction->reference }}</dd>
                     </div>
                 @endif
 
-                <div class="bp-row flex justify-content-between py-1">
+                <div class="bp-row flex justify-between py-1">
                     <dt class="text-black/40 dark:text-white/40">{{ __('Date &amp; time') }}</dt>
                     <dd class="font-bold text-right tabular-nums">{{ $transaction->created_at->format('j M Y, H:i') }}</dd>
                 </div>
 
                 @if($settledAt)
-                    <div class="bp-row flex justify-content-between py-1">
+                    <div class="bp-row flex justify-between py-1">
                         <dt class="text-black/40 dark:text-white/40">{{ __('Processed at') }}</dt>
                         <dd class="font-bold text-right tabular-nums">{{ $settledAt->format('j M Y, H:i') }}</dd>
                     </div>
                 @endif
 
-                <div class="bp-row flex justify-content-between py-1">
+                <div class="bp-row flex justify-between py-1">
                     <dt class="text-black/40 dark:text-white/40">{{ __('Type') }}</dt>
                     <dd class="font-bold text-right">{{ $typeLabel }}</dd>
                 </div>
 
                 @if($origin)
-                    <div class="bp-row flex justify-content-between py-1">
+                    <div class="bp-row flex justify-between py-1">
                         <dt class="text-black/40 dark:text-white/40">{{ $isDeposit ? __('From') : __('From account') }}</dt>
                         <dd class="font-bold text-right break-words">{{ $origin }}</dd>
                     </div>
                 @endif
 
                 @if($destination)
-                    <div class="bp-row flex justify-content-between py-1">
+                    <div class="bp-row flex justify-between py-1">
                         <dt class="text-black/40 dark:text-white/40">{{ __('Beneficiary / to') }}</dt>
                         <dd class="font-bold text-right break-words">{{ $destination }}</dd>
                     </div>
                 @endif
 
-                <div class="bp-row flex justify-content-between py-1">
+                <div class="bp-row flex justify-between py-1">
                     <dt class="text-black/40 dark:text-white/40">{{ __('Amount') }}</dt>
                     <dd class="font-bold text-right tabular-nums">{{ $amount }} {{ $symbol }}</dd>
                 </div>
 
                 @if((float) $transaction->fee > 0)
-                    <div class="bp-row flex justify-content-between py-1">
+                    <div class="bp-row flex justify-between py-1">
                         <dt class="text-black/40 dark:text-white/40">{{ __('Fee') }}</dt>
                         <dd class="font-bold text-right tabular-nums">{{ $fee }} {{ $symbol }}</dd>
                     </div>
                 @endif
 
-                <div class="bp-row flex justify-content-between py-1 font-semibold border-t border-black/10 dark:border-white/10 mt-1 pt-2">
+                <div class="bp-row flex justify-between py-1 font-semibold border-t border-black/10 dark:border-white/10 mt-1 pt-2">
                     <dt class="text-black/40 dark:text-white/40">{{ __('Net amount') }}</dt>
                     <dd class="font-bold text-right tabular-nums">{{ $net }} {{ $symbol }}</dd>
                 </div>
 
-                @if($transaction->memo)
-                    <div class="bp-row flex justify-content-between py-1">
-                        <dt class="text-black/40 dark:text-white/40">{{ __('Description') }}</dt>
-                        <dd class="font-bold text-right whitespace-pre-line break-words">{{ $transaction->memo }}</dd>
-                    </div>
-                @endif
+                 @if($transaction->memo)
+                     <div class="bp-row flex justify-between py-2">
+                         <dt class="text-black/40 dark:text-white/40">{{ __('Note') }}</dt>
+                         <dd class="font-bold text-right whitespace-pre-line break-words">{{ $transaction->memo }}</dd>
+                     </div>
+                 @endif
             </dl>
 
             {{-- Payment channel details --}}
@@ -186,7 +186,7 @@
                 <h2 class="text-black/50 dark:text-white/50 text-xs uppercase tracking-wider font-semibold mb-2">{{ __('Payment details') }}</h2>
                 <dl class="bp-details">
                     @foreach($present as $key => $label)
-                        <div class="bp-row flex justify-content-between py-1">
+                        <div class="bp-row flex justify-between py-1">
                             <dt class="text-black/40 dark:text-white/40">{{ $label }}</dt>
                             <dd class="font-bold text-right font-mono break-all">{{ $meta[$key] }}</dd>
                         </div>
@@ -287,5 +287,7 @@
         white-space: nowrap;
         letter-spacing: 0.25em;
     }
+
+    .bp-row { line-height: 1.5; }
 </style>
 @endsection

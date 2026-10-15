@@ -82,7 +82,7 @@
             white-space: nowrap;
             letter-spacing: 0.3em;
         }
-        .row { display: flex; justify-content: space-between; gap: 16px; padding: 5px 0; }
+        .row { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; line-height: 1.5; }
         .row dt { color: #666; font-size: 11px; }
         .row dd { font-weight: bold; text-align: right; word-break: break-word; font-variant-numeric: tabular-nums; }
         .row.total { border-top: 1px solid #e0e0e0; margin-top: 4px; padding-top: 6px; font-size: 14px; }
@@ -194,7 +194,7 @@
 
     @if($transaction->memo)
         <div class="row">
-            <dt class="label">Description</dt>
+            <dt class="label">Note</dt>
             <dd class="value" style="white-space: pre-line;">{{ $transaction->memo }}</dd>
         </div>
     @endif
