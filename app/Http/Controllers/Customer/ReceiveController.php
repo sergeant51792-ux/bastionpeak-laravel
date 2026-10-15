@@ -60,7 +60,10 @@ class ReceiveController extends Controller
         }
 
         $globalMethods = \App\Models\DepositMethod::where('is_active', true)
-            ->whereDoesntHave('accounts')
+            ->where(function ($q) {
+                $q->where('is_global', true)
+                  ->orWhereDoesntHave('accounts');
+            })
             ->get()
             ->map(function ($method) use ($accounts) {
                 $account = $accounts->first();

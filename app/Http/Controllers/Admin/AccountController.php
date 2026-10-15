@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Account;
+use App\Models\DepositMethod;
 use Illuminate\Support\Facades\Storage;
 
 class AccountController extends Controller
@@ -26,6 +27,12 @@ class AccountController extends Controller
             ->withPivot(['address', 'qr_path', 'instructions', 'metadata', 'is_active'])
             ->get();
 
+        $globalDepositMethods = DepositMethod::where('is_active', true)
+            ->where('is_global', true)
+            ->get();
+
+        $depositMethods = $globalDepositMethods->merge($accountDepositMethods);
+
         return view('admin.account-detail', [
             'account'            => $account,
             'currency'           => $account->currency,
@@ -38,7 +45,7 @@ class AccountController extends Controller
             'ledger'             => \App\Models\Transaction::where(function ($q) use ($account) {
                 $q->where('from_account_id', $account->id)->orWhere('to_account_id', $account->id);
             })->with('currency')->orderByDesc('created_at')->limit(50)->get(),
-            'depositMethods'     => $accountDepositMethods,
+            'depositMethods'     => $depositMethods,
         ]);
     }
 
@@ -59,7 +66,7 @@ class AccountController extends Controller
             if ($account->deposit_qr_path && Storage::disk('public')->exists($account->deposit_qr_path)) {
                 Storage::disk('public')->delete($account->deposit_qr_path);
             }
-            $data['deposit_qr_path'] = $request->file('deposit_qr')->store('deposit-qr', 'public');
+            $data['deposit_qr_path'] = $this->storeUploadedFile($request->file('deposit_qr'), 'deposit-qr', $account->deposit_qr_path);
         }
 
         $account->update($data);

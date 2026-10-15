@@ -35,7 +35,10 @@ class DepositController extends Controller
         }
 
         $globalMethods = \App\Models\DepositMethod::where('is_active', true)
-            ->whereDoesntHave('accounts')
+            ->where(function ($q) {
+                $q->where('is_global', true)
+                  ->orWhereDoesntHave('accounts');
+            })
             ->get()
             ->map(function ($method) use ($activeAccounts) {
                 $account = $activeAccounts->first();
@@ -119,7 +122,7 @@ class DepositController extends Controller
 
         $proofPath = null;
         if ($request->hasFile('proof')) {
-            $proofPath = $request->file('proof')->store('uploads/proofs', 'public');
+            $proofPath = $this->storeUploadedFile($request->file('proof'), 'uploads/proofs');
         }
 
         $this->deposits->submitRequest(

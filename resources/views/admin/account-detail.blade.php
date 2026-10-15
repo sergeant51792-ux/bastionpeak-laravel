@@ -103,9 +103,57 @@
 
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
                 <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Deposit Methods</h2>
-                @if($depositMethods && $depositMethods->isNotEmpty())
+                @php
+                    $globalMethods = $depositMethods->filter(fn($m) => $m->is_global);
+                    $accountMethods = $depositMethods->filter(fn($m) => !$m->is_global);
+                @endphp
+                @if($globalMethods->isNotEmpty())
+                    <div class="space-y-4 mb-4">
+                        <p class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">System-wide deposit methods (visible to all accounts)</p>
+                        @foreach($globalMethods as $method)
+                            <div class="border border-[var(--line)] rounded-xl p-4">
+                                <div class="flex items-center gap-3">
+                                    @if($method->icon_image_path)
+                                        <img src="{{ Storage::url($method->icon_image_path) }}" alt="{{ $method->name }}" class="w-10 h-10 object-contain rounded-lg">
+                                    @else
+                                        <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                                            <x-icon name="{{ $method->icon ?: 'settings' }}" class="w-5 h-5" />
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
+                                        <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} • Code: {{ $method->code }}</p>
+                                    </div>
+                                </div>
+                                @if($method->address)
+                                    <div class="mt-2">
+                                        <p class="text-xs text-[var(--text-muted)] font-semibold uppercase mb-1">Address</p>
+                                        <p class="text-xs text-[var(--text-muted)] break-all font-mono bg-[var(--line-soft)] px-2 py-1 rounded">{{ $method->address }}</p>
+                                    </div>
+                                @endif
+                                @if($method->qr_path)
+                                    <div class="mt-2">
+                                        <p class="text-xs text-[var(--text-muted)] font-semibold uppercase mb-1">QR Code</p>
+                                        <img src="{{ Storage::url($method->qr_path) }}" alt="QR Code" class="w-24 h-24 object-contain border border-[var(--line)] rounded-lg">
+                                    </div>
+                                @endif
+                                @if($method->instructions)
+                                    <div class="mt-2">
+                                        <p class="text-xs text-[var(--text-muted)] font-semibold uppercase mb-1">Instructions</p>
+                                        <p class="text-xs text-[var(--text-muted)] whitespace-pre-line">{{ $method->instructions }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                        <div class="pt-2">
+                            <a href="{{ route('admin.deposit-methods.index') }}" class="text-xs font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">Manage global deposit methods →</a>
+                        </div>
+                    </div>
+                @endif
+
+                @if($accountMethods->isNotEmpty())
                     <div class="space-y-3">
-                        @foreach($depositMethods as $method)
+                        @foreach($accountMethods as $method)
                             <div class="border border-[var(--line)] rounded-xl p-4">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center gap-3">

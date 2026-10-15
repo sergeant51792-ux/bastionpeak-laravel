@@ -28,7 +28,9 @@
                                 class="text-left border border-[var(--line)] rounded-xl p-4 hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-all group">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                                    @if($method->type === 'crypto')
+                                    @if($method->icon_image_path)
+                                        <img src="{{ Storage::url($method->icon_image_path) }}" alt="{{ $method->name }}" class="w-6 h-6 object-contain">
+                                    @elseif($method->type === 'crypto')
                                         <x-icon name="bitcoin" class="w-5 h-5" />
                                     @elseif($method->type === 'giftcard' || $method->type === 'gift_card')
                                         <x-icon name="gift" class="w-5 h-5" />

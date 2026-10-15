@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DepositMethod;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DepositMethodController extends Controller
 {
@@ -40,12 +41,12 @@ class DepositMethodController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:wire,crypto,swift,sepa,ach,zelle,faster_payments,bacs,chaps,giftcard,other'],
             'icon' => ['nullable', 'string', 'max:255'],
-            'icon_image' => ['nullable', 'image', 'max:2048'],
+            'icon_image' => ['nullable', 'file', 'max:2048'],
             'description' => ['nullable', 'string', 'max:2000'],
             'is_global' => ['boolean'],
             'address' => ['nullable', 'string'],
             'instructions' => ['nullable', 'string'],
-            'qr_image' => ['nullable', 'image', 'max:2048'],
+            'qr_image' => ['nullable', 'file', 'max:2048'],
             'template' => ['nullable', 'array'],
             'is_active' => ['boolean'],
             'sort_order' => ['integer', 'min:0'],
@@ -56,11 +57,17 @@ class DepositMethodController extends Controller
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
 
         if ($request->hasFile('icon_image')) {
-            $validated['icon_image_path'] = $request->file('icon_image')->store('deposit-method-icons', 'public');
+            $file = $request->file('icon_image');
+            $filename = 'icon_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->put('deposit-method-icons/' . $filename, file_get_contents($file->getRealPath()));
+            $validated['icon_image_path'] = 'deposit-method-icons/' . $filename;
         }
 
         if ($request->hasFile('qr_image')) {
-            $validated['qr_path'] = $request->file('qr_image')->store('deposit-qr-codes', 'public');
+            $file = $request->file('qr_image');
+            $filename = 'qr_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->put('deposit-qr-codes/' . $filename, file_get_contents($file->getRealPath()));
+            $validated['qr_path'] = 'deposit-qr-codes/' . $filename;
         }
 
         DepositMethod::create($validated);
@@ -82,12 +89,12 @@ class DepositMethodController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:wire,crypto,swift,sepa,ach,zelle,faster_payments,bacs,chaps,giftcard,other'],
             'icon' => ['nullable', 'string', 'max:255'],
-            'icon_image' => ['nullable', 'image', 'max:2048'],
+            'icon_image' => ['nullable', 'file', 'max:2048'],
             'description' => ['nullable', 'string', 'max:2000'],
             'is_global' => ['boolean'],
             'address' => ['nullable', 'string'],
             'instructions' => ['nullable', 'string'],
-            'qr_image' => ['nullable', 'image', 'max:2048'],
+            'qr_image' => ['nullable', 'file', 'max:2048'],
             'remove_qr' => ['nullable', 'boolean'],
             'template' => ['nullable', 'array'],
             'is_active' => ['boolean'],
@@ -102,14 +109,20 @@ class DepositMethodController extends Controller
             if ($depositMethod->icon_image_path) {
                 Storage::disk('public')->delete($depositMethod->icon_image_path);
             }
-            $validated['icon_image_path'] = $request->file('icon_image')->store('deposit-method-icons', 'public');
+            $file = $request->file('icon_image');
+            $filename = 'icon_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->put('deposit-method-icons/' . $filename, file_get_contents($file->getRealPath()));
+            $validated['icon_image_path'] = 'deposit-method-icons/' . $filename;
         }
 
         if ($request->hasFile('qr_image')) {
             if ($depositMethod->qr_path) {
                 Storage::disk('public')->delete($depositMethod->qr_path);
             }
-            $validated['qr_path'] = $request->file('qr_image')->store('deposit-qr-codes', 'public');
+            $file = $request->file('qr_image');
+            $filename = 'qr_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->put('deposit-qr-codes/' . $filename, file_get_contents($file->getRealPath()));
+            $validated['qr_path'] = 'deposit-qr-codes/' . $filename;
         }
 
         if ($request->boolean('remove_qr')) {

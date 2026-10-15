@@ -96,8 +96,13 @@
                                 class="w-full text-left border border-[var(--line)] rounded-xl p-4 hover:border-[var(--accent)] hover:bg-[var(--line-soft)] transition-all">
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] shrink-0">
-                                        <x-icon name="{{ $method->category === 'crypto' ? 'bitcoin' : ($method->category === 'giftcard' ? 'gift' : 'landmark') }}" class="w-5 h-5" />
+                                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center shrink-0">
+                                        @if($method->icon_image_path)
+                                            <img src="{{ Storage::url($method->icon_image_path) }}" alt="{{ $method->name }}" class="w-6 h-6 object-contain">
+                                        @else
+                                            <x-icon name="{{ $method->category === 'crypto' ? 'bitcoin' : ($method->category === 'giftcard' ? 'gift' : 'landmark') }}" class="w-5 h-5" />
+                                        @endif
+                                    </div>
                                     </div>
                                     <div>
                                         <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>

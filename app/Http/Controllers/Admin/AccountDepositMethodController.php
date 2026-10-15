@@ -31,7 +31,7 @@ class AccountDepositMethodController extends Controller
             'deposit_method_id' => ['required', 'exists:deposit_methods,id'],
             'address' => ['nullable', 'string', 'max:500'],
             'instructions' => ['nullable', 'string', 'max:2000'],
-            'qr' => ['nullable', 'file', 'mimetypes:image/png,image/jpeg', 'max:2048'],
+            'qr' => ['nullable', 'file', 'max:2048'],
             'metadata' => ['nullable', 'array'],
             'is_active' => ['boolean'],
         ]);
@@ -45,10 +45,11 @@ class AccountDepositMethodController extends Controller
 
         if ($request->hasFile('qr')) {
             $existing = $account->depositMethods()->where('deposit_method_id', $validated['deposit_method_id'])->first();
-            if ($existing && $existing->pivot->qr_path && Storage::disk('public')->exists($existing->pivot->qr_path)) {
-                Storage::disk('public')->delete($existing->pivot->qr_path);
+            $existingQrPath = $existing?->pivot?->qr_path;
+            if ($existing && $existingQrPath && Storage::disk('public')->exists($existingQrPath)) {
+                Storage::disk('public')->delete($existingQrPath);
             }
-            $pivotData['qr_path'] = $request->file('qr')->store('deposit-qr', 'public');
+            $pivotData['qr_path'] = $this->storeUploadedFile($request->file('qr'), 'deposit-qr', $existingQrPath);
         }
 
         $account->depositMethods()->syncWithoutDetaching([
@@ -63,7 +64,7 @@ class AccountDepositMethodController extends Controller
         $validated = $request->validate([
             'address' => ['nullable', 'string', 'max:500'],
             'instructions' => ['nullable', 'string', 'max:2000'],
-            'qr' => ['nullable', 'file', 'mimetypes:image/png,image/jpeg', 'max:2048'],
+            'qr' => ['nullable', 'file', 'max:2048'],
             'metadata' => ['nullable', 'array'],
             'is_active' => ['boolean'],
         ]);
@@ -77,10 +78,11 @@ class AccountDepositMethodController extends Controller
 
         if ($request->hasFile('qr')) {
             $existing = $account->depositMethods()->where('deposit_method_id', $depositMethod->id)->first();
-            if ($existing && $existing->pivot->qr_path && Storage::disk('public')->exists($existing->pivot->qr_path)) {
-                Storage::disk('public')->delete($existing->pivot->qr_path);
+            $existingQrPath = $existing?->pivot?->qr_path;
+            if ($existing && $existingQrPath && Storage::disk('public')->exists($existingQrPath)) {
+                Storage::disk('public')->delete($existingQrPath);
             }
-            $pivotData['qr_path'] = $request->file('qr')->store('deposit-qr', 'public');
+            $pivotData['qr_path'] = $this->storeUploadedFile($request->file('qr'), 'deposit-qr', $existingQrPath);
         }
 
         if ($request->input('remove_qr') === '1') {

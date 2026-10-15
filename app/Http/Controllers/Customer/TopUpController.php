@@ -43,7 +43,7 @@ class TopUpController extends Controller
 
         $proofPath = null;
         if ($request->hasFile('proof')) {
-            $proofPath = $request->file('proof')->store('uploads/proofs', 'public');
+            $proofPath = $this->storeUploadedFile($request->file('proof'), 'uploads/proofs');
         }
 
         $this->deposits->submitRequest(
