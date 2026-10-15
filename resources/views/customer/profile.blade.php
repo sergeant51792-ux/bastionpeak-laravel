@@ -130,7 +130,7 @@
     <section class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-bold text-[var(--text)]">{{ __('Preferences') }}</h2>
-            <button type="button" id="save-preferences-btn" class="hidden px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium min-h-[44px]">
+            <button type="submit" form="preferences-form" id="save-preferences-btn" class="hidden px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium min-h-[44px]">
                 {{ __('Save Settings') }}
             </button>
         </div>
@@ -238,17 +238,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (savePrefBtn) savePrefBtn.classList.remove('hidden');
     }
 
-    if (hideToggle) {
-        hideToggle.addEventListener('change', function () {
-            if (this.checked) {
-                document.body.setAttribute('data-hide-balance', 'true');
-            } else {
-                document.body.removeAttribute('data-hide-balance');
-            }
-            showPrefBtn();
-        });
-    }
-
     var currentTheme = localStorage.getItem('theme') || '{{ $user->theme_preference ?: "system" }}';
 
     function applyTheme(theme) {
@@ -316,7 +305,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    var input = document.getElementById('picture-input');
+    if (hideToggle) {
+        hideToggle.addEventListener('change', function () {
+            if (this.checked) {
+                document.body.setAttribute('data-hide-balance', 'true');
+            } else {
+                document.body.removeAttribute('data-hide-balance');
+            }
+            showPrefBtn();
+            setTimeout(function() {
+                prefsForm.submit();
+            }, 300);
+        });
+    }
+
     if (input) {
         input.addEventListener('change', function(e) {
             if (this.files.length > 0) {
