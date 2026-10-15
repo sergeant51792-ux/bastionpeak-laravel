@@ -49,12 +49,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Web middleware group
         $middleware->web([
-            HandleLocale::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
+            HandleLocale::class,
         ]);
 
         // API middleware group
