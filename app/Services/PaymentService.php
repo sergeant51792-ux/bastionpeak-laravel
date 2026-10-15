@@ -109,7 +109,7 @@ class PaymentService
             return $transaction;
         }
 
-        return DB::transaction(function () use ($transaction, $operatorId) {
+        $result = DB::transaction(function () use ($transaction, $operatorId) {
             $account = Account::where('id', $transaction->from_account_id)
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -132,18 +132,19 @@ class PaymentService
             $account->balance = (float)$account->balance - (float)$transaction->amount;
             $account->save();
 
-            event(new \App\Events\PaymentApproved($transaction));
-
-            $this->notifications->sendToUser(
-                $transaction->from_user_id,
-                'payment_approved',
-                'Payment Processed',
-                'Your payment request has been approved.',
-                'in-app'
-            );
-
             return $transaction;
         });
+
+        try {
+            event(new \App\Events\PaymentApproved($result));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('PaymentApproved notification failed', [
+                'transaction_id' => $result->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
+
+        return $result;
     }
 
     /**
@@ -167,15 +168,14 @@ class PaymentService
             'updated_at'       => now(),
         ]);
 
-        event(new \App\Events\PaymentRejected($transaction, $reason));
-
-        $this->notifications->sendToUser(
-            $transaction->from_user_id,
-            'payment_rejected',
-            'Payment Rejected',
-            'Your payment request was rejected: ' . $reason,
-            'in-app'
-        );
+        try {
+            event(new \App\Events\PaymentRejected($transaction, $reason));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('PaymentRejected notification failed', [
+                'transaction_id' => $transaction->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
 
         return $transaction;
     }

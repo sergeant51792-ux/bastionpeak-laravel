@@ -94,7 +94,7 @@ class DepositService
             return $transaction;
         }
 
-        return DB::transaction(function () use ($transaction, $operatorId, $targetAccountId) {
+        $result = DB::transaction(function () use ($transaction, $operatorId, $targetAccountId) {
             $account = Account::where('id', $targetAccountId)
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -118,10 +118,19 @@ class DepositService
             $account->balance = (float)$account->balance + (float)$transaction->amount;
             $account->save();
 
-            event(new \App\Events\DepositApproved($transaction));
-
             return $transaction;
         });
+
+        try {
+            event(new \App\Events\DepositApproved($result));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('DepositApproved notification failed', [
+                'transaction_id' => $result->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
+
+        return $result;
     }
 
     /**
@@ -145,7 +154,14 @@ class DepositService
             'updated_at'       => now(),
         ]);
 
-        event(new \App\Events\DepositRejected($transaction, $reason));
+        try {
+            event(new \App\Events\DepositRejected($transaction, $reason));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('DepositRejected notification failed', [
+                'transaction_id' => $transaction->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
 
         return $transaction;
     }

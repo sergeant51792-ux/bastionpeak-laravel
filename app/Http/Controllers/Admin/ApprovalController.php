@@ -70,14 +70,24 @@ class ApprovalController extends Controller
     {
         $operatorId = Auth::id();
 
-        if ($transaction->type === TransactionType::DepositCredit) {
-            $this->deposits->approve($transaction->id, $operatorId, []);
-        } elseif ($transaction->type === TransactionType::PaymentDebit) {
-            $this->payments->approve($transaction->id, $operatorId);
+        try {
+            if ($transaction->type === TransactionType::DepositCredit) {
+                $this->deposits->approve($transaction->id, $operatorId, []);
+            } elseif ($transaction->type === TransactionType::PaymentDebit) {
+                $this->payments->approve($transaction->id, $operatorId);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Approval failed', [
+                'transaction_id' => $transaction->id,
+                'error'          => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Approval failed: ' . $e->getMessage());
         }
 
-        $typeLabel = $transaction->type instanceof \App\Enums\TransactionType ? $transaction->type->label() : ucfirst(str_replace('_', ' ', $transaction->type));
-        return back()->with('status', $typeLabel . ' approved.');
+        $typeLabel = $transaction->type instanceof \App\Enums\TransactionType ? $transaction->type->label() : ucfirst(str_replace('_', ' ', (string) $transaction->type));
+        return redirect()->route('admin.approvals', ['tab' => $transaction->type === TransactionType::DepositCredit ? 'deposits' : 'payments'])
+            ->with('status', $typeLabel . ' approved.');
     }
 
     public function reject(Request $request, Transaction $transaction): RedirectResponse
@@ -88,14 +98,24 @@ class ApprovalController extends Controller
 
         $operatorId = Auth::id();
 
-        if ($transaction->type === TransactionType::DepositCredit) {
-            $this->deposits->reject($transaction->id, $operatorId, $validated['reason']);
-        } elseif ($transaction->type === TransactionType::PaymentDebit) {
-            $this->payments->reject($transaction->id, $operatorId, $validated['reason']);
+        try {
+            if ($transaction->type === TransactionType::DepositCredit) {
+                $this->deposits->reject($transaction->id, $operatorId, $validated['reason']);
+            } elseif ($transaction->type === TransactionType::PaymentDebit) {
+                $this->payments->reject($transaction->id, $operatorId, $validated['reason']);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Rejection failed', [
+                'transaction_id' => $transaction->id,
+                'error'          => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Rejection failed: ' . $e->getMessage());
         }
 
-        $typeLabel = $transaction->type instanceof TransactionType ? $transaction->type->label() : ucfirst(str_replace('_', ' ', $transaction->type));
-        return back()->with('status', $typeLabel . ' rejected.');
+        $typeLabel = $transaction->type instanceof TransactionType ? $transaction->type->label() : ucfirst(str_replace('_', ' ', (string) $transaction->type));
+        return redirect()->route('admin.approvals', ['tab' => $transaction->type === TransactionType::DepositCredit ? 'deposits' : 'payments'])
+            ->with('status', $typeLabel . ' rejected.');
     }
 
     public function batchApprove(Request $request): RedirectResponse

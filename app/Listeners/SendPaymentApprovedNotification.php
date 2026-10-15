@@ -37,12 +37,30 @@ class SendPaymentApprovedNotification implements ShouldQueue
     public function handle(PaymentApproved $event): void
     {
         $transaction = $event->transaction;
-        $customerId = $transaction->customer_id;
+        $customerId = $this->resolveCustomerId($transaction);
+
+        if (!$customerId) {
+            return;
+        }
 
         $title = 'Payment approved';
         $body  = 'Your payment of ' . $transaction->formattedAmount() . ' has been approved and processed.';
 
-        $this->notificationService->sendToUser($customerId, 'withdrawal_approved', $title, $body, 'in-app');
-        $this->notificationService->sendToUser($customerId, 'withdrawal_approved', $title, $body, 'email');
+        $this->notificationService->sendToUser($customerId, 'payment_approved', $title, $body, 'in-app');
+    }
+
+    /**
+     * Resolve the customer (user) that owns a payment transaction.
+     */
+    protected function resolveCustomerId(\App\Models\Transaction $transaction): ?int
+    {
+        $customerId = $transaction->from_user_id ?? $transaction->to_user_id;
+
+        if (!$customerId) {
+            $accountId = $transaction->from_account_id ?? $transaction->to_account_id;
+            $customerId = $accountId ? \App\Models\Account::where('id', $accountId)->value('user_id') : null;
+        }
+
+        return $customerId ? (int) $customerId : null;
     }
 }

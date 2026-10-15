@@ -37,13 +37,31 @@ class SendPaymentRejectedNotification implements ShouldQueue
     public function handle(PaymentRejected $event): void
     {
         $transaction = $event->transaction;
-        $customerId = $transaction->customer_id;
+        $customerId = $this->resolveCustomerId($transaction);
+
+        if (!$customerId) {
+            return;
+        }
 
         $reason = $transaction->rejection_reason ?: 'Please contact support for details.';
         $title  = 'Payment declined';
         $body   = 'Your payment of ' . $transaction->formattedAmount() . ' was declined. Reason: ' . $reason;
 
         $this->notificationService->sendToUser($customerId, 'payment_rejected', $title, $body, 'in-app');
-        $this->notificationService->sendToUser($customerId, 'payment_rejected', $title, $body, 'email');
+    }
+
+    /**
+     * Resolve the customer (user) that owns a payment transaction.
+     */
+    protected function resolveCustomerId(\App\Models\Transaction $transaction): ?int
+    {
+        $customerId = $transaction->from_user_id ?? $transaction->to_user_id;
+
+        if (!$customerId) {
+            $accountId = $transaction->from_account_id ?? $transaction->to_account_id;
+            $customerId = $accountId ? \App\Models\Account::where('id', $accountId)->value('user_id') : null;
+        }
+
+        return $customerId ? (int) $customerId : null;
     }
 }

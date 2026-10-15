@@ -25,6 +25,30 @@
         </div>
     </div>
 
+    @if(session('status'))
+        <div class="mb-4 flex items-center gap-3 p-4 bg-[var(--success-bg)] border border-[var(--success)]/30 rounded-xl text-sm font-medium text-[var(--success)]" role="status">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-width="2.5" stroke="currentColor" d="M5 13l4 4 7-7"></path>
+            </svg>
+            <span>{{ session('status') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-4 flex items-center gap-3 p-4 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm font-medium text-[var(--danger)]" role="alert">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            </svg>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="mb-4 p-4 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
     @push('scripts')
     <script>
     function getSelectedIds() {
@@ -125,7 +149,7 @@
                             <p class="text-2xl font-semibold mt-1">{{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}</p>
                             <p class="text-sm text-[var(--text-muted)]">{{ $openTransaction->fromAccount?->name ?? 'External' }} to {{ $openTransaction->toAccount?->name ?? $openTransaction->toUser?->name ?? 'External' }}</p>
                         </div>
-                        <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch])>
+                        <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch, 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true)])>
                             {{ $openTransaction->status instanceof \App\Enums\TransactionStatus ? $openTransaction->status->label() : ($openTransaction->status ?? '—') }}
                         </span>
                     </div>
