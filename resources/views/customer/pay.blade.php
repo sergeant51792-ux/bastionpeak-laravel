@@ -15,69 +15,81 @@
         <input type="hidden" name="idempotency" value="{{ $idempotency }}">
         <input type="hidden" id="selected_method" name="payment_method" value="{{ $selectedMethod }}">
 
-        <div data-account-field>
-            <label for="from_account_id" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Debit account</label>
-            <x-custom-select
-                name="from_account_id"
-                :options="$accounts->mapWithKeys(fn($a) => [$a->id => $a->name . ' (' . ($a->currency?->symbol ?? '') . ')' ])"
-                placeholder="Select account"
-                required
-            />
-        </div>
+        @if($debitAccount)
+            <div class="flex items-center justify-between gap-3 p-4 bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl">
+                <div class="min-w-0">
+                    <p class="text-xs text-[var(--text-muted)] mb-0.5">Debited from</p>
+                    <p class="text-sm font-semibold text-[var(--text)] truncate">
+                        {{ $debitAccount->name }}
+                        <span class="font-normal text-[var(--text-muted)]">&middot; {{ $debitAccount->currency?->code }}</span>
+                    </p>
+                </div>
+                <div class="text-right flex-shrink-0" data-balance-sensitive>
+                    <p class="text-xs text-[var(--text-muted)] mb-0.5">Balance</p>
+                    <p class="text-sm font-semibold text-[var(--text)] tabular-nums">
+                        {{ number_format((float) $debitAccount->balance, $debitAccount->currency?->decimals ?? 2) }} {{ $debitAccount->currency?->symbol ?? '' }}
+                    </p>
+                </div>
+            </div>
+        @else
+            <div class="p-4 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-xl text-sm text-[var(--danger)]">
+                No active account is available to debit. Please contact support.
+            </div>
+        @endif
 
         <div>
             <label class="block text-sm font-semibold text-[var(--text)] mb-1.5">Transfer method</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
-                <button type="button" onclick="selectMethod('wire')" data-method="wire" class="method-btn py-3 px-4 rounded-xl border text-center transition-all {{ $selectedMethod === 'wire' ? 'border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]' : 'border-[var(--line)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]' }}">
+                <button type="button" onclick="selectMethod('wire')" data-method="wire" class="method-btn min-h-[44px] flex items-center justify-center py-3 px-3 sm:px-4 rounded-xl border text-sm text-center transition-all {{ $selectedMethod === 'wire' ? 'border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]' : 'border-[var(--line)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]' }}">
                     Wire transfer
                 </button>
-                <button type="button" onclick="selectMethod('crypto')" data-method="crypto" class="method-btn py-3 px-4 rounded-xl border text-center transition-all {{ $selectedMethod === 'crypto' ? 'border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]' : 'border-[var(--line)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]' }}">
+                <button type="button" onclick="selectMethod('crypto')" data-method="crypto" class="method-btn min-h-[44px] flex items-center justify-center py-3 px-3 sm:px-4 rounded-xl border text-sm text-center transition-all {{ $selectedMethod === 'crypto' ? 'border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]' : 'border-[var(--line)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]' }}">
                     Cryptocurrency
                 </button>
-                <button type="button" onclick="selectMethod('swift')" data-method="swift" class="method-btn py-3 px-4 rounded-xl border text-center transition-all {{ $selectedMethod === 'swift' ? 'border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]' : 'border-[var(--line)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]' }}">
-                    SWIFT / UK & EU modes
+                <button type="button" onclick="selectMethod('swift')" data-method="swift" class="method-btn min-h-[44px] flex items-center justify-center py-3 px-3 sm:px-4 rounded-xl border text-sm text-center transition-all col-span-2 sm:col-span-1 {{ $selectedMethod === 'swift' ? 'border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]' : 'border-[var(--line)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]' }}">
+                    SWIFT / UK &amp; EU modes
                 </button>
             </div>
         </div>
 
         <div id="method-form-wire" class="method-form {{ $selectedMethod === 'wire' ? 'block' : 'hidden' }} space-y-4">
-            <div class="bg-[var(--surface-raised)] rounded-xl p-4">
+            <div class="bg-[var(--surface-raised)] rounded-xl p-4 sm:p-5">
                 <h3 class="text-sm font-semibold text-[var(--text)] mb-3">Wire transfer details</h3>
                 <div class="space-y-4">
                     <div>
-                        <label for="recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary name</label>
-                        <input type="text" id="recipient_name" name="recipient_name" data-required maxlength="255" class="input-field" placeholder="Full name of beneficiary">
+                        <label for="wire_recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary name</label>
+                        <input type="text" id="wire_recipient_name" name="recipient_name" data-required maxlength="255" class="input-field" placeholder="Full name of beneficiary" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
                     </div>
                     <div>
-                        <label for="bank_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Bank name</label>
-                        <input type="text" id="bank_name" name="metadata[bank_name]" data-required maxlength="255" class="input-field" placeholder="Receiving bank name">
+                        <label for="wire_bank_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Bank name</label>
+                        <input type="text" id="wire_bank_name" name="metadata[bank_name]" data-required maxlength="255" class="input-field" placeholder="Receiving bank name" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
                     </div>
                     <div>
-                        <label for="routing_number" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Routing number</label>
-                        <input type="text" id="routing_number" name="metadata[routing_number]" maxlength="50" class="input-field" placeholder="ABA / CHIPS routing number">
+                        <label for="wire_routing_number" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Routing number</label>
+                        <input type="text" id="wire_routing_number" name="metadata[routing_number]" maxlength="50" class="input-field" placeholder="ABA / CHIPS routing number" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     </div>
                     <div>
-                        <label for="account_number" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Account number</label>
-                        <input type="text" id="account_number" name="metadata[account_number]" data-required maxlength="50" class="input-field" placeholder="Recipient bank account number">
+                        <label for="wire_account_number" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Account number</label>
+                        <input type="text" id="wire_account_number" name="metadata[account_number]" data-required maxlength="50" class="input-field" placeholder="Recipient bank account number" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     </div>
                     <div>
-                        <label for="swift_code" class="block text-sm font-semibold text-[var(--text)] mb-1.5">SWIFT/BIC code <span class="text-[var(--text-muted)] font-normal">(optional)</span></label>
-                        <input type="text" id="swift_code" name="metadata[swift_code]" maxlength="20" class="input-field" placeholder="SWIFT/BIC code if applicable">
+                        <label for="wire_swift_code" class="block text-sm font-semibold text-[var(--text)] mb-1.5">SWIFT/BIC code <span class="text-[var(--text-muted)] font-normal">(optional)</span></label>
+                        <input type="text" id="wire_swift_code" name="metadata[swift_code]" maxlength="20" class="input-field" placeholder="SWIFT/BIC code if applicable" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     </div>
                     <div>
-                        <label for="recipient_detail" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Recipient details</label>
-                        <textarea id="recipient_detail" name="recipient_detail" data-required rows="2" maxlength="1000" class="input-field" placeholder="Full beneficiary address, bank address, purpose of payment"></textarea>
+                        <label for="wire_recipient_detail" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Recipient details</label>
+                        <textarea id="wire_recipient_detail" name="recipient_detail" data-required rows="2" maxlength="1000" class="input-field" placeholder="Full beneficiary address, bank address, purpose of payment" autocomplete="off"></textarea>
                     </div>
                     <div>
-                        <label for="purpose" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Purpose of payment</label>
-                        <input type="text" id="purpose" name="purpose" data-required maxlength="500" class="input-field" placeholder="e.g. Invoice payment, investment, etc.">
+                        <label for="wire_purpose" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Purpose of payment</label>
+                        <input type="text" id="wire_purpose" name="purpose" data-required maxlength="500" class="input-field" placeholder="e.g. Invoice payment, investment, etc." inputmode="text" autocomplete="off">
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="method-form-crypto" class="method-form {{ $selectedMethod === 'crypto' ? 'block' : 'hidden' }} space-y-4">
-            <div class="bg-[var(--surface-raised)] rounded-xl p-4">
+            <div class="bg-[var(--surface-raised)] rounded-xl p-4 sm:p-5">
                 <h3 class="text-sm font-semibold text-[var(--text)] mb-3">Cryptocurrency transfer</h3>
                 <div class="space-y-4">
                     <div>
@@ -98,9 +110,9 @@
                         />
                     </div>
                     <div>
-                        <label for="network" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Network</label>
+                        <label for="crypto_network" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Network</label>
                         <x-custom-select
-                            id="network"
+                            id="crypto_network"
                             name="metadata[network]"
                             :options="[
                                 'TRC20' => 'TRC20 (Tron)',
@@ -114,52 +126,52 @@
                         />
                     </div>
                     <div>
-                        <label for="wallet_address" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Recipient wallet address</label>
-                        <input type="text" id="wallet_address" name="metadata[wallet_address]" data-required maxlength="200" class="input-field" placeholder="Recipient cryptocurrency wallet address">
+                        <label for="crypto_wallet_address" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Recipient wallet address</label>
+                        <input type="text" id="crypto_wallet_address" name="metadata[wallet_address]" data-required maxlength="200" class="input-field" placeholder="Recipient cryptocurrency wallet address" inputmode="text" autocomplete="off" autocapitalize="none" spellcheck="false">
                     </div>
                     <div>
-                        <label for="recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Recipient name</label>
-                        <input type="text" id="recipient_name" name="recipient_name" data-required maxlength="255" class="input-field" placeholder="Full name of beneficiary">
+                        <label for="crypto_recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Recipient name</label>
+                        <input type="text" id="crypto_recipient_name" name="recipient_name" data-required maxlength="255" class="input-field" placeholder="Full name of beneficiary" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
                     </div>
                     <div>
-                        <label for="recipient_detail" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Notes <span class="text-[var(--text-muted)] font-normal">(optional)</span></label>
-                        <textarea id="recipient_detail" name="recipient_detail" rows="2" maxlength="1000" class="input-field" placeholder="Additional details or memo"></textarea>
+                        <label for="crypto_recipient_detail" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Notes <span class="text-[var(--text-muted)] font-normal">(optional)</span></label>
+                        <textarea id="crypto_recipient_detail" name="recipient_detail" rows="2" maxlength="1000" class="input-field" placeholder="Additional details or memo" autocomplete="off"></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="method-form-swift" class="method-form {{ $selectedMethod === 'swift' ? 'block' : 'hidden' }} space-y-4">
-            <div class="bg-[var(--surface-raised)] rounded-xl p-4">
+            <div class="bg-[var(--surface-raised)] rounded-xl p-4 sm:p-5">
                 <h3 class="text-sm font-semibold text-[var(--text)] mb-3">SWIFT / International transfer</h3>
                 <div class="space-y-4">
                     <div>
-                        <label for="recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary name</label>
-                        <input type="text" id="recipient_name" name="recipient_name" required maxlength="255" class="input-field" placeholder="Full name of beneficiary">
+                        <label for="swift_recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary name</label>
+                        <input type="text" id="swift_recipient_name" name="recipient_name" required maxlength="255" class="input-field" placeholder="Full name of beneficiary" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
                     </div>
                     <div>
-                        <label for="bank_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Bank name</label>
-                        <input type="text" id="bank_name" name="metadata[bank_name]" data-required maxlength="255" class="input-field" placeholder="Receiving bank name">
+                        <label for="swift_bank_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Bank name</label>
+                        <input type="text" id="swift_bank_name" name="metadata[bank_name]" data-required maxlength="255" class="input-field" placeholder="Receiving bank name" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
                     </div>
                     <div>
-                        <label for="swift_code" class="block text-sm font-semibold text-[var(--text)] mb-1.5">SWIFT/BIC code</label>
-                        <input type="text" id="swift_code" name="metadata[swift_code]" data-required maxlength="20" class="input-field" placeholder="SWIFT/BIC code">
+                        <label for="swift_swift_code" class="block text-sm font-semibold text-[var(--text)] mb-1.5">SWIFT/BIC code</label>
+                        <input type="text" id="swift_swift_code" name="metadata[swift_code]" data-required maxlength="20" class="input-field" placeholder="SWIFT/BIC code" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     </div>
                     <div>
-                        <label for="iban" class="block text-sm font-semibold text-[var(--text)] mb-1.5">IBAN <span class="text-[var(--text-muted)] font-normal">(EUR accounts)</span></label>
-                        <input type="text" id="iban" name="metadata[iban]" maxlength="50" class="input-field" placeholder="IBAN (for SEPA transfers)">
+                        <label for="swift_iban" class="block text-sm font-semibold text-[var(--text)] mb-1.5">IBAN <span class="text-[var(--text-muted)] font-normal">(EUR accounts)</span></label>
+                        <input type="text" id="swift_iban" name="metadata[iban]" maxlength="50" class="input-field" placeholder="IBAN (for SEPA transfers)" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     </div>
                     <div>
-                        <label for="account_number" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Account number / Sort code</label>
-                        <input type="text" id="account_number" name="metadata[account_number]" data-required maxlength="50" class="input-field" placeholder="Account number and/or sort code">
+                        <label for="swift_account_number" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Account number / Sort code</label>
+                        <input type="text" id="swift_account_number" name="metadata[account_number]" data-required maxlength="50" class="input-field" placeholder="Account number and/or sort code" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     </div>
                     <div>
-                        <label for="recipient_detail" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary address</label>
-                        <textarea id="recipient_detail" name="recipient_detail" data-required rows="2" maxlength="1000" class="input-field" placeholder="Full beneficiary address"></textarea>
+                        <label for="swift_recipient_detail" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary address</label>
+                        <textarea id="swift_recipient_detail" name="recipient_detail" data-required rows="2" maxlength="1000" class="input-field" placeholder="Full beneficiary address" autocomplete="off"></textarea>
                     </div>
                     <div>
-                        <label for="purpose" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Purpose of payment</label>
-                        <input type="text" id="purpose" name="purpose" data-required maxlength="500" class="input-field" placeholder="e.g. Invoice payment, investment, etc.">
+                        <label for="swift_purpose" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Purpose of payment</label>
+                        <input type="text" id="swift_purpose" name="purpose" data-required maxlength="500" class="input-field" placeholder="e.g. Invoice payment, investment, etc." inputmode="text" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -168,10 +180,10 @@
         <div>
             <label for="amount" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Amount</label>
             <div class="input-symbol-prefix">
-                <span class="symbol">$</span>
+                <span class="symbol">{{ $debitAccount?->currency?->symbol ?? '$' }}</span>
                 <input type="text" inputmode="decimal" id="amount" name="amount" required
                        class="input-field pr-4 py-3"
-                       placeholder="0.00">
+                       placeholder="0.00" autocomplete="off">
             </div>
         </div>
 
@@ -192,7 +204,7 @@
         @endif
 
         <div class="mt-6">
-            <button type="submit" id="submit-btn" class="w-full py-3.5 btn-primary disabled:opacity-60 disabled:cursor-not-allowed">Submit transfer request</button>
+            <button type="submit" id="submit-btn" class="w-full py-3.5 btn-primary disabled:opacity-60 disabled:cursor-not-allowed" @disabled(! $debitAccount)>Submit transfer request</button>
         </div>
     </form>
 </div>
@@ -256,6 +268,21 @@
         from { width: 6%; }
         to { width: 100%; }
     }
+
+    /* Money input reads as the primary field on the page */
+    .input-symbol-prefix input#amount {
+        font-size: 1.0625rem;
+        font-weight: 600;
+    }
+    .input-symbol-prefix:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .input-symbol-prefix input#amount:focus {
+        outline: none;
+        border: none;
+        box-shadow: none;
+    }
 </style>
 <script>
     function selectMethod(method) {
@@ -294,12 +321,6 @@
         if (!activeForm) return true;
 
         var firstInvalid = null;
-
-        var accountInput = document.querySelector('input[name="from_account_id"]');
-        if (accountInput && !accountInput.value) {
-            firstInvalid = accountInput.closest('.custom-select');
-            showFieldError(accountInput.closest('[data-account-field]') || accountInput.closest('.relative'), 'Please select a debit account.');
-        }
 
         activeForm.querySelectorAll('[data-required]').forEach(el => {
             var value = (el.value || '').trim();

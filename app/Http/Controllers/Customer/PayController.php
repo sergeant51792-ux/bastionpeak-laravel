@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,22 +19,26 @@ class PayController extends Controller
     public function __invoke(Request $request): \Illuminate\View\View
     {
         $user = Auth::user();
+        abort_if(! $user instanceof User, 403);
+
         $selectedMethod = $request->query('method', 'wire');
 
         return view('customer.pay', [
-            'user'       => $user,
-            'accounts'   => $user->accounts()->where('status', 'active')->with('currency')->get(),
-            'idempotency' => bin2hex(random_bytes(32)),
-            'selectedMethod' => $selectedMethod,
+            'user'            => $user,
+            'accounts'        => $user->accounts()->where('status', 'active')->with('currency')->get(),
+            'debitAccount'    => $this->resolveDebitAccount($user, $request),
+            'idempotency'     => bin2hex(random_bytes(32)),
+            'selectedMethod'  => $selectedMethod,
         ]);
     }
 
     public function submit(Request $request): RedirectResponse
     {
         $user = Auth::user();
+        abort_if(! $user instanceof User, 403);
 
         $validated = $request->validate([
-            'from_account_id' => ['required', 'exists:accounts,id'],
+            'from_account_id' => ['nullable', 'integer'],
             'payment_method'  => ['required', 'string', 'max:100'],
             'recipient_name'  => ['required', 'string', 'max:255'],
             'recipient_detail' => ['nullable', 'string', 'max:1000'],
@@ -43,13 +49,11 @@ class PayController extends Controller
             'metadata'        => ['nullable', 'array'],
         ]);
 
-        $account = \App\Models\Account::where('id', $validated['from_account_id'])
-            ->where('user_id', $user->id)
-            ->firstOrFail();
+        $account = $this->resolveDebitAccount($user, $request, isset($validated['from_account_id']) ? (int) $validated['from_account_id'] : null);
 
-        if ($account->status !== 'active') {
+        if (! $account) {
             return back()->withErrors([
-                'from_account_id' => 'The selected account is ' . $account->status . '. Please choose an active account.',
+                'amount' => 'No active account is available to debit. Please contact support.',
             ])->withInput();
         }
 
@@ -72,5 +76,38 @@ class PayController extends Controller
         );
 
         return redirect()->route('pay', ['status' => 'submitted'])->with('status', 'Transfer request submitted successfully.');
+    }
+
+    /**
+     * Resolve the account a transfer will be debited from.
+     *
+     * Uses an explicitly submitted account when it is valid, otherwise the
+     * account the customer currently has active, falling back to their first
+     * active account.
+     */
+    protected function resolveDebitAccount(User $user, Request $request, ?int $preferredAccountId = null): ?Account
+    {
+        if ($preferredAccountId) {
+            $preferred = $user->accounts()
+                ->where('id', $preferredAccountId)
+                ->where('status', 'active')
+                ->with('currency')
+                ->first();
+
+            if ($preferred) {
+                return $preferred;
+            }
+        }
+
+        $accounts = $user->accounts()->with('currency')->orderBy('type')->orderBy('created_at')->get();
+        $activeAccounts = $accounts->where('status', 'active');
+
+        if ($activeAccounts->isEmpty()) {
+            return null;
+        }
+
+        $chosen = $accounts->get((int) $request->cookie('bp_active_account', 0));
+
+        return ($chosen && $chosen->status === 'active') ? $chosen : $activeAccounts->first();
     }
 }
