@@ -10,7 +10,7 @@
         <h1 class="text-xl font-semibold">Send money</h1>
     </header>
 
-    <form method="POST" action="{{ route('pay.submit') }}" enctype="multipart/form-data" class="space-y-5" id="payment-form">
+    <form method="POST" action="{{ route('pay.submit') }}" enctype="multipart/form-data" class="space-y-5" id="payment-form" novalidate>
         @csrf
         <input type="hidden" name="idempotency" value="{{ $idempotency }}">
         <input type="hidden" id="selected_method" name="payment_method" value="{{ $selectedMethod }}">
@@ -147,7 +147,7 @@
                 <div class="space-y-4">
                     <div>
                         <label for="swift_recipient_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Beneficiary name</label>
-                        <input type="text" id="swift_recipient_name" name="recipient_name" required maxlength="255" class="input-field" placeholder="Full name of beneficiary" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
+                        <input type="text" id="swift_recipient_name" name="recipient_name" data-required maxlength="255" class="input-field" placeholder="Full name of beneficiary" inputmode="text" autocomplete="off" autocapitalize="words" spellcheck="false">
                     </div>
                     <div>
                         <label for="swift_bank_name" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Bank name</label>
@@ -181,7 +181,7 @@
             <label for="amount" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Amount</label>
             <div class="input-symbol-prefix">
                 <span class="symbol">{{ $debitAccount?->currency?->symbol ?? '$' }}</span>
-                <input type="text" inputmode="decimal" id="amount" name="amount" required
+                <input type="text" inputmode="decimal" id="amount" name="amount" data-required
                        class="input-field pr-4 py-3"
                        placeholder="0.00" autocomplete="off">
             </div>
@@ -322,6 +322,17 @@
 
         var firstInvalid = null;
 
+        var amountInput = document.getElementById('amount');
+        if (amountInput) {
+            var amountValue = (amountInput.value || '').trim();
+            var amountNum = parseFloat(amountValue.replace(/,/g, '.'));
+            if (!amountValue || isNaN(amountNum) || amountNum <= 0) {
+                var amountContainer = amountInput.closest('.input-symbol-prefix') || amountInput.parentElement;
+                showFieldError(amountContainer.parentElement, 'Please enter a valid amount.');
+                if (firstInvalid === null) firstInvalid = amountContainer;
+            }
+        }
+
         activeForm.querySelectorAll('[data-required]').forEach(el => {
             var value = (el.value || '').trim();
             if (el.type === 'hidden') {
@@ -358,7 +369,6 @@
                 e.preventDefault();
                 return;
             }
-
             var overlay = document.getElementById('processing-overlay');
             var fill = overlay.querySelector('.bp-progress-fill');
             fill.style.animation = 'none';
