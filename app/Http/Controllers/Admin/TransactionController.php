@@ -50,7 +50,7 @@ class TransactionController extends Controller
     public function show(Transaction $transaction): \Illuminate\View\View
     {
         return view('admin.transaction-detail', [
-            'transaction' => $transaction->load(['fromAccount', 'toAccount', 'fromUser', 'toUser', 'merchant', 'operator']),
+            'transaction' => $transaction->load(['fromAccount', 'toAccount', 'fromUser', 'toUser', 'merchant', 'operator', 'currency']),
         ]);
     }
 
