@@ -67,7 +67,14 @@ class PayController extends Controller
         $validated['proof_path'] = $proofPath;
 
         // An authenticator code is required before a transfer can be sent.
-        if ($user->hasTotp() && ! TwoFactorController::isApproved('transfer')) {
+        // Redirect to setup if the user has not yet enrolled.
+        if (! $user->hasTotp()) {
+            return redirect()
+                ->route('two-factor.setup')
+                ->with('status', 'Authenticator verification is required before sending transfers. Please set up your authenticator first.');
+        }
+
+        if (! TwoFactorController::isApproved('transfer')) {
             return TwoFactorController::requireOtp($request, 'transfer', $validated);
         }
 
