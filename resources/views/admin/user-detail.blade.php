@@ -311,23 +311,47 @@
         <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl overflow-hidden">
             <h2 class="text-sm font-semibold text-[var(--text-muted)] p-5 pb-3">Pending approvals ({{ $requests->count() }})</h2>
             <div class="divide-y divide-[var(--line)]">
-                @forelse($requests as $request)
+                @forelse($requests as $req)
                     @php
-                        $requestTypeLabel = $request->type instanceof \App\Enums\TransactionType ? $request->type->label() : ($request->type ?? '—');
-                        $requestStatusLabel = $request->status instanceof \App\Enums\TransactionStatus ? $request->status->label() : ($request->status ?? '—');
+                        $reqTypeLabel = $req->type instanceof \App\Enums\TransactionType ? $req->type->label() : ($req->type ?? '—');
+                        $reqStatus = $req->status instanceof \App\Enums\TransactionStatus ? $req->status->value : ($req->status ?? '—');
+                        $reqStatusLabel = match($reqStatus) {
+                            'pending_review', 'pending_match' => 'Pending',
+                            default => ucfirst($reqStatus),
+                        };
                     @endphp
-                    <div class="p-4 flex items-center justify-between">
-                        <div>
-                            <p class="font-medium">{{ $requestTypeLabel }}</p>
-                            <p class="text-sm text-[var(--text-muted)]">{{ Str::limit($request->memo ?? 'No memo', 60) }}</p>
-                            <p class="text-xs text-[var(--text-muted)] mt-1">{{ $request->created_at->diffForHumans() }}</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="text-right">
-                                <p class="font-semibold" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $request->amount, $request->currency->decimals ?? 2) }} {{ $request->currency->symbol ?? '' }}</p>
-                                <span class="text-xs text-[var(--text-muted)]">{{ $requestStatusLabel }}</span>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                                <p class="font-medium">{{ $reqTypeLabel }}</p>
+                                <p class="text-sm text-[var(--text-muted)]">{{ Str::limit($req->memo ?? 'No memo', 60) }}</p>
+                                <p class="text-xs text-[var(--text-muted)] mt-1">{{ $req->created_at->diffForHumans() }}</p>
                             </div>
-                            <a href="{{ route('admin.approvals', ['open' => $request->id]) }}" class="px-3 py-1.5 bg-[var(--primary)]/10 text-[var(--primary)] rounded-lg text-xs font-medium hover:bg-[var(--primary)]/20 transition-colors">Review</a>
+                            <div class="text-right flex-shrink-0">
+                                <p class="font-semibold" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $req->amount, $req->currency->decimals ?? 2) }} {{ $req->currency->symbol ?? '' }}</p>
+                                <span class="text-xs text-[var(--text-muted)]">{{ $reqStatusLabel }}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <form method="POST" action="{{ route('admin.approvals.approve', $req) }}" class="flex-1">
+                                @csrf
+                                <button type="submit"
+                                        onclick="return confirm('Approve this {{ $reqTypeLabel }} request? Funds will be processed immediately.')"
+                                        class="w-full py-2 bg-[var(--success)] text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity min-h-[44px] flex items-center justify-center gap-1">
+                                    <x-icon name="check" class="w-3.5 h-3.5" />
+                                    Approve
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.approvals.reject', $req) }}" class="flex-1">
+                                @csrf
+                                <input type="hidden" name="reason" value="Transaction did not meet verification requirements">
+                                <button type="submit"
+                                        onclick="return confirm('Decline this {{ $reqTypeLabel }} request? The customer will be notified.')"
+                                        class="w-full py-2 bg-[var(--danger)] text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity min-h-[44px] flex items-center justify-center gap-1">
+                                    <x-icon name="x" class="w-3.5 h-3.5" />
+                                    Decline
+                                </button>
+                            </form>
                         </div>
                     </div>
                 @empty
