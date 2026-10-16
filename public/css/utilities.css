@@ -1,0 +1,73 @@
+[data-theme]{
+--bg:#f1f5f9;--surface:#fff;--surface-raised:#f8fafc;--line:#e2e8f0;--line-soft:#f1f5f9;--text:#0f172a;--text-muted:#64748b;--text-inverse:#fff;--focus:#3b82f6;--primary:#1e3a8a;--primary-light:#2563eb;--primary-dark:#0f2557;--accent:#3b82f6;--accent-light:#60a5fa;--accent-dark:#1d4ed8;--accent-subtle:#eff6ff;--success:#059669;--success-bg:#ecfdf5;--warning:#d97706;--warning-bg:#fffbeb;--danger:#dc2626;--danger-bg:#fef2f2;--card-navy:#0f2557;--card-blue:#1e3a8a;--card-sky:#075985
+}
+body{background:var(--bg);font-feature-settings:"cv02","cv03","cv04","cv11";min-height:100vh}body.dark,body[data-theme=dark]{--bg:#0f172a;--surface:rgba(30,35,60,.45);--surface-raised:rgba(40,50,80,.55);--line:rgba(60,70,100,.4);--line-soft:rgba(30,35,60,.3);--text:#f1f5f9;--text-muted:#94a3b8;--text-inverse:#fff;--focus:#60a5fa;--primary:#3b82f6;--primary-light:#60a5fa;--primary-dark:#2563eb;--accent:#60a5fa;--accent-light:#93c5fd;--accent-dark:#3b82f6;--accent-subtle:#1e3a8a;--success:#4ade80;--success-bg:rgba(20,83,45,.6);--warning:#fb923c;--warning-bg:rgba(120,53,15,.6);--danger:#f87171;--danger-bg:rgba(127,29,29,.6);--card-navy:#1e3a8a;--card-blue:#3b82f6;--card-sky:#0ea5e9}
+.bg-\[var\(--danger\)\]{background-color:var(--danger)}
+.bg-\[var\(--success\)\]{background-color:var(--success)}
+.bg-\[var\(--warning\)\]{background-color:var(--warning)}
+.bg-\[var\(--primary\)\]{background-color:var(--primary)}
+.bg-\[var\(--primary-dark\)\]{background-color:var(--primary-dark)}
+.bg-\[var\(--accent\)\]{background-color:var(--accent)}
+.bg-\[var\(--accent-dark\)\]{background-color:var(--accent-dark)}
+.bg-\[var\(--accent-subtle\)\]{background-color:var(--accent-subtle)}
+.bg-\[var\(--surface\)\]{background-color:var(--surface)}
+.bg-\[var\(--surface-raised\)\]{background-color:var(--surface-raised)}
+.bg-\[var\(--danger-bg\)\]{background-color:var(--danger-bg)}
+.bg-\[var\(--success-bg\)\]{background-color:var(--success-bg)}
+.bg-\[var\(--warning-bg\)\]{background-color:var(--warning-bg)}
+.bg-\[var\(--line\)\]{background-color:var(--line)}
+.bg-\[var\(--line-soft\)\]{background-color:var(--line-soft)}
+.bg-\[var\(--bg\)\]{background-color:var(--bg)}
+.text-\[var\(--danger\)\]{color:var(--danger)}
+.text-\[var\(--success\)\]{color:var(--success)}
+.text-\[var\(--warning\)\]{color:var(--warning)}
+.text-\[var\(--primary\)\]{color:var(--primary)}
+.text-\[var\(--primary-dark\)\]{color:var(--primary-dark)}
+.text-\[var\(--accent\)\]{color:var(--accent)}
+.text-\[var\(--accent-dark\)\]{color:var(--accent-dark)}
+.text-\[var\(--text\)\]{color:var(--text)}
+.text-\[var\(--text-muted\)\]{color:var(--text-muted)}
+.text-\[var\(--text-inverse\)\]{color:var(--text-inverse)}
+.text-\[var\(--bg\)\]{color:var(--bg)}
+.border-\[var\(--danger\)\]{border-color:var(--danger)}
+.border-\[var\(--success\)\]{border-color:var(--success)}
+.border-\[var\(--accent\)\]{border-color:var(--accent)}
+.border-\[var\(--line\)\]{border-color:var(--line)}
+.border-\[var\(--surface-raised\)\]{border-color:var(--surface-raised)}
+.border-\[var\(--primary\)\]{border-color:var(--primary)}
+.hover\:bg-\[var\(--danger\)\]:hover{background-color:var(--danger)}
+.hover\:bg-\[var\(--success\)\]:hover{background-color:var(--success)}
+.hover\:bg-\[var\(--accent\)\]:hover{background-color:var(--accent)}
+.hover\:bg-\[var\(--accent-dark\)\]:hover{background-color:var(--accent-dark)}
+.hover\:bg-\[var\(--surface-raised\)\]:hover{background-color:var(--surface-raised)}
+.hover\:bg-\[var\(--line-soft\)\]:hover{background-color:var(--line-soft)}
+.hover\:bg-\[var\(--line\)\]\/30:hover{background-color:Color-mix(in oklab,var(--line) 30%,transparent)}
+.hover\:bg-\[var\(--line\)\]\/50:hover{background-color:Color-mix(in oklab,var(--line) 50%,transparent)}
+.hover\:bg-\[var\(--primary\)\]\/20:hover{background-color:Color-mix(in oklab,var(--primary) 20%,transparent)}
+.hover\:text-\[var\(--accent\)\]:hover{color:var(--accent)}
+.hover\:text-\[var\(--accent-dark\)\]:hover{color:var(--accent-dark)}
+.hover\:text-\[var\(--text\)\]:hover{color:var(--text)}
+.hover\:text-\[var\(--primary\)\]:hover{color:var(--primary)}
+.hover\:text-white:hover{color:var(--color-white)}
+.hover\:border-\[var\(--accent\)\]:hover{border-color:var(--accent)}
+.hover\:border-\[var\(--line\)\]:hover{border-color:var(--line)}
+.hover\:opacity-90:hover{opacity:.9}
+.hover\:opacity-100:hover{opacity:1}
+.peer-checked\:bg-\[var\(--accent\)\]:is(:where(.peer:checked)~*){background-color:var(--accent)}
+.peer-focus\:ring-\[var\(--accent\)\]:is(:where(.peer:focus)~*){--tw-ring-color:var(--accent)}
+.peer-focus\:outline-none:is(:where(.peer:focus)~*){outline-style:none}
+.has-\[\:checked\]\:border-\[var\(--accent\)\]:has(:checked){border-color:var(--accent)}
+.has-\[\:checked\]\:bg-\[var\(--accent-subtle\)\]:has(:checked){background-color:var(--accent-subtle)}
+.group-hover\:bg-\[var\(--accent\)\]:is(:where(.group):hover *){background-color:var(--accent)}
+.group-hover\:bg-\[var\(--accent-subtle\)\]:is(:where(.group):hover *){background-color:var(--accent-subtle)}
+.group-hover\:text-\[var\(--accent\)\]:is(:where(.group):hover *){color:var(--accent)}
+.group-hover\:text-white:is(:where(.group):hover *){color:var(--color-white)}
+.dark\:bg-\[var\(--surface\)\]{background-color:var(--surface)}
+.dark\:bg-\[var\(--surface-raised\)\]{background-color:var(--surface-raised)}
+.dark\:bg-\[var\(--accent\)\]{background-color:var(--accent)}
+.dark\:bg-\[var\(--accent-dark\)\]{background-color:var(--accent-dark)}
+.dark\:text-\[var\(--text\)\]{color:var(--text)}
+.dark\:text-\[var\(--accent\)\]{color:var(--accent)}
+.dark\:text-white{color:var(--color-white)}
+.dark\:hover\:bg-\[var\(--accent\)\]:hover{background-color:var(--accent)}
+.dark\:hover\:text-white:hover{color:var(--color-white)}
