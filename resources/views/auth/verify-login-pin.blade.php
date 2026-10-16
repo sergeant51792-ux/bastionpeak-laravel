@@ -36,7 +36,7 @@
                         </div>
                         <h1 class="text-2xl font-bold text-[var(--text)] mb-2">Enter your login PIN</h1>
                         <p class="text-sm text-[var(--text-muted)]">
-                            Enter the 4-digit PIN provided by an administrator to complete sign-in for
+                            Enter the 4-digit PIN provided by support to complete sign-in for
                             <span class="font-medium text-[var(--text)]">{{ $email }}</span>.
                         </p>
                         <p class="text-xs text-[var(--text-muted)] mt-2 flex items-center justify-center gap-1">

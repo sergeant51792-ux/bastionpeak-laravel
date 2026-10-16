@@ -76,7 +76,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('admin.users.block', $user) }}" class="inline" onsubmit="return confirm('Block this user account?')" title="Block account">
                                         @csrf
-                                        <input type="hidden" name="reason" value="Blocked by admin">
+                                        <input type="hidden" name="reason" value="Account locked">
                                         <button type="submit" class="p-1.5 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
                                             <x-icon name="lock" class="w-4 h-4" />
                                         </button>
@@ -93,7 +93,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('admin.users.block', $user) }}" class="inline" onsubmit="return confirm('Block this user account?')" title="Block account">
                                         @csrf
-                                        <input type="hidden" name="reason" value="Blocked by admin">
+                                        <input type="hidden" name="reason" value="Account locked">
                                         <button type="submit" class="p-1.5 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
                                             <x-icon name="lock" class="w-4 h-4" />
                                         </button>

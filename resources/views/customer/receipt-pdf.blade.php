@@ -18,7 +18,7 @@
         'credited'       => ['label' => 'Successful', 'color' => '#10B981', 'icon' => 'check'],
         'posted'         => ['label' => 'Successful', 'color' => '#10B981', 'icon' => 'check'],
         'rejected'       => ['label' => 'Failed',     'color' => '#EF4444', 'icon' => 'x'],
-        'reversed'       => ['label' => 'Reversed',   'color' => '#F59E0B', 'icon' => 'refresh-cw'],
+        'reversed'       => ['label' => 'Failed',     'color' => '#EF4444', 'icon' => 'x'],
     ];
     $statusInfo = $statusMap[$statusEnum->value]
         ?? ['label' => ucfirst($statusEnum->value), 'color' => '#64748B', 'icon' => 'circle'];

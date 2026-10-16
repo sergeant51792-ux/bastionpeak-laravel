@@ -57,7 +57,7 @@
             </div>
             <h2 class="text-base font-semibold text-[var(--text)]">Understanding transaction statuses</h2>
             <p class="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
-                <strong>Pending</strong> — the transaction is being reviewed. <strong>Credited / Completed</strong> — the money is in the destination account. <strong>Debited / Completed</strong> — money left your account. <strong>Failed</strong> — the transaction was declined. If a transfer fails, your funds are returned to balance.
+                <strong>Pending</strong> — the transaction is being reviewed. <strong>Credited / Successful</strong> — the money is in the destination account. <strong>Debited / Successful</strong> — money left your account. <strong>Failed</strong> — the transaction was declined. If a transfer fails, your funds are returned to balance.
             </p>
         </article>
         <article class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">

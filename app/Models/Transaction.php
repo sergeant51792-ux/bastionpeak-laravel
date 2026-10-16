@@ -137,7 +137,8 @@ class Transaction extends Model
             ? $this->status
             : \App\Enums\TransactionStatus::from((string) $this->status);
 
-        if ($status === \App\Enums\TransactionStatus::Rejected) {
+        if ($status === \App\Enums\TransactionStatus::Rejected
+            || $status === \App\Enums\TransactionStatus::Reversed) {
             return 'Failed';
         }
 
@@ -146,11 +147,7 @@ class Transaction extends Model
             return 'Pending';
         }
 
-        if ($status === \App\Enums\TransactionStatus::Reversed) {
-            return 'Reversed';
-        }
-
-        return $this->isOutgoing() ? 'Debited' : 'Credited';
+        return 'Successful';
     }
 
     public function customerStatusTone(): string
@@ -159,17 +156,17 @@ class Transaction extends Model
             ? $this->status
             : \App\Enums\TransactionStatus::from((string) $this->status);
 
-        if ($status === \App\Enums\TransactionStatus::Rejected) {
+        if ($status === \App\Enums\TransactionStatus::Rejected
+            || $status === \App\Enums\TransactionStatus::Reversed) {
             return 'danger';
         }
 
         if ($status === \App\Enums\TransactionStatus::PendingReview
-            || $status === \App\Enums\TransactionStatus::PendingMatch
-            || $status === \App\Enums\TransactionStatus::Reversed) {
+            || $status === \App\Enums\TransactionStatus::PendingMatch) {
             return 'warning';
         }
 
-        return $this->isIncoming() ? 'success' : 'neutral';
+        return 'success';
     }
 
     public function scopePending($query)

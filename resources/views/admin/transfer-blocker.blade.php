@@ -104,7 +104,7 @@
                         </form>
                     </div>
                     <div class="mt-3 p-3 bg-[var(--line-soft)] rounded-lg">
-                        <p class="text-xs font-semibold text-[var(--text-muted)] mb-1">Admin message</p>
+                        <p class="text-xs font-semibold text-[var(--text-muted)] mb-1">Notice</p>
                         <p class="text-sm text-[var(--text)] whitespace-pre-line">{{ $blocked->transfer_block_reason }}</p>
                     </div>
                     <p class="text-xs text-[var(--text-muted)] mt-2">

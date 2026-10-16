@@ -150,7 +150,16 @@
                             <p class="text-sm text-[var(--text-muted)]">{{ $openTransaction->fromAccount?->name ?? 'External' }} to {{ $openTransaction->toAccount?->name ?? $openTransaction->toUser?->name ?? 'External' }}</p>
                         </div>
                         <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch, 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true)])>
-                            {{ $openTransaction->status instanceof \App\Enums\TransactionStatus ? $openTransaction->status->label() : ($openTransaction->status ?? '—') }}
+                            @php
+                                $adminStatusLabel = match(true) {
+                                    in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true) => 'Approved',
+                                    in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true) => 'Declined',
+                                    $openTransaction->status === \App\Enums\TransactionStatus::PendingReview => 'Pending',
+                                    $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch => 'Pending Match',
+                                    default => $openTransaction->status instanceof \App\Enums\TransactionStatus ? $openTransaction->status->label() : ($openTransaction->status ?? '—'),
+                                };
+                            @endphp
+                            {{ $adminStatusLabel }}
                         </span>
                     </div>
                 </div>
@@ -243,20 +252,20 @@
                     <div class="flex items-center gap-3 pt-4">
                         <form method="POST" action="{{ route('admin.approvals.reject', $openTransaction) }}" class="flex-1">
                             @csrf
-                            <input type="hidden" name="reason" value="Rejected during review">
-                            <button type="submit" class="w-full py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors">Reject</button>
+                            <input type="hidden" name="reason" value="Transaction did not meet verification requirements">
+                            <button type="submit" class="w-full py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors" onclick="return confirm('Decline this transaction? It will be marked as failed and the customer notified.')">Decline</button>
                         </form>
                         <form method="POST" action="{{ route('admin.approvals.approve', $openTransaction) }}" class="flex-1">
                             @csrf
-                                <button type="submit" class="w-full py-2.5 bg-[var(--success)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">
-                            @if($openTransaction->type === \App\Enums\TransactionType::DepositCredit)
-                                Approve and credit {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
-                            @elseif($openTransaction->type === \App\Enums\TransactionType::PaymentDebit)
-                                Approve and debit {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
-                            @else
-                                Approve {{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}
-                            @endif
-                                </button>
+                            <button type="submit" class="w-full py-2.5 bg-[var(--success)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity" onclick="return confirm('Approve this transaction? It will be marked as successful and funds will be processed.')">
+                                @if($openTransaction->type === \App\Enums\TransactionType::DepositCredit)
+                                    Approve
+                                @elseif($openTransaction->type === \App\Enums\TransactionType::PaymentDebit)
+                                    Approve
+                                @else
+                                    Approve
+                                @endif
+                            </button>
                         </form>
                     </div>
                 </div>

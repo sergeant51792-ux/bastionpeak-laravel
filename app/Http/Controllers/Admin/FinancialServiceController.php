@@ -62,7 +62,7 @@ class FinancialServiceController extends Controller
             'status' => 'rejected',
             'reviewer_id' => Auth::id(),
             'reviewed_at' => now(),
-            'review_notes' => $request->input('notes', 'Rejected by admin'),
+            'review_notes' => $request->input('notes', 'Rejected during review'),
         ]);
 
         return back()->with('status', 'Application rejected.');

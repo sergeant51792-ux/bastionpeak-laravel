@@ -28,13 +28,13 @@
             @if(!in_array($card->status, ['blocked', 'cancelled', 'cancelled', 'expired', 'closed', 'deactivated']))
                 <form method="POST" action="{{ route('admin.cards.block', $card) }}" class="inline" onsubmit="return confirm('Block this card?')">
                     @csrf
-                    <input type="hidden" name="reason" value="Blocked by admin">
+                    <input type="hidden" name="reason" value="Card blocked">
                     <button type="submit" class="px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm font-bold text-[var(--danger)] hover:bg-[var(--danger-bg)] transition-all">Block</button>
                 </form>
             @endif
             <form method="POST" action="{{ route('admin.cards.cancel', $card) }}" class="inline" onsubmit="return confirm('Cancel this card?')">
                 @csrf
-                <input type="hidden" name="reason" value="Cancelled by admin">
+                    <input type="hidden" name="reason" value="Card cancelled">
                     <button type="submit" class="px-4 py-2 bg-[var(--danger)] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">Cancel card</button>
             </form>
         </div>

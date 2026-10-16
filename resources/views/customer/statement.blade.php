@@ -108,9 +108,8 @@
                             : \App\Enums\TransactionStatus::from((string) $txn->status);
                         $statusLabel = match($statusEnum->value) {
                             'pending_review', 'pending_match' => 'Pending',
-                            'approved', 'credited', 'posted'  => 'Completed',
-                            'rejected'                        => 'Failed',
-                            'reversed'                        => 'Reversed',
+                            'approved', 'credited', 'posted'  => 'Successful',
+                            'rejected', 'reversed'            => 'Failed',
                             default                           => ucfirst($statusEnum->value),
                         };
                         $statusColor = match($statusEnum->value) {

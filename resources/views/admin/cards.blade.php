@@ -73,7 +73,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('admin.cards.block', $card) }}" class="inline" onsubmit="return confirm('Block this card?')">
                                         @csrf
-                                        <input type="hidden" name="reason" value="Blocked by admin">
+                                        <input type="hidden" name="reason" value="Card blocked">
                                         <button type="submit" class="p-2 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Block">
                                             <x-icon name="lock" class="w-5 h-5" />
                                         </button>

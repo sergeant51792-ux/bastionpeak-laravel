@@ -59,7 +59,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('admin.financial-services.applications.reject', $app->id) }}" class="inline-block">
                                         @csrf
-                                        <input type="hidden" name="notes" value="Rejected by admin">
+                                        <input type="hidden" name="notes" value="Rejected during review">
                                         <button type="submit" class="text-xs text-[var(--danger)] hover:text-[var(--danger)]/80 font-medium">Reject</button>
                                     </form>
                                 @else

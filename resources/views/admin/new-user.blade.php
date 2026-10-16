@@ -66,7 +66,7 @@
                 <div>
                     <label class="block text-sm font-medium mb-1.5">Opening balance</label>
                     <input type="text" inputmode="decimal" name="opening_balance" placeholder="0.00" class="w-full px-4 py-2.5 bg-[var(--surface-raised)] border border-[var(--line)] rounded-xl text-sm">
-                    <p class="text-xs text-[var(--text-muted)] mt-1">Above zero creates an Admin Credit entry.</p>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Above zero creates an opening balance credit entry.</p>
                 </div>
             </div>
         </div>

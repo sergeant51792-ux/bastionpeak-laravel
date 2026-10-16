@@ -128,7 +128,7 @@ class AccountController extends Controller
                 'fee'               => 0,
                 'net_amount'        => abs($diff),
                 'status'            => 'posted',
-                'memo'              => 'Balance adjustment: ' . ($diff > 0 ? 'Credit' : 'Debit') . ' of ' . abs($diff) . ' by admin',
+                'memo'              => 'Balance adjustment: ' . ($diff > 0 ? 'Credit' : 'Debit') . ' of ' . abs($diff) . ' via account settings',
                 'reference'         => 'BAL-ADJ-' . strtoupper(uniqid()),
                 'idempotency_key'   => 'bal-adj-' . $account->id . '-' . md5((string)time()),
                 'operator_id'       => Auth::id(),

@@ -24,9 +24,9 @@
                     '' => 'All statuses',
                     'pending_review' => 'In review',
                     'approved' => 'Approved',
-                    'credited' => 'Credited',
-                    'rejected' => 'Rejected',
-                    'reversed' => 'Reversed',
+                    'credited' => 'Approved',
+                    'rejected' => 'Declined',
+                    'reversed' => 'Declined',
                 ]"
             />
             <button type="submit" class="px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-medium hover:bg-[var(--line-soft)] transition-colors min-h-[44px]">Apply</button>
@@ -55,7 +55,12 @@
                         $toName = optional($txn->toAccount)->name ?? '—';
                         $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '—');
                         $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
-                        $statusLabel = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? '—');
+                        $statusLabel = match ($status) {
+                            'approved', 'credited', 'posted' => 'Approved',
+                            'rejected', 'reversed' => 'Declined',
+                            'pending_review', 'pending_match' => 'Pending',
+                            default => ucfirst($status),
+                        };
                     @endphp
                     <tr class="hover:bg-[var(--surface-raised)]/50 cursor-pointer">
                         <td class="px-4 py-3 font-mono text-xs">{{ $txn->transaction_id }}</td>

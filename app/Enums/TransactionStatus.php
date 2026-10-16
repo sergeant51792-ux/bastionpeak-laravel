@@ -17,13 +17,9 @@ enum TransactionStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::PendingReview => 'Pending',
-            self::Approved => 'Approved',
-            self::Rejected => 'Failed',
-            self::Reversed => 'Reversed',
-            self::PendingMatch => 'Pending',
-            self::Credited => 'Credited',
-            self::Posted => 'Completed',
+            self::PendingReview, self::PendingMatch => 'Pending',
+            self::Approved, self::Credited, self::Posted => 'Successful',
+            self::Rejected, self::Reversed => 'Failed',
         };
     }
 

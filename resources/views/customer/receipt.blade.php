@@ -22,7 +22,7 @@
         'credited'       => ['label' => 'Successful', 'color' => '#10B981', 'icon' => 'check',  'desc' => 'The funds have been credited.'],
         'posted'         => ['label' => 'Successful', 'color' => '#10B981', 'icon' => 'check',  'desc' => 'This transaction has been completed.'],
         'rejected'       => ['label' => 'Failed',     'color' => '#EF4444', 'icon' => 'x',      'desc' => 'This transaction was rejected.'],
-        'reversed'       => ['label' => 'Reversed',   'color' => '#F59E0B', 'icon' => 'refresh-cw', 'desc' => 'This transaction was reversed.'],
+        'reversed'       => ['label' => 'Failed',     'color' => '#EF4444', 'icon' => 'x',      'desc' => 'This transaction was reversed and marked as failed.'],
     ];
     $statusInfo = $statusMap[$statusEnum->value]
         ?? ['label' => ucfirst($statusEnum->value), 'color' => '#64748B', 'icon' => 'circle', 'desc' => ''];

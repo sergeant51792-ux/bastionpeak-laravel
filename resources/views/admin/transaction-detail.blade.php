@@ -110,7 +110,7 @@
                     @if($transaction->isReversible())
                         <form method="POST" action="{{ route('admin.transactions.reverse', $transaction) }}">
                             @csrf
-                            <input type="hidden" name="reason" value="Reversal by admin">
+                            <input type="hidden" name="reason" value="Reversal initiated">
                             <button type="submit" class="w-full py-2.5 bg-[var(--text)] text-[var(--bg)] rounded-xl text-sm font-medium hover:opacity-90 transition-opacity" onclick="return confirm('Reverse this transaction? This will undo its balance changes.')">Reverse</button>
                         </form>
                     @endif

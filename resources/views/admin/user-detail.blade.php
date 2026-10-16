@@ -45,7 +45,7 @@
                 </form>
                 <form method="POST" action="{{ route('admin.users.block', $user) }}" class="ml-1 inline" onsubmit="return confirmBlock()">
                     @csrf
-                    <input type="hidden" name="reason" id="block-reason" value="Account locked by administrator">
+                    <input type="hidden" name="reason" id="block-reason" value="Account locked">
                     <button type="submit" class="p-2 bg-[var(--danger-bg)] text-[var(--danger)] rounded-lg text-xs font-medium hover:bg-[var(--danger-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                         <x-icon name="lock" class="w-4 h-4" />
                     </button>
@@ -406,7 +406,13 @@
                             @forelse($transactions as $txn)
                                  @php
                                      $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
-                                     $statusLabel = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? '—');
+                                     $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '—');
+                                     $statusLabel = match($status) {
+                                         'approved', 'credited', 'posted' => 'Approved',
+                                         'rejected', 'reversed' => 'Declined',
+                                         'pending_review', 'pending_match' => 'Pending',
+                                         default => ucfirst($status),
+                                     };
                                  @endphp
                                  <tr class="hover:bg-[var(--surface-raised)]/50" data-txn-row="{{ $txn->id }}">
                                      <td class="px-4 py-2">{{ $txn->created_at->format('d M Y, H:i') }}</td>
@@ -597,16 +603,16 @@ function toggleTxnEdit(id) {
 function confirmFreeze() {
     var reason = prompt('Enter a reason for freezing this account (optional):', 'Frozen due to policy violation');
     if (reason !== null) {
-        document.getElementById('freeze-reason').value = reason || 'Frozen by administrator';
+        document.getElementById('freeze-reason').value = reason || 'Frozen due to policy violation';
         return confirm('Freeze this account? The user will be unable to add money, receive, or transfer funds.');
     }
     return false;
 }
 
 function confirmBlock() {
-    var reason = prompt('Enter a reason for locking this account (optional):', 'Account locked by administrator');
+    var reason = prompt('Enter a reason for locking this account (optional):', 'Account locked');
     if (reason !== null) {
-        document.getElementById('block-reason').value = reason || 'Account locked by administrator';
+        document.getElementById('block-reason').value = reason || 'Account locked';
         return confirm('Lock this account? The user will not be able to sign in.');
     }
     return false;
