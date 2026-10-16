@@ -29,7 +29,7 @@ enum TransactionStatus: string
             self::Approved, self::Credited, self::Posted => 'success',
             self::Rejected => 'danger',
             self::Reversed => 'warning',
-            self::PendingReview, self::PendingMatch => 'pending',
+            self::PendingReview, self::PendingMatch => 'warning',
         };
     }
 

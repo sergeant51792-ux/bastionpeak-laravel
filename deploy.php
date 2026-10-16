@@ -501,6 +501,20 @@ if ($kernel && $bootError === null) {
             bp_out("config:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
             $r = runArtisan($kernel, 'route:cache');
             bp_out("route:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
+
+            // Explicitly clear compiled views before re-caching to avoid stale cache
+            $viewsDir = $appDir . '/bootstrap/cache/views';
+            if (is_dir($viewsDir)) {
+                foreach (glob($viewsDir . '/*') as $f) {
+                    if (is_file($f)) @unlink($f);
+                }
+                rmdir($viewsDir);
+                @mkdir($viewsDir, 0755, true);
+                bp_out("views: cleared compiled views directory");
+            }
+            $r = runArtisan($kernel, 'view:clear');
+            bp_out("view:clear (exit {$r['code']})");
+
             $r = runArtisan($kernel, 'view:cache');
             bp_out("view:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
             break;
