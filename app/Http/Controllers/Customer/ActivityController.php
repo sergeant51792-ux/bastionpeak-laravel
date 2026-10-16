@@ -77,6 +77,77 @@ class ActivityController extends Controller
     }
 
     /**
+     * Generate a statement of account PDF for a date range.
+     */
+    public function statement(Request $request): \Illuminate\Http\Response
+    {
+        $user = Auth::user();
+        $accountIds = $user->accounts()->pluck('accounts.id');
+
+        $validated = $request->validate([
+            'start_date' => ['required', 'date'],
+            'end_date'   => ['required', 'date', 'after_or_equal:start_date'],
+            'account_id' => ['nullable', 'integer'],
+        ]);
+
+        $query = Transaction::where(function ($q) use ($accountIds) {
+            $q->whereIn('from_account_id', $accountIds)->orWhereIn('to_account_id', $accountIds);
+        });
+
+        if ($request->filled('account_id') && $request->integer('account_id') > 0) {
+            $accountId = $request->integer('account_id');
+            if ($accountIds->contains($accountId)) {
+                $query->where(function ($q) use ($accountId) {
+                    $q->where('from_account_id', $accountId)->orWhere('to_account_id', $accountId);
+                });
+            }
+        }
+
+        $transactions = $query
+            ->whereBetween('created_at', [$validated['start_date'], $validated['end_date']])
+            ->whereNotIn('status', ['reversed'])
+            ->with(['fromAccount', 'toAccount', 'currency'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalDeposits = 0.0;
+        $totalWithdrawals = 0.0;
+        $openingBalance = 0.0;
+        $closingBalance = 0.0;
+
+        foreach ($transactions as $txn) {
+            $decimals = $txn->currency?->decimals ?? 2;
+            $amount = (float) $txn->amount;
+            $isDeposit = in_array($txn->type, [
+                \App\Enums\TransactionType::DepositCredit,
+                \App\Enums\TransactionType::Credit,
+                \App\Enums\TransactionType::Refund,
+            ], true);
+
+            if ($isDeposit) {
+                $totalDeposits += $amount;
+            } else {
+                $totalWithdrawals += $amount;
+            }
+            $closingBalance += $isDeposit ? $amount : -$amount;
+        }
+
+        $accounts = $user->accounts()->with('currency')->get();
+
+        return \PDF::loadView('customer.statement', [
+            'user'            => $user,
+            'transactions'    => $transactions,
+            'startDate'       => $validated['start_date'],
+            'endDate'         => $validated['end_date'],
+            'accounts'        => $accounts,
+            'totalDeposits'   => $totalDeposits,
+            'totalWithdrawals'=> $totalWithdrawals,
+            'closingBalance'  => $closingBalance,
+            'generatedAt'     => now(),
+        ])->download('statement_' . now()->format('Ymd_His') . '.pdf');
+    }
+
+    /**
      * Shared logic: authorise access, eager-load relations, and prepare the
      * view data for both the on-screen receipt and the PDF download.
      */

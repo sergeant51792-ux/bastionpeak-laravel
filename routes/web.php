@@ -60,6 +60,7 @@ Route::middleware('web')->group(function () {
         Route::get('/activity', [ActivityController::class, '__invoke'])->name('activity');
         Route::get('/activity/{transaction}', [ActivityController::class, 'receipt'])->name('activity.receipt');
         Route::get('/activity/{transaction}/download', [ActivityController::class, 'downloadReceipt'])->name('activity.receipt.download');
+        Route::post('/activity/statement', [ActivityController::class, 'statement'])->name('activity.statement');
 
         Route::get('/security/two-factor', [TwoFactorController::class, 'setup'])->name('two-factor.setup');
         Route::post('/security/two-factor', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
