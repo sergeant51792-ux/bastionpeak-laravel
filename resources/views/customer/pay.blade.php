@@ -277,7 +277,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-xs text-[var(--text-muted)]">{{ __('Amount') }}</span>
-                            <span class="text-xs font-semibold text-[var(--text)] tabular-nums">âˆ’{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</span>
+                            <span class="text-xs font-semibold text-[var(--text)] tabular-nums">-{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</span>
                         </div>
                     </div>
                 </div>

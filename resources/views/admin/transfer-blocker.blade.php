@@ -69,7 +69,7 @@
                     <p class="text-xs text-[var(--text-muted)] mt-1.5">This message is shown to the customer on the transfer page and sent as a notification.</p>
                 </div>
 
-                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity min-h-[44px]">
+                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#dc2626] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity min-h-[44px]">
                     <x-icon name="lock" class="w-4 h-4" />
                     Lock transfers for selected account
                 </button>

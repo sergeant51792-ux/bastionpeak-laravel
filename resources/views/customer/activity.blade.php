@@ -99,9 +99,9 @@
                                          default => 'text-[var(--text-muted)]',
                                      };
                                  @endphp
-                                 <a href="{{ route('activity.receipt', $txn) }}" class="{{ $amountClass }}">
-                                      {{ $isIncoming ? '+' : 'âˆ’' }}{{ number_format((float) $txn->amount, $txn->currency?->decimals ?? 2) }} {{ $txn->currency?->symbol ?? '' }}
-                                 </a>
+                                  <a href="{{ route('activity.receipt', $txn) }}" class="{{ $amountClass }}">
+                                      {{ $isIncoming ? '+' : '-' }}{{ $txn->currency?->symbol ?? '' }}{{ number_format(abs((float) $txn->amount), $txn->currency?->decimals ?? 2) }}
+                                  </a>
                              </td>
                              <td class="px-3 sm:px-4 py-3 hidden sm:table-cell">
                                  <x-status-pill :status="$txn->status" :label="$txn->customerStatusLabel()" />

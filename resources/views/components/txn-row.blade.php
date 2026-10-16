@@ -6,8 +6,8 @@
 @php
     $isMobile = $variant === 'mobile';
     $isIncoming = $transaction->isIncoming();
-    $amountPrefix = $isIncoming ? '+' : 'âˆ’';
-    $amountClass = $isIncoming ? 'text-[var(--success)]' : 'text-[var(--text)]';
+    $amountPrefix = $isIncoming ? '+' : '-';
+    $amountClass = $isIncoming ? 'text-[var(--success)]' : 'text-[var(--danger)]';
     $iconName = $isIncoming ? 'arrow-down-left' : 'arrow-up-right';
     $iconClass = $isIncoming ? 'txn-icon txn-icon-in' : 'txn-icon txn-icon-out';
 
@@ -31,7 +31,7 @@
     <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between gap-2">
             <p class="text-sm font-semibold text-[var(--text)] truncate">{{ $title }}</p>
-            <p class="text-sm font-semibold text-balance {{ $amountClass }}">{{ $amountPrefix }}{{ number_format((float) $transaction->amount, $decimals) }} {{ $symbol }}</p>
+            <p class="text-sm font-semibold text-balance {{ $amountClass }}">{{ $amountPrefix }}{{ $symbol }}{{ number_format(abs((float) $transaction->amount), $decimals) }}</p>
         </div>
         <div class="flex items-center justify-between gap-2 mt-1">
             <p class="text-xs text-[var(--text-muted)]">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
@@ -52,7 +52,7 @@
         <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
     </div>
     <div class="text-right flex-shrink-0">
-        <p class="text-sm font-semibold text-balance {{ $amountClass }}">{{ $amountPrefix }}{{ number_format((float) $transaction->amount, $decimals) }} {{ $symbol }}</p>
+        <p class="text-sm font-semibold text-balance {{ $amountClass }}">{{ $amountPrefix }}{{ $symbol }}{{ number_format(abs((float) $transaction->amount), $decimals) }}</p>
         <p class="text-xs text-[var(--text-muted)]">{{ $transaction?->currency?->code ?? '' }}</p>
     </div>
 </a>
