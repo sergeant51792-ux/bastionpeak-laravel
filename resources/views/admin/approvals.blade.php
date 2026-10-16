@@ -13,10 +13,10 @@
             </a>
         </div>
         <div id="bulk-actions" class="hidden items-center gap-2">
-            <button type="button" onclick="bulkApprove()" class="py-1.5 px-3 bg-[#059669] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Approve selected">
+            <button type="button" onclick="bulkApprove()" class="py-1.5 px-3 bg-[var(--success)] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Approve selected">
                 <x-icon name="check" class="w-4 h-4" /> Approve
             </button>
-                <button type="button" onclick="bulkDelete()" class="py-1.5 px-3 bg-[#dc2626] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Delete selected">
+                <button type="button" onclick="bulkDelete()" class="py-1.5 px-3 bg-[var(--danger)] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Delete selected">
                 <x-icon name="trash-2" class="w-4 h-4" /> Delete
             </button>
             <button type="button" onclick="clearSelection()" class="py-1.5 px-3 text-[var(--text-muted)] hover:bg-[var(--surface-raised)] rounded-lg text-sm min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Clear">
@@ -253,11 +253,11 @@
                         <form method="POST" action="{{ route('admin.approvals.reject', $openTransaction) }}" class="flex-1">
                             @csrf
                             <input type="hidden" name="reason" value="Transaction did not meet verification requirements">
-                            <button type="submit" class="w-full py-2.5 bg-[#dc2626] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors" onclick="return confirm('Decline this transaction? It will be marked as failed and the customer notified.')">Decline</button>
+                            <button type="submit" class="w-full py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-colors" onclick="return confirm('Decline this transaction? It will be marked as failed and the customer notified.')">Decline</button>
                         </form>
                         <form method="POST" action="{{ route('admin.approvals.approve', $openTransaction) }}" class="flex-1">
                             @csrf
-                            <button type="submit" class="w-full py-2.5 bg-[#059669] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity" onclick="return confirm('Approve this transaction? It will be marked as successful and funds will be processed.')">
+                            <button type="submit" class="w-full py-2.5 bg-[var(--success)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity" onclick="return confirm('Approve this transaction? It will be marked as successful and funds will be processed.')">
                                 @if($openTransaction->type === \App\Enums\TransactionType::DepositCredit)
                                     Approve
                                 @elseif($openTransaction->type === \App\Enums\TransactionType::PaymentDebit)

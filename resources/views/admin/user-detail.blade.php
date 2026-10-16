@@ -337,7 +337,7 @@
                                 @csrf
                                 <button type="submit"
                                         onclick="return confirm('Approve this {{ $reqTypeLabel }} request? Funds will be processed immediately.')"
-                                        class="w-full py-2 bg-[#059669] text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity min-h-[44px] flex items-center justify-center gap-1">
+                                        class="w-full py-2 bg-[var(--success)] text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity min-h-[44px] flex items-center justify-center gap-1">
                                     <x-icon name="check" class="w-3.5 h-3.5" />
                                     Approve
                                 </button>
@@ -347,7 +347,7 @@
                                 <input type="hidden" name="reason" value="Transaction did not meet verification requirements">
                                     <button type="submit"
                                             onclick="return confirm('Decline this {{ $reqTypeLabel }} request? The customer will be notified.')"
-                                            class="w-full py-2 bg-[#dc2626] text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity min-h-[44px] flex items-center justify-center gap-1">
+                                            class="w-full py-2 bg-[var(--danger)] text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity min-h-[44px] flex items-center justify-center gap-1">
                                         <x-icon name="x" class="w-3.5 h-3.5" />
                                         Decline
                                     </button>
