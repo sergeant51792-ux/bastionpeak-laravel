@@ -77,11 +77,14 @@ class TransferBlockerController extends Controller
         ]);
     }
 
-    public function block(Request $request, User $user): RedirectResponse
+    public function block(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'reason' => ['required', 'string', 'max:1000'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'reason'  => ['required', 'string', 'max:1000'],
         ]);
+
+        $user = User::findOrFail($validated['user_id']);
 
         $reason = trim($validated['reason']);
 

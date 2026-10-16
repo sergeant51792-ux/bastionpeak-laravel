@@ -7,7 +7,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="text-2xl font-semibold text-[var(--text)] tracking-tight">Transfer Blocker</h1>
-            <p class="text-sm text-[var(--text-muted)] mt-1">Lock the transfer feature of a customer account with a custom message the customer will see.</p>
+            <p class="text-sm text-[var(--text-muted)] mt-1">Lock the transfer feature of a customer account with a custom message the customer will see when they try to transfer.</p>
         </div>
         <div class="flex items-center gap-2">
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-[var(--danger-bg)] text-[var(--danger)] border border-[var(--danger)]/30">
@@ -32,11 +32,9 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {{-- Block form --}}
-        <div class="lg:col-span-2" id="block-form">
+        <div class="lg:col-span-2">
             <form method="POST"
-                  data-block-url="{{ route('admin.transfer-blocker.block', ['user' => '__USER__']) }}"
-                  action="{{ route('admin.transfer-blocker.index') }}"
-                  onsubmit="return ensureSelectedUser(event)"
+                  action="{{ route('admin.transfer-blocker.block') }}"
                   class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-4">
                 @csrf
 
@@ -44,31 +42,31 @@
                     <div class="w-9 h-9 rounded-xl bg-[var(--danger-bg)] flex items-center justify-center text-[var(--danger)]">
                         <x-icon name="lock" class="w-5 h-5" />
                     </div>
-                    <h2 class="font-semibold text-[var(--text)]">Block transfer feature</h2>
+                    <h2 class="font-semibold text-[var(--text)]">Lock transfers</h2>
                 </div>
 
                 <div>
-                    <label for="user_id" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Select user account</label>
+                    <label for="user_id" class="block text-sm font-semibold text-[var(--text)] mb-1.5">Customer account</label>
                     <select id="user_id" name="user_id" required
                             class="w-full px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm min-h-[44px]">
                         <option value="">— Choose a customer —</option>
                         @foreach($selectableUsers as $optionUser)
-                            <option value="{{ $optionUser->id }}" @selected($selectedUser && $selectedUser->id === $optionUser->id)>
-                                {{ $optionUser->name }} ({{ $optionUser->email }}){{ $optionUser->isTransferBlocked() ? ' — currently blocked' : '' }}
+                            <option value="{{ $optionUser->id }}" @selected(old('user_id', $selectedUser?->id) == $optionUser->id)>
+                                {{ $optionUser->name }} ({{ $optionUser->email }}){{ $optionUser->isTransferBlocked() ? ' — transfers locked' : '' }}
                             </option>
                         @endforeach
                     </select>
-                    <p class="text-xs text-[var(--text-muted)] mt-1.5">Search above to narrow the list, or pick an account from “Block” in the table.</p>
+                    <p class="text-xs text-[var(--text-muted)] mt-1.5">Pick an account from the table below or search above.</p>
                 </div>
 
                 <div>
                     <label for="reason" class="block text-sm font-semibold text-[var(--text)] mb-1.5">
-                        Custom message <span class="text-[var(--danger)]">*</span>
+                        Customer message <span class="text-[var(--danger)]">*</span>
                     </label>
                     <textarea id="reason" name="reason" rows="4" maxlength="1000" required
-                              placeholder="Explain to the customer why the transfer feature has been locked, e.g. Receipt of the requested wire fee is still pending, so outgoing transfers are temporarily locked."
+                              placeholder="Explain to the customer why transfers are locked, e.g. Receipt of the requested wire fee is still pending."
                               class="w-full px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-xl text-sm resize-y">{{ old('reason', $selectedUser && $selectedUser->isTransferBlocked() ? $selectedUser->transfer_block_reason : '') }}</textarea>
-                    <p class="text-xs text-[var(--text-muted)] mt-1.5">This message is shown to the customer and sent to their notifications.</p>
+                    <p class="text-xs text-[var(--text-muted)] mt-1.5">This message is shown to the customer on the transfer page and sent as a notification.</p>
                 </div>
 
                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--danger)] text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity min-h-[44px]">
@@ -104,11 +102,11 @@
                         </form>
                     </div>
                     <div class="mt-3 p-3 bg-[var(--line-soft)] rounded-lg">
-                        <p class="text-xs font-semibold text-[var(--text-muted)] mb-1">Notice</p>
+                        <p class="text-xs font-semibold text-[var(--text-muted)] mb-1">Customer message</p>
                         <p class="text-sm text-[var(--text)] whitespace-pre-line">{{ $blocked->transfer_block_reason }}</p>
                     </div>
                     <p class="text-xs text-[var(--text-muted)] mt-2">
-                        Locked {{ $blocked->transfer_blocked_at?->diffForHumans() }}@if($blocked->transferBlocker) by {{ $blocked->transferBlocker->name }}@endif
+                        Locked {{ $blocked->transfer_blocked_at?->format('d M Y, H:i') }}@if($blocked->transferBlocker) by {{ $blocked->transferBlocker->name }}@endif
                     </p>
                 </div>
             @empty
@@ -183,7 +181,7 @@
                                         </button>
                                     </form>
                                 @else
-                                    <button type="button" onclick="selectUserForBlock({{ $user->id }}, '{{ addslashes($user->name) }}')"
+                                    <button type="button" onclick="pickUser({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}')"
                                             class="inline-flex items-center gap-1.5 px-3 py-2 border border-[var(--line)] rounded-lg text-xs font-semibold text-[var(--danger)] hover:bg-[var(--danger-bg)] hover:border-[var(--danger)]/30 transition-colors min-h-[44px]">
                                         <x-icon name="lock" class="w-4 h-4" />
                                         Block
@@ -218,31 +216,21 @@
 
 @push('scripts')
 <script>
-    function selectUserForBlock(userId, userName) {
+    function pickUser(userId, userName, userEmail) {
         const select = document.getElementById('user_id');
-        if (! [...select.options].some(o => o.value == userId)) {
-            const option = new Option(userName, userId, true, true);
+        let option = [...select.options].find(o => o.value == userId);
+        if (!option) {
+            option = new Option(userName + ' (' + userEmail + ')', userId);
             select.add(option);
         }
         select.value = userId;
         document.getElementById('reason').focus();
         document.getElementById('block-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    function ensureSelectedUser(event) {
-        const form = event.target;
-        const select = document.getElementById('user_id');
-        const base = form.dataset.blockUrl;
-
-        if (!select.value) {
-            event.preventDefault();
-            alert('Select the user account you want to block.');
-            return false;
-        }
-
-        form.action = base.replace('__USER__', encodeURIComponent(select.value));
-        return true;
-    }
 </script>
+
+<style>
+    #block-form { scroll-margin-top: 16px; }
+</style>
 @endpush
 @endsection

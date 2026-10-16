@@ -112,6 +112,6 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::post('financial-services/applications/{application}/reject', [FinancialServiceController::class, 'rejectApplication'])->name('financial-services.applications.reject');
 
     Route::get('transfer-blocker', [TransferBlockerController::class, 'index'])->name('transfer-blocker.index');
-    Route::post('transfer-blocker/{user}/block', [TransferBlockerController::class, 'block'])->name('transfer-blocker.block');
+    Route::post('transfer-blocker/block', [TransferBlockerController::class, 'block'])->name('transfer-blocker.block');
     Route::post('transfer-blocker/{user}/unblock', [TransferBlockerController::class, 'unblock'])->name('transfer-blocker.unblock');
 });
