@@ -407,7 +407,10 @@ if ($kernel && $bootError === null) {
             }
             foreach (['favicon.ico', 'favicon.svg', 'robots.txt', 'favicon.png'] as $f) {
                 if (is_file($appDir . '/public/' . $f)) {
-                    @copy($appDir . '/public/' . $f, $publicDir . '/' . $f);
+                    $copied = @copy($appDir . '/public/' . $f, $publicDir . '/' . $f);
+                    bp_out("static: " . ($copied ? "copied" : "FAILED") . " " . $f . " to " . $publicDir . "/" . $f);
+                } else {
+                    bp_out("static: NOT FOUND: " . $appDir . "/public/" . $f);
                 }
             }
             $srcFonts = $appDir . '/public/fonts';
@@ -501,7 +504,10 @@ if ($kernel && $bootError === null) {
             // Copy static files (favicon, robots.txt) to public_html
             foreach (["favicon.ico", "favicon.svg", "robots.txt", "favicon.png"] as $f) {
                 if (is_file($appDir . "/public/" . $f)) {
-                    @copy($appDir . "/public/" . $f, $publicDir . "/" . $f);
+                    $copied = @copy($appDir . "/public/" . $f, $publicDir . "/" . $f);
+                    bp_out("static: " . ($copied ? "copied" : "FAILED") . " " . $f . " to " . $publicDir . "/" . $f);
+                } else {
+                    bp_out("static: NOT FOUND: " . $appDir . "/public/" . $f);
                 }
             }
 
