@@ -498,6 +498,13 @@ if ($kernel && $bootError === null) {
             }
 
             $r = runArtisan($kernel, 'config:cache');
+            // Copy static files (favicon, robots.txt) to public_html
+            foreach (["favicon.ico", "favicon.svg", "robots.txt", "Bastion Peaks.png"] as $f) {
+                if (is_file($appDir . "/public/" . $f)) {
+                    @copy($appDir . "/public/" . $f, $publicDir . "/" . $f);
+                }
+            }
+
             bp_out("config:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
             $r = runArtisan($kernel, 'route:cache');
             bp_out("route:cache (exit {$r['code']})\n" . ($r['output'] ?: '(no output)'));
