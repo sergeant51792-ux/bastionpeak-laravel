@@ -12,8 +12,7 @@
     <meta name="theme-color" content="#1E3A8A">
     <title>@yield('title', 'Home') — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
+    @vite(['resources/css/app.css', 'resources/css/utilities.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
     <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>
