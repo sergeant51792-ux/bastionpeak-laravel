@@ -41,6 +41,12 @@ class OverviewController extends Controller
             ->limit(5)
             ->get();
 
+        $failedTransactions = Transaction::whereIn('status', ['rejected', 'reversed'])
+            ->with('currency')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
         $needsDecision = $pendingDeposits->count() + $pendingPayments->count()
             + \App\Models\Notification::where('read_at', null)
                 ->where('type', 'customer_message')
@@ -57,6 +63,7 @@ class OverviewController extends Controller
         return view('admin.overview', [
             'pendingDeposits'   => $pendingDeposits,
             'pendingPayments'   => $pendingPayments,
+            'failedTransactions' => $failedTransactions,
             'needsDecision'     => $needsDecision,
             'anomalies'         => $anomalies,
             'recentActions'     => $recentActions,

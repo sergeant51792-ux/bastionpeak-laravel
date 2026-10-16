@@ -73,6 +73,31 @@
         </div>
     </div>
 
+    <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold">Failed transactions</h2>
+            <a href="{{ route('admin.transactions.index') }}?status=rejected" class="text-sm text-[var(--accent)] hover:text-[var(--accent-dark)] font-medium">View all</a>
+        </div>
+        <div class="space-y-3">
+            @forelse($failedTransactions as $txn)
+                <a href="{{ route('admin.transactions.show', $txn) }}" class="flex items-center justify-between p-4 bg-[var(--surface-raised)] rounded-xl hover:bg-[var(--line)]/50 transition-colors">
+                    <div>
+                        <p class="font-medium text-[var(--danger)]">Failed - {{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr($txn->id, 0, 8)) }}</p>
+                        <p class="text-sm text-[var(--text-muted)]">{{ $txn->memo ?: ($txn->type instanceof \App\Enums\TransactionType ? $txn->type->customerLabel() : 'Transaction') }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-[var(--text-muted)]">{{ number_format((float) $txn->amount, $txn->currency?->decimals ?? 2) }} {{ $txn->currency?->symbol ?? '' }}</p>
+                        <span @class(['px-2 py-0.5 rounded-full text-xs font-medium', 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : $txn->status, ['rejected', 'reversed'])])>
+                            Failed
+                        </span>
+                    </div>
+                </a>
+            @empty
+                <p class="text-sm text-[var(--text-muted)]">No failed transactions.</p>
+            @endforelse
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
             <h2 class="text-lg font-semibold mb-4">Quick actions</h2>
