@@ -10,7 +10,7 @@
             </a>
             <div>
                 <h1 class="text-xl font-semibold">Card ****{{ $card->card_number_masked ? substr($card->card_number_masked, -4) : '0000' }}</h1>
-                <p class="text-sm text-[var(--text-muted)]">{{ $card->user->name ?? 'â€”' }} â€¢ {{ $card->account->name ?? 'â€”' }}</p>
+                <p class="text-sm text-[var(--text-muted)]">{{ $card->user->name ?? '-' }} â€¢ {{ $card->account->name ?? '-' }}</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Type</span>
-                    <span>{{ ucfirst($card->card_type ?? 'â€”') }}</span>
+                    <span>{{ ucfirst($card->card_type ?? '-') }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Status</span>
@@ -58,11 +58,11 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Valid from</span>
-                    <span>{{ $card->valid_from ? $card->valid_from->format('d M Y') : 'â€”' }}</span>
+                    <span>{{ $card->valid_from ? $card->valid_from->format('d M Y') : '-' }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Valid to</span>
-                    <span>{{ $card->valid_to ? $card->valid_to->format('d M Y') : 'â€”' }}</span>
+                    <span>{{ $card->valid_to ? $card->valid_to->format('d M Y') : '-' }}</span>
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@
                 <tbody class="divide-y divide-[var(--line)]">
                     @forelse($transactions as $txn)
                         @php
-                            $txnTypeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : 'â€”';
+                            $txnTypeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : '-';
                         @endphp
                         <tr class="hover:bg-[var(--surface-raised)]/50">
                             <td class="px-4 py-2">{{ $txn->created_at->format('d M Y, H:i') }}</td>

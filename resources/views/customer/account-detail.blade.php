@@ -41,7 +41,7 @@
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Account number</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-medium text-[var(--text)] font-mono">{{ $account->account_number ?: 'â€”' }}</span>
+                        <span class="text-sm font-medium text-[var(--text)] font-mono">{{ $account->account_number ?: '-' }}</span>
                         <button onclick="copyAccountNumber(this, '{{ $account->account_number }}')" class="text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" aria-label="Copy">
                             <x-icon name="copy" class="w-4 h-4" />
                         </button>
@@ -49,11 +49,11 @@
                 </div>
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Currency</span>
-                    <span class="text-sm font-medium text-[var(--text)]">{{ $account?->currency?->code ?? 'â€”' }}</span>
+                    <span class="text-sm font-medium text-[var(--text)]">{{ $account?->currency?->code ?? '-' }}</span>
                 </div>
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Type</span>
-                    <span class="text-sm font-medium text-[var(--text)]">{{ $account->type ?: 'â€”' }}</span>
+                    <span class="text-sm font-medium text-[var(--text)]">{{ $account->type ?: '-' }}</span>
                 </div>
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Opened</span>

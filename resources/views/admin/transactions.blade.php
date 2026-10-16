@@ -51,10 +51,10 @@
             <tbody class="divide-y divide-[var(--line)]">
                 @foreach($transactions as $txn)
                     @php
-                        $fromName = optional($txn->fromAccount)->name ?? 'â€”';
-                        $toName = optional($txn->toAccount)->name ?? 'â€”';
-                        $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? 'â€”');
-                        $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? 'â€”');
+                        $fromName = optional($txn->fromAccount)->name ?? '-';
+                        $toName = optional($txn->toAccount)->name ?? '-';
+                        $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '-');
+                        $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '-');
                         $statusLabel = match ($status) {
                             'approved', 'credited', 'posted' => 'Successful',
                             'rejected', 'reversed' => 'Failed',
@@ -67,15 +67,12 @@
                         <td class="px-4 py-3">{{ $txn->created_at->format('d M') }}</td>
                         <td class="px-4 py-3">{{ $fromName }} to {{ $toName }}</td>
                         <td class="px-4 py-3">{{ $typeLabel }}</td>
-                        <td class="px-4 py-3">
-                            <span @class(['px-2.5 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($status, ['credited','approved']), 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($status, ['pending_review','pending_match']), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($status, ['rejected','reversed'])]))>
-                                {{ $statusLabel }}
-                            </span>
-                        </td>
+                        <td class="px-4 py-3"><x-status-pill :status="$txn->status" :label="$statusLabel" /></td>
                         <td class="px-4 py-3 text-right" style="font-variant-numeric: tabular-nums;">
                             @php $amount = (float) $txn->amount; @endphp
+                            @php $symbol = $txn?->currency?->symbol ?? ''; $decimals = $txn?->currency?->decimals ?? 2; @endphp
                             <span @class(['text-[var(--text)]', 'text-[var(--text-muted)]' => $amount < 0])>
-                                {{ $amount >= 0 ? '+' : '' }}{{ number_format($amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}
+                                {{ $amount >= 0 ? '+' : '-' }}{{ $symbol }}{{ number_format(abs($amount), $decimals) }}
                             </span>
                         </td>
                     </tr>

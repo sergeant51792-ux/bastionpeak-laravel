@@ -63,8 +63,8 @@
                     <tbody class="divide-y divide-[var(--line)]">
                         @forelse($transactions as $txn)
                             @php
-                                $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? 'â€”');
-                                $statusLabel = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? 'â€”');
+                                $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '-');
+                                $statusLabel = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? '-');
                             @endphp
                             <tr class="hover:bg-[var(--surface-raised)]/50">
                                 <td class="px-4 py-2">{{ $txn->created_at->format('d M Y, H:i') }}</td>

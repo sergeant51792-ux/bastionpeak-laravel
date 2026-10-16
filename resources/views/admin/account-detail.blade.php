@@ -240,19 +240,19 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Account number</span>
-                        <span class="text-[var(--text)] font-mono">{{ $account->account_number ?: 'â€”' }}</span>
+                        <span class="text-[var(--text)] font-mono">{{ $account->account_number ?: '-' }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Currency</span>
-                        <span class="text-[var(--text)]">{{ $account?->currency?->name ?? 'â€”' }} ({{ $account?->currency?->code ?? 'â€”' }})</span>
+                        <span class="text-[var(--text)]">{{ $account?->currency?->name ?? '-' }} ({{ $account?->currency?->code ?? '-' }})</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Type</span>
-                        <span class="text-[var(--text)]">{{ $account->type ?: 'â€”' }}</span>
+                        <span class="text-[var(--text)]">{{ $account->type ?: '-' }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Opened</span>
-                        <span class="text-[var(--text)]">{{ $account->opened_at?->format('d M Y') ?: 'â€”' }}</span>
+                        <span class="text-[var(--text)]">{{ $account->opened_at?->format('d M Y') ?: '-' }}</span>
                     </div>
                 </div>
             </div>
