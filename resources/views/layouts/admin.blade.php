@@ -109,6 +109,9 @@
                     <h1 class="text-base font-semibold text-[var(--text)] tracking-tight">@yield('title', 'Admin')</h1>
                 </div>
                 <div class="flex items-center gap-3">
+                    <button id="theme-toggle" type="button" onclick="toggleAdminTheme()" class="p-2 rounded-xl text-[var(--text-muted)] hover:bg-[var(--surface-raised)] hover:text-[var(--text)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Toggle theme">
+                        <x-icon id="theme-toggle-icon" name="moon" class="w-5 h-5" />
+                    </button>
                     <div class="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-white text-xs font-semibold">{{ substr(auth()->user()->name ?? 'Admin', 0, 2) }}</div>
                 </div>
             </header>
@@ -163,13 +166,40 @@
             });
         });
 
+        // Set initial theme toggle icon
+        (function() {
+            var icon = document.getElementById('theme-toggle-icon');
+            if (icon) {
+                var isDark = document.body.classList.contains('dark');
+                icon.setAttribute('name', isDark ? 'sun' : 'moon');
+            }
+        })();
+
         // Initialize: sidebar should be open on desktop, closed on mobile
         if (window.innerWidth >= 1024) {
             sidebar.classList.remove('sidebar-closed');
             sidebar.classList.remove('sidebar-collapsed');
+        }
+
+        function toggleAdminTheme() {
+            var isDark = document.body.classList.contains('dark');
+            var newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                document.body.classList.add('dark');
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.classList.remove('dark');
+                document.body.setAttribute('data-theme', 'light');
+            }
+            localStorage.setItem('theme', newTheme);
+            var icon = document.getElementById('theme-toggle-icon');
+            if (icon) {
+                icon.setAttribute('name', isDark ? 'sun' : 'moon');
+            }
         }
     </script>
 
     @stack('scripts')
 </body>
 </html>
+
