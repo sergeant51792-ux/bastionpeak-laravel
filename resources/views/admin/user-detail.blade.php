@@ -408,8 +408,8 @@
                                      $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
                                      $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '—');
                                      $statusLabel = match($status) {
-                                         'approved', 'credited', 'posted' => 'Approved',
-                                         'rejected', 'reversed' => 'Declined',
+                                         'approved', 'credited', 'posted' => 'Successful',
+                                         'rejected', 'reversed' => 'Failed',
                                          'pending_review', 'pending_match' => 'Pending',
                                          default => ucfirst($status),
                                      };

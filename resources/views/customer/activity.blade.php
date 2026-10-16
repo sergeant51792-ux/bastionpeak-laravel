@@ -82,22 +82,30 @@
                 </thead>
                 <tbody class="divide-y divide-[var(--line)]">
                     @forelse($transactions as $txn)
-                        @php $isIncoming = $txn->isIncoming(); @endphp
-                        <tr class="transition-colors hover:bg-[var(--line-soft)] cursor-pointer" onclick="window.location='{{ route('activity.receipt', $txn) }}'">
-                            <td class="px-3 sm:px-4 py-3">
-                                <p class="font-semibold text-[var(--text)] text-sm">{{ $txn->memo ?: $txn->type->customerLabel() }}</p>
-                                <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr($txn->id, 0, 8)) }}</p>
-                                <p class="text-xs text-[var(--text-muted)] mt-0.5 sm:hidden tabular-nums">{{ $txn->created_at->format('d M Y, H:i') }}</p>
-                            </td>
-                            <td class="px-3 sm:px-4 py-3 text-sm text-[var(--text-muted)] hidden sm:table-cell whitespace-nowrap tabular-nums">{{ $txn->created_at->format('d M Y, H:i') }}</td>
-                            <td class="px-3 sm:px-4 py-3 text-right font-semibold text-balance">
-                                <a href="{{ route('activity.receipt', $txn) }}" class="{{ $isIncoming ? 'text-[var(--success)]' : 'text-[var(--text)]' }}">
-                                    {{ $isIncoming ? '+' : '−' }}{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}
-                                </a>
-                            </td>
-                            <td class="px-3 sm:px-4 py-3 hidden sm:table-cell">
-                                <x-status-pill :status="$txn->status" :label="$txn->customerStatusLabel()" />
-                            </td>
+                         @php $isIncoming = $txn->isIncoming(); $tone = $txn->customerStatusTone(); @endphp
+                         <tr class="transition-colors hover:bg-[var(--line-soft)] cursor-pointer" onclick="window.location='{{ route('activity.receipt', $txn) }}'">
+                             <td class="px-3 sm:px-4 py-3">
+                                 <p class="font-semibold text-[var(--text)] text-sm">{{ $txn->memo ?: $txn->type->customerLabel() }}</p>
+                                 <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr($txn->id, 0, 8)) }}</p>
+                                 <p class="text-xs text-[var(--text-muted)] mt-0.5 sm:hidden tabular-nums">{{ $txn->created_at->format('d M Y, H:i') }}</p>
+                             </td>
+                             <td class="px-3 sm:px-4 py-3 text-sm text-[var(--text-muted)] hidden sm:table-cell whitespace-nowrap tabular-nums">{{ $txn->created_at->format('d M Y, H:i') }}</td>
+                             <td class="px-3 sm:px-4 py-3 text-right font-semibold text-balance">
+                                 @php
+                                     $amountClass = match($tone) {
+                                         'success' => 'text-[var(--success)]',
+                                         'danger' => 'text-[var(--danger)]',
+                                         'warning' => 'text-[var(--warning)]',
+                                         default => 'text-[var(--text-muted)]',
+                                     };
+                                 @endphp
+                                 <a href="{{ route('activity.receipt', $txn) }}" class="{{ $amountClass }}">
+                                     {{ $isIncoming ? '+' : '−' }}{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}
+                                 </a>
+                             </td>
+                             <td class="px-3 sm:px-4 py-3 hidden sm:table-cell">
+                                 <x-status-pill :status="$txn->status" :label="$txn->customerStatusLabel()" />
+                             </td>
                         </tr>
                     @empty
                         <tr>

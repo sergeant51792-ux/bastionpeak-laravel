@@ -152,8 +152,8 @@
                         <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch, 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true)])>
                             @php
                                 $adminStatusLabel = match(true) {
-                                    in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true) => 'Approved',
-                                    in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true) => 'Declined',
+                                    in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true) => 'Successful',
+                                    in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true) => 'Failed',
                                     $openTransaction->status === \App\Enums\TransactionStatus::PendingReview => 'Pending',
                                     $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch => 'Pending Match',
                                     default => $openTransaction->status instanceof \App\Enums\TransactionStatus ? $openTransaction->status->label() : ($openTransaction->status ?? '—'),

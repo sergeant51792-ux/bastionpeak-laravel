@@ -23,10 +23,10 @@
                 :options="[
                     '' => 'All statuses',
                     'pending_review' => 'In review',
-                    'approved' => 'Approved',
-                    'credited' => 'Approved',
-                    'rejected' => 'Declined',
-                    'reversed' => 'Declined',
+                    'approved' => 'Successful',
+                    'credited' => 'Successful',
+                    'rejected' => 'Failed',
+                    'reversed' => 'Failed',
                 ]"
             />
             <button type="submit" class="px-4 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-medium hover:bg-[var(--line-soft)] transition-colors min-h-[44px]">Apply</button>
@@ -56,8 +56,8 @@
                         $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '—');
                         $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
                         $statusLabel = match ($status) {
-                            'approved', 'credited', 'posted' => 'Approved',
-                            'rejected', 'reversed' => 'Declined',
+                            'approved', 'credited', 'posted' => 'Successful',
+                            'rejected', 'reversed' => 'Failed',
                             'pending_review', 'pending_match' => 'Pending',
                             default => ucfirst($status),
                         };

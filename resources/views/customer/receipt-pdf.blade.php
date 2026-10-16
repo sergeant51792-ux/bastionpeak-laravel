@@ -107,7 +107,7 @@
 
     <div class="row" style="margin-top: 8px;">
         <dt class="muted">{{ $isDeposit ? 'CREDITED' : 'DEBITED' }}</dt>
-        <dd class="amount" style="color: {{ $isDeposit ? $statusInfo['color'] : '#1F2937' }};">
+        <dd class="amount" style="color: {{ $statusInfo['color'] }};">
             {{ $isDeposit ? '+' : '−' }}{{ $amount }} {{ $symbol }}
         </dd>
     </div>

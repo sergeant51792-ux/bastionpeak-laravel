@@ -91,7 +91,7 @@
                 <div class="text-right">
                     <p class="text-xs text-[var(--text-muted)] uppercase tracking-wider">{{ $isDeposit ? 'Credited' : 'Debited' }}</p>
                     <div class="mt-1">
-                        <span class="text-3xl font-bold tabular-nums" style="color: {{ $isDeposit ? $statusInfo['color'] : '#1F2937' }};">
+                        <span class="text-3xl font-bold tabular-nums" style="color: {{ $statusInfo['color'] }};">
                             {{ $isDeposit ? '+' : '−' }}{{ $amount }} {{ $symbol }}
                         </span>
                     </div>
