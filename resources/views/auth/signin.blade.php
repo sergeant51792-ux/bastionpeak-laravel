@@ -42,7 +42,9 @@
         }
     </style>
 
-        <script>
+        </head>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+<script>
         (function() {
             var dbTheme = localStorage.getItem("theme") || "dark";
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -58,8 +60,6 @@
             }
         })();
     </script>
-</head>
-<body class="bg-[var(--bg)] text-[var(--text)]">
     <div class="min-h-screen flex flex-col">
         <header class="absolute top-6 left-0 right-0 z-20">
             <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6">

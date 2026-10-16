@@ -38,7 +38,9 @@
         }
     </style>
 
-        <script>
+        </head>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+<script>
         (function() {
             var dbTheme = localStorage.getItem("theme") || "dark";
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -54,8 +56,6 @@
             }
         })();
     </script>
-</head>
-<body class="bg-[var(--bg)] text-[var(--text)]">
     <div class="flex min-h-screen">
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
 

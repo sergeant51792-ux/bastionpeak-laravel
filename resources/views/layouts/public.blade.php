@@ -18,7 +18,9 @@
         .font-display { font-family: var(--font-display); }
     </style>
 
-        <script>
+        </head>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+<script>
         (function() {
             var dbTheme = localStorage.getItem("theme") || "dark";
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -34,8 +36,6 @@
             }
         })();
     </script>
-</head>
-<body class="bg-[var(--bg)] text-[var(--text)]">
     <nav class="sticky top-0 z-50 bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--line)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="{{ route('landing') }}" class="flex items-center gap-2.5">

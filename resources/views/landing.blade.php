@@ -24,7 +24,9 @@
         }
     </style>
 
-        <script>
+        </head>
+<body class="bg-white text-[var(--text)]">
+<script>
         (function() {
             var dbTheme = localStorage.getItem("theme") || "dark";
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -40,8 +42,6 @@
             }
         })();
     </script>
-</head>
-<body class="bg-white text-[var(--text)]">
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--line)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5">

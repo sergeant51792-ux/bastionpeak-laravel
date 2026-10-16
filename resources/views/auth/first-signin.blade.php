@@ -17,7 +17,9 @@
         h1, h2, h3, h4, h5, .font-display { font-family: var(--font-display); }
     </style>
 
-        <script>
+        </head>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+<script>
         (function() {
             var dbTheme = localStorage.getItem("theme") || "dark";
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -33,8 +35,6 @@
             }
         })();
     </script>
-</head>
-<body class="bg-[var(--bg)] text-[var(--text)]">
     <div class="min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-sm">
             <div class="text-center mb-8">
