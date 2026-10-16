@@ -36,7 +36,7 @@
         </div>
 
         <p class="text-xs text-[var(--text-muted)] mt-4">
-            {{ __('Your profile details are managed by your account administrator. Contact support if any detail needs to be corrected.') }}
+            {{ __('Once your profile is set, it cannot be changed. Contact support if any detail needs to be corrected.') }}
         </p>
     </section>
 

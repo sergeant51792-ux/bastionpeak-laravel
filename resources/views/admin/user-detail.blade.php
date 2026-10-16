@@ -151,13 +151,39 @@
             </div>
 
             <div class="space-y-6">
+                {{-- Profile picture --}}
                 <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 text-center">
-                    <div class="w-20 h-20 rounded-full bg-[var(--primary)] flex items-center justify-center text-white mx-auto mb-3 font-bold text-2xl">
-                        {{ strtoupper(substr($user->name ?? $user->email, 0, 2)) }}
-                    </div>
+                    @if($user->profile_picture)
+                        <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="w-20 h-20 rounded-full object-cover mx-auto mb-3 border-4 border-[var(--line)]">
+                    @else
+                        <div class="w-20 h-20 rounded-full bg-[var(--primary)] flex items-center justify-center text-white mx-auto mb-3 font-bold text-2xl">
+                            {{ strtoupper(substr($user->name ?? $user->email, 0, 2)) }}
+                        </div>
+                    @endif
+
                     <p class="font-semibold text-[var(--text)]">{{ $user->name }}</p>
                     <p class="text-xs text-[var(--text-muted)] mt-1">{{ $user->email }}</p>
                     <p class="text-xs text-[var(--text-muted)] mt-1">Member since {{ $user->created_at->format('M Y') }}</p>
+
+                    <div class="mt-3 flex gap-2 justify-center">
+                        <form method="POST" action="{{ route('admin.users.picture.upload', $user) }}" enctype="multipart/form-data" class="inline-flex items-center gap-2" onsubmit="document.getElementById('picture-input').click(); return false;">
+                            @csrf
+                            <input type="file" name="picture" accept="image/*" class="hidden" id="picture-input" onchange="this.form.submit()">
+                            <button type="button" onclick="document.getElementById('picture-input').click()" class="px-3 py-1.5 bg-[var(--surface-raised)] border border-[var(--line)] rounded-lg text-xs font-medium text-[var(--text)] hover:bg-[var(--line-soft)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                                Upload photo
+                            </button>
+                        </form>
+                        @if($user->profile_picture)
+                            <form method="POST" action="{{ route('admin.users.picture.remove', $user) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Remove this profile picture?')"
+                                        class="px-3 py-1.5 bg-[var(--danger-bg)] text-[var(--danger)] rounded-lg text-xs font-medium hover:bg-[var(--danger-bg)]/50 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                                    Remove
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5 space-y-3">

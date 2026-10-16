@@ -55,6 +55,80 @@ class UserController extends Controller
         return back()->with('status', 'User approved and account activated.');
     }
 
+    public function uploadProfilePicture(Request $request, User $user): RedirectResponse
+    {
+        $request->validate([
+            'picture' => ['required', 'max:2048'],
+        ]);
+
+        $file = $request->file('picture');
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $allowedExtensions)) {
+            return back()->with('error', 'The file must be an image (JPEG, PNG, GIF, or WebP).');
+        }
+
+        $storageRoot = dirname(base_path()) . '/public_html/storage';
+
+        if ($user->profile_picture) {
+            $oldPath = $storageRoot . '/' . $user->profile_picture;
+            if (@file_exists($oldPath)) {
+                @unlink($oldPath);
+            }
+        }
+
+        $dir = $storageRoot . '/profile-pictures';
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+
+        $filename = uniqid('pp_') . '.' . $extension;
+        $destPath = $dir . '/' . $filename;
+
+        if (!move_uploaded_file($file->getRealPath(), $destPath)) {
+            return back()->with('error', 'Upload failed. Please try again.');
+        }
+
+        $user->update([
+            'profile_picture' => 'profile-pictures/' . $filename,
+        ]);
+
+        AuditLog::create([
+            'admin_id' => Auth::id(),
+            'action' => 'profile_picture_upload',
+            'target_type' => 'user',
+            'target_id' => $user->id,
+            'new_value' => ['profile_picture' => 'profile-pictures/' . $filename],
+        ]);
+
+        return back()->with('status', 'Profile picture updated.');
+    }
+
+    public function removeProfilePicture(Request $request, User $user): RedirectResponse
+    {
+        $storageRoot = dirname(base_path()) . '/public_html/storage';
+        if ($user->profile_picture) {
+            $storagePath = $storageRoot . '/' . $user->profile_picture;
+            if (@file_exists($storagePath)) {
+                @unlink($storagePath);
+            }
+        }
+
+        $user->update([
+            'profile_picture' => null,
+        ]);
+
+        AuditLog::create([
+            'admin_id' => Auth::id(),
+            'action' => 'profile_picture_remove',
+            'target_type' => 'user',
+            'target_id' => $user->id,
+            'new_value' => null,
+        ]);
+
+        return back()->with('status', 'Profile picture removed.');
+    }
+
     public function generateAuthenticator(Request $request, User $user): RedirectResponse
     {
         $secret = $this->totp->generateSecret();

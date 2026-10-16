@@ -30,6 +30,8 @@ Route::middleware(['web', 'auth', 'role:Super Admin'])->prefix('admin')->name('a
     Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::match(['POST', 'PATCH'], 'users/{user}', [UserController::class, 'updateUser'])->name('users.update');
     Route::post('users/{user}/password', [UserController::class, 'changePassword'])->name('users.password');
+    Route::post('users/{user}/picture', [UserController::class, 'uploadProfilePicture'])->name('users.picture.upload');
+    Route::delete('users/{user}/picture', [UserController::class, 'removeProfilePicture'])->name('users.picture.remove');
     Route::post('users/{user}/message', [UserController::class, 'sendMessage'])->name('users.message');
     Route::post('users/{user}/credit', [UserController::class, 'credit'])->name('users.credit');
     Route::post('users/{user}/debit', [UserController::class, 'debit'])->name('users.debit');
