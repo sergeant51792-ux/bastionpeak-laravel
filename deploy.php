@@ -405,7 +405,7 @@ if ($kernel && $bootError === null) {
                 bp_out("No build source at $srcBuild");
                 $ok = false;
             }
-            foreach (['favicon.ico', 'favicon.svg', 'robots.txt'] as $f) {
+            foreach (['favicon.ico', 'favicon.svg', 'robots.txt', 'Bastion Peaks.png'] as $f) {
                 if (is_file($appDir . '/public/' . $f)) {
                     @copy($appDir . '/public/' . $f, $publicDir . '/' . $f);
                 }
