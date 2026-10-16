@@ -10,7 +10,7 @@
             </a>
             <div>
                 <h1 class="text-xl font-semibold">{{ $account->name }}</h1>
-                <p class="text-sm text-[var(--text-muted)]">{{ $account->user->name }} â€¢ {{ $account?->currency?->code }}</p>
+                <p class="text-sm text-[var(--text-muted)]">{{ $account->user->name }} "¢ {{ $account?->currency?->code }}</p>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <h3 class="font-semibold text-[var(--text)]">{{ $method->name }}</h3>
-                        <p class="text-sm text-[var(--text-muted)]">{{ ucfirst($method->type) }} â€¢ Code: {{ $method->code }}</p>
+                        <p class="text-sm text-[var(--text-muted)]">{{ ucfirst($method->type) }} "¢ Code: {{ $method->code }}</p>
                         @if($method->description)
                             <p class="text-xs text-[var(--text-muted)] mt-1">{{ $method->description }}</p>
                         @endif

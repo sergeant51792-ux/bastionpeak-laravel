@@ -23,6 +23,23 @@
             background-position: center;
         }
     </style>
+
+        <script>
+        (function() {
+            var dbTheme = localStorage.getItem("theme") || "dark";
+            var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (dbTheme === "dark" || (dbTheme === "system" && prefersDark)) {
+                document.body.classList.add("dark");
+                document.body.setAttribute("data-theme", "dark");
+            } else if (dbTheme === "light") {
+                document.body.classList.remove("dark");
+                document.body.setAttribute("data-theme", "light");
+            } else {
+                document.body.classList.add("dark");
+                document.body.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
 </head>
 <body class="bg-white text-[var(--text)]">
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--line)]">

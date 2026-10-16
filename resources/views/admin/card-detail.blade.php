@@ -10,7 +10,7 @@
             </a>
             <div>
                 <h1 class="text-xl font-semibold">Card ****{{ $card->card_number_masked ? substr($card->card_number_masked, -4) : '0000' }}</h1>
-                <p class="text-sm text-[var(--text-muted)]">{{ $card->user->name ?? '-' }} â€¢ {{ $card->account->name ?? '-' }}</p>
+                <p class="text-sm text-[var(--text-muted)]">{{ $card->user->name ?? '-' }} "¢ {{ $card->account->name ?? '-' }}</p>
             </div>
         </div>
         <div class="flex items-center gap-2">

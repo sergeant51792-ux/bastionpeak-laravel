@@ -11,7 +11,7 @@
             </a>
             <div>
                 <h1 class="text-xl font-bold text-[var(--text)]">{{ $account->name }}</h1>
-                <p class="text-sm text-[var(--text-muted)] mt-0.5">{{ $account->user->name ?? 'Unknown user' }} â€¢ {{ $account?->currency?->code ?? '' }} {{ $account->account_number ?: '' }}</p>
+                <p class="text-sm text-[var(--text-muted)] mt-0.5">{{ $account->user->name ?? 'Unknown user' }} "¢ {{ $account?->currency?->code ?? '' }} {{ $account->account_number ?: '' }}</p>
             </div>
         </div>
         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $account->status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : ($account->status === 'frozen' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]') }}">
@@ -131,7 +131,7 @@
                                     @endif
                                     <div>
                                         <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
-                                        <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} â€¢ Code: {{ $method->code }}</p>
+                                        <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} "¢ Code: {{ $method->code }}</p>
                                     </div>
                                 </div>
                                 @if($method->address)
@@ -155,7 +155,7 @@
                             </div>
                         @endforeach
                         <div class="pt-2">
-                            <a href="{{ route('admin.deposit-methods.index') }}" class="text-xs font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">Manage global deposit methods â†’</a>
+                            <a href="{{ route('admin.deposit-methods.index') }}" class="text-xs font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">Manage global deposit methods  →</a>
                         </div>
                     </div>
                 @endif
@@ -175,7 +175,7 @@
                                         @endif
                                         <div>
                                             <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
-                                            <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} â€¢ Code: {{ $method->code }}</p>
+                                            <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} "¢ Code: {{ $method->code }}</p>
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $method->pivot->is_active ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--line-soft)] text-[var(--text-muted)]' }}">

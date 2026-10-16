@@ -436,7 +436,7 @@
             var btn = document.getElementById('submit-btn');
             if (btn) {
                 btn.disabled = true;
-                btn.textContent = 'Processingâ€¦';
+                btn.textContent = 'Processing"¦';
             }
         });
     });

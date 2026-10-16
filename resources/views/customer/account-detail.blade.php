@@ -10,7 +10,7 @@
         </a>
         <div class="flex-1 min-w-0">
             <h1 class="text-xl font-bold text-[var(--text)] tracking-tight truncate">{{ $account->name }}</h1>
-            <p class="text-sm text-[var(--text-muted)] mt-0.5 truncate">{{ $account?->currency?->code ?? '' }} â€¢ {{ $account->account_number ?: '' }}</p>
+            <p class="text-sm text-[var(--text-muted)] mt-0.5 truncate">{{ $account?->currency?->code ?? '' }} "¢ {{ $account->account_number ?: '' }}</p>
         </div>
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $account->status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]' }} flex-shrink-0">
             {{ ucfirst($account->status) }}

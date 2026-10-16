@@ -17,6 +17,23 @@
         body { font-family: var(--font-body); }
         .font-display { font-family: var(--font-display); }
     </style>
+
+        <script>
+        (function() {
+            var dbTheme = localStorage.getItem("theme") || "dark";
+            var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (dbTheme === "dark" || (dbTheme === "system" && prefersDark)) {
+                document.body.classList.add("dark");
+                document.body.setAttribute("data-theme", "dark");
+            } else if (dbTheme === "light") {
+                document.body.classList.remove("dark");
+                document.body.setAttribute("data-theme", "light");
+            } else {
+                document.body.classList.add("dark");
+                document.body.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
 </head>
 <body class="bg-[var(--bg)] text-[var(--text)]">
     <nav class="sticky top-0 z-50 bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--line)]">

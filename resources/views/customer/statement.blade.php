@@ -50,7 +50,7 @@
 
     <div class="row">
         <dt>Statement period</dt>
-        <dd>{{ $startDate }} â†’ {{ $endDate }}</dd>
+        <dd>{{ $startDate }}  → {{ $endDate }}</dd>
     </div>
     <div class="row">
         <dt>Account holder</dt>

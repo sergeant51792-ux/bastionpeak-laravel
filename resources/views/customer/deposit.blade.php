@@ -74,7 +74,7 @@
                     {{ __('View activity') }}
                 </a>
                 <button onclick="window.location.href='{{ route('home') }}'" class="mt-4 text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
-                    â† {{ __('Back to dashboard') }}
+                     ? {{ __('Back to dashboard') }}
                 </button>
             </div>
         </div>

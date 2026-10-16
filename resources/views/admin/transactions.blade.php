@@ -82,7 +82,7 @@
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--text-muted)]">
-        <span>Showing {{ $transactions->firstItem() ?? 0 }}â€“{{ $transactions->lastItem() ?? 0 }} of {{ $transactions->total() }}</span>
+        <span>Showing {{ $transactions->firstItem() ?? 0 }}"“{{ $transactions->lastItem() ?? 0 }} of {{ $transactions->total() }}</span>
         <div class="flex gap-2">
             @if($transactions->previousPageUrl())
                 <a href="{{ $transactions->previousPageUrl() }}" class="px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-all min-h-[44px] min-w-[44px] flex items-center justify-center">Previous</a>

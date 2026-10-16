@@ -114,7 +114,7 @@
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--text-muted)]">
-        <span>Showing {{ $users->firstItem() ?? 0 }}â€“{{ $users->lastItem() ?? 0 }} of {{ $users->total() }}</span>
+        <span>Showing {{ $users->firstItem() ?? 0 }}"“{{ $users->lastItem() ?? 0 }} of {{ $users->total() }}</span>
         <div class="flex gap-2">
             @if($users->previousPageUrl())
                 <a href="{{ $users->previousPageUrl() }}" class="px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-all min-h-[44px] min-w-[44px] flex items-center justify-center">Previous</a>
