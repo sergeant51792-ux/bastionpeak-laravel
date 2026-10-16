@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sign in — Bastion Peak</title>
-    <link rel="icon" href="{{ asset('Bastion Peaks.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/css/utilities.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">

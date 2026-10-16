@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#1E3A8A">
     <title>@yield('title', 'Home') — Bastion Peak</title>
-    <link rel="icon" href="{{ asset('Bastion Peaks.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/css/utilities.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">

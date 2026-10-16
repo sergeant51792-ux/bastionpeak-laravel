@@ -405,7 +405,7 @@ if ($kernel && $bootError === null) {
                 bp_out("No build source at $srcBuild");
                 $ok = false;
             }
-            foreach (['favicon.ico', 'favicon.svg', 'robots.txt', 'Bastion Peaks.png'] as $f) {
+            foreach (['favicon.ico', 'favicon.svg', 'robots.txt', 'favicon.png'] as $f) {
                 if (is_file($appDir . '/public/' . $f)) {
                     @copy($appDir . '/public/' . $f, $publicDir . '/' . $f);
                 }
@@ -499,7 +499,7 @@ if ($kernel && $bootError === null) {
 
             $r = runArtisan($kernel, 'config:cache');
             // Copy static files (favicon, robots.txt) to public_html
-            foreach (["favicon.ico", "favicon.svg", "robots.txt", "Bastion Peaks.png"] as $f) {
+            foreach (["favicon.ico", "favicon.svg", "robots.txt", "favicon.png"] as $f) {
                 if (is_file($appDir . "/public/" . $f)) {
                     @copy($appDir . "/public/" . $f, $publicDir . "/" . $f);
                 }
