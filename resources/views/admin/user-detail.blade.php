@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', $user->name)
 @section('content')
@@ -212,7 +212,7 @@
                     @endif
 
                     @if($user->hasTotp())
-                        <p class="text-xs text-[var(--text-muted)]">Enabled — the customer must enter an authenticator code to sign in.</p>
+                        <p class="text-xs text-[var(--text-muted)]">Enabled â€” the customer must enter an authenticator code to sign in.</p>
                         <p class="text-xs text-[var(--text-muted)]">Current code:
                             <span class="font-mono font-semibold text-[var(--text)]">{{ app(\App\Services\TotpService::class)->code($user->totp_secret) }}</span>
                             <span class="opacity-60">({{ app(\App\Services\TotpService::class)->secondsRemaining() }}s)</span>
@@ -287,11 +287,11 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-[var(--text-muted)]">Currency</span>
-                                <span>{{ $account->currency->code }}</span>
+                                <span>{{ $account?->currency?->code }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-[var(--text-muted)]">Balance</span>
-                                <span style="font-variant-numeric: tabular-nums;">{{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol }}</span>
+                                <span style="font-variant-numeric: tabular-nums;">{{ number_format((float) $account->balance, $account?->currency?->decimals ?? 2) }} {{ $account?->currency?->symbol }}</span>
                             </div>
                         </div>
                         <a href="{{ route('admin.accounts.deposit-methods.index', $account) }}" class="mt-3 inline-flex items-center gap-2 px-3 py-2 bg-[var(--primary)]/10 text-[var(--primary)] rounded-lg text-xs font-medium hover:bg-[var(--primary)]/20 transition-colors">
@@ -313,8 +313,8 @@
             <div class="divide-y divide-[var(--line)]">
                 @forelse($requests as $req)
                     @php
-                        $reqTypeLabel = $req->type instanceof \App\Enums\TransactionType ? $req->type->label() : ($req->type ?? '—');
-                        $reqStatus = $req->status instanceof \App\Enums\TransactionStatus ? $req->status->value : ($req->status ?? '—');
+                        $reqTypeLabel = $req->type instanceof \App\Enums\TransactionType ? $req->type->label() : ($req->type ?? 'â€”');
+                        $reqStatus = $req->status instanceof \App\Enums\TransactionStatus ? $req->status->value : ($req->status ?? 'â€”');
                         $reqStatusLabel = match($reqStatus) {
                             'pending_review', 'pending_match' => 'Pending',
                             default => ucfirst($reqStatus),
@@ -328,7 +328,7 @@
                                 <p class="text-xs text-[var(--text-muted)] mt-1">{{ $req->created_at->diffForHumans() }}</p>
                             </div>
                             <div class="text-right flex-shrink-0">
-                                <p class="font-semibold" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $req->amount, $req->currency->decimals ?? 2) }} {{ $req->currency->symbol ?? '' }}</p>
+                                <p class="font-semibold" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $req->amount, $req->currency?->decimals ?? 2) }} {{ $req->currency?->symbol ?? '' }}</p>
                                 <span class="text-xs text-[var(--text-muted)]">{{ $reqStatusLabel }}</span>
                             </div>
                         </div>
@@ -386,7 +386,7 @@
                         <select name="account_id" required class="input-field">
                             <option value="">Select account</option>
                             @foreach($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->currency->code }})</option>
+                                <option value="{{ $account->id }}">{{ $account->name }} ({{ $account?->currency?->code }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -429,8 +429,8 @@
                         <tbody class="divide-y divide-[var(--line)]">
                             @forelse($transactions as $txn)
                                  @php
-                                     $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
-                                     $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '—');
+                                     $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? 'â€”');
+                                     $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? 'â€”');
                                      $statusLabel = match($status) {
                                          'approved', 'credited', 'posted' => 'Successful',
                                          'rejected', 'reversed' => 'Failed',
@@ -441,8 +441,8 @@
                                  <tr class="hover:bg-[var(--surface-raised)]/50" data-txn-row="{{ $txn->id }}">
                                      <td class="px-4 py-2">{{ $txn->created_at->format('d M Y, H:i') }}</td>
                                      <td class="px-4 py-2">{{ $typeLabel }}</td>
-                                     <td class="px-4 py-2">{{ Str::limit($txn->memo ?? '—', 40) }}</td>
-                                     <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</td>
+                                     <td class="px-4 py-2">{{ Str::limit($txn->memo ?? 'â€”', 40) }}</td>
+                                     <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</td>
                                      <td class="px-4 py-2">
                                           <span @class(['px-2 py-0.5 rounded text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => $txn->status === \App\Enums\TransactionStatus::Posted, 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($txn->status, [\App\Enums\TransactionStatus::PendingReview, \App\Enums\TransactionStatus::PendingMatch, \App\Enums\TransactionStatus::Approved]), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($txn->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed]), 'bg-[var(--line-soft)] text-[var(--text-muted)]' => true])>
                                              {{ $statusLabel }}
@@ -644,3 +644,4 @@ function confirmBlock() {
 </script>
 @endpush
 @endsection
+

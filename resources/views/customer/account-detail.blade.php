@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+﻿@extends('layouts.customer')
 
 @section('title', $account->name)
 
@@ -10,7 +10,7 @@
         </a>
         <div class="flex-1 min-w-0">
             <h1 class="text-xl font-bold text-[var(--text)] tracking-tight truncate">{{ $account->name }}</h1>
-            <p class="text-sm text-[var(--text-muted)] mt-0.5 truncate">{{ $account->currency->code ?? '' }} • {{ $account->account_number ?: '' }}</p>
+            <p class="text-sm text-[var(--text-muted)] mt-0.5 truncate">{{ $account?->currency?->code ?? '' }} â€¢ {{ $account->account_number ?: '' }}</p>
         </div>
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $account->status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]' }} flex-shrink-0">
             {{ ucfirst($account->status) }}
@@ -41,7 +41,7 @@
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Account number</span>
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-medium text-[var(--text)] font-mono">{{ $account->account_number ?: '—' }}</span>
+                        <span class="text-sm font-medium text-[var(--text)] font-mono">{{ $account->account_number ?: 'â€”' }}</span>
                         <button onclick="copyAccountNumber(this, '{{ $account->account_number }}')" class="text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" aria-label="Copy">
                             <x-icon name="copy" class="w-4 h-4" />
                         </button>
@@ -49,11 +49,11 @@
                 </div>
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Currency</span>
-                    <span class="text-sm font-medium text-[var(--text)]">{{ $account->currency->code ?? '—' }}</span>
+                    <span class="text-sm font-medium text-[var(--text)]">{{ $account?->currency?->code ?? 'â€”' }}</span>
                 </div>
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Type</span>
-                    <span class="text-sm font-medium text-[var(--text)]">{{ $account->type ?: '—' }}</span>
+                    <span class="text-sm font-medium text-[var(--text)]">{{ $account->type ?: 'â€”' }}</span>
                 </div>
                 <div class="flex items-center justify-between py-2.5">
                     <span class="text-sm text-[var(--text-muted)]">Opened</span>

@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'transaction',
     'variant' => 'desktop',
 ])
@@ -6,13 +6,13 @@
 @php
     $isMobile = $variant === 'mobile';
     $isIncoming = $transaction->isIncoming();
-    $amountPrefix = $isIncoming ? '+' : '−';
+    $amountPrefix = $isIncoming ? '+' : 'âˆ’';
     $amountClass = $isIncoming ? 'text-[var(--success)]' : 'text-[var(--text)]';
     $iconName = $isIncoming ? 'arrow-down-left' : 'arrow-up-right';
     $iconClass = $isIncoming ? 'txn-icon txn-icon-in' : 'txn-icon txn-icon-out';
 
-    $decimals = $transaction->currency->decimals ?? 2;
-    $symbol = $transaction->currency->symbol ?? '';
+    $decimals = $transaction->currency?->decimals ?? 2;
+    $symbol = $transaction->currency?->symbol ?? '';
     $title = $transaction->memo
         ?: ($transaction->type instanceof \App\Enums\TransactionType
             ? $transaction->type->customerLabel()
@@ -53,7 +53,8 @@
     </div>
     <div class="text-right flex-shrink-0">
         <p class="text-sm font-semibold text-balance {{ $amountClass }}">{{ $amountPrefix }}{{ number_format((float) $transaction->amount, $decimals) }} {{ $symbol }}</p>
-        <p class="text-xs text-[var(--text-muted)]">{{ $transaction->currency->code ?? '' }}</p>
+        <p class="text-xs text-[var(--text-muted)]">{{ $transaction?->currency?->code ?? '' }}</p>
     </div>
 </a>
 @endif
+

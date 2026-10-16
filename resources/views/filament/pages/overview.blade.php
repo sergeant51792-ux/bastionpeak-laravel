@@ -1,4 +1,4 @@
-<x-filament-panels::page>
+﻿<x-filament-panels::page>
     <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="p-4 bg-[var(--surface-raised)] rounded-lg border border-[var(--line)]">
@@ -31,7 +31,7 @@
                         <div class="flex items-center justify-between p-3 bg-[var(--line-soft)] rounded">
                             <div>
                                 <p class="font-medium text-[var(--text)]">{{ $item->fromUser?->name ?? 'Unknown' }}</p>
-                                <p class="text-sm text-[var(--text-muted)]">{{ $item->type->label() }} — {{ number_format((float) $item->amount, $item->currency->decimals ?? 2) }} {{ $item->currency->symbol ?? '' }}</p>
+                                <p class="text-sm text-[var(--text-muted)]">{{ $item->type->label() }} â€” {{ number_format((float) $item->amount, $item?->currency?->decimals ?? 2) }} {{ $item?->currency?->symbol ?? '' }}</p>
                             </div>
                             <a href="{{ route('admin.approvals', ['tab' => $item->type === \App\Enums\TransactionType::DepositCredit ? 'deposits' : 'payments']) }}"
                                class="text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-dark)]">
@@ -85,3 +85,4 @@
         </div>
     </div>
 </x-filament-panels::page>
+

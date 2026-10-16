@@ -40,7 +40,7 @@
                         <td class="px-4 py-3 font-medium">{{ $merchant->name }}</td>
                         <td class="px-4 py-3">{{ $merchant->category }}</td>
                         <td class="px-4 py-3" style="font-variant-numeric: tabular-nums;">${{ number_format($merchant->receiving_cap, 0) }}</td>
-                        <td class="px-4 py-3" style="font-variant-numeric: tabular-nums;">{{ number_format($merchant->transactions->sum('amount'), 2) }} {{ $merchant->transactions->first()?->currency->symbol ?? '$' }}</td>
+                            <td class="px-4 py-3" style="font-variant-numeric: tabular-nums;">{{ number_format($merchant->transactions->sum('amount'), 2) }} {{ $merchant->transactions->first()?->currency?->symbol ?? '$' }}</td>
                         <td class="px-4 py-3">
                             <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]' }}">{{ ucfirst($status) }}</span>
                         </td>

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', $account->name)
 
@@ -11,7 +11,7 @@
             </a>
             <div>
                 <h1 class="text-xl font-bold text-[var(--text)]">{{ $account->name }}</h1>
-                <p class="text-sm text-[var(--text-muted)] mt-0.5">{{ $account->user->name ?? 'Unknown user' }} • {{ $account->currency->code ?? '' }} {{ $account->account_number ?: '' }}</p>
+                <p class="text-sm text-[var(--text-muted)] mt-0.5">{{ $account->user->name ?? 'Unknown user' }} â€¢ {{ $account?->currency?->code ?? '' }} {{ $account->account_number ?: '' }}</p>
             </div>
         </div>
         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $account->status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : ($account->status === 'frozen' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]') }}">
@@ -23,7 +23,7 @@
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
                 <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Balance</h2>
-                <p class="text-3xl font-bold text-[var(--text)]">{{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol ?? '' }}</p>
+                <p class="text-3xl font-bold text-[var(--text)]">{{ number_format((float) $account->balance, $account?->currency?->decimals ?? 2) }} {{ $account?->currency?->symbol ?? '' }}</p>
             </div>
 
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
@@ -31,7 +31,7 @@
                 <div class="space-y-3">
                     <form method="POST" action="{{ route('admin.accounts.balance.update', $account) }}" class="flex gap-2">
                         @csrf
-                        <input type="number" step="{{ pow(10, -($account->currency->decimals ?? 2)) }}" name="balance" value="{{ old('balance', $account->balance) }}" required class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
+                        <input type="number" step="{{ pow(10, -($account?->currency?->decimals ?? 2)) }}" name="balance" value="{{ old('balance', $account->balance) }}" required class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                         <button type="submit" class="px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Update balance</button>
                     </form>
 
@@ -58,24 +58,24 @@
             </div>
 
             <div class="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
-                <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Limits ({{ $account->currency->code }})</h2>
+                <h2 class="text-sm font-semibold text-[var(--text-muted)] mb-4">Limits ({{ $account?->currency?->code }})</h2>
                 <form method="POST" action="{{ route('admin.accounts.caps.update', $account) }}" class="grid grid-cols-2 gap-4">
                     @csrf
                     <div>
                         <label class="text-xs text-[var(--text-muted)]">Per-transaction</label>
-                        <input type="number" step="{{ pow(10, -($account->currency->decimals ?? 2)) }}" name="per_transaction_cap" value="{{ old('per_transaction_cap', $account->per_transaction_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
+                        <input type="number" step="{{ pow(10, -($account?->currency?->decimals ?? 2)) }}" name="per_transaction_cap" value="{{ old('per_transaction_cap', $account->per_transaction_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                     </div>
                     <div>
                         <label class="text-xs text-[var(--text-muted)]">Daily</label>
-                        <input type="number" step="{{ pow(10, -($account->currency->decimals ?? 2)) }}" name="daily_cap" value="{{ old('daily_cap', $account->daily_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
+                        <input type="number" step="{{ pow(10, -($account?->currency?->decimals ?? 2)) }}" name="daily_cap" value="{{ old('daily_cap', $account->daily_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                     </div>
                     <div>
                         <label class="text-xs text-[var(--text-muted)]">Monthly</label>
-                        <input type="number" step="{{ pow(10, -($account->currency->decimals ?? 2)) }}" name="monthly_cap" value="{{ old('monthly_cap', $account->monthly_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
+                        <input type="number" step="{{ pow(10, -($account?->currency?->decimals ?? 2)) }}" name="monthly_cap" value="{{ old('monthly_cap', $account->monthly_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                     </div>
                     <div>
                         <label class="text-xs text-[var(--text-muted)]">Balance cap</label>
-                        <input type="number" step="{{ pow(10, -($account->currency->decimals ?? 2)) }}" name="balance_cap" value="{{ old('balance_cap', $account->balance_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
+                        <input type="number" step="{{ pow(10, -($account?->currency?->decimals ?? 2)) }}" name="balance_cap" value="{{ old('balance_cap', $account->balance_cap) }}" class="w-full px-3 py-2 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-sm">
                     </div>
                     <div class="col-span-2">
                         <button type="submit" class="w-full px-4 py-2 bg-[var(--text)] text-[var(--bg)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">Update limits</button>
@@ -131,7 +131,7 @@
                                     @endif
                                     <div>
                                         <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
-                                        <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} • Code: {{ $method->code }}</p>
+                                        <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} â€¢ Code: {{ $method->code }}</p>
                                     </div>
                                 </div>
                                 @if($method->address)
@@ -155,7 +155,7 @@
                             </div>
                         @endforeach
                         <div class="pt-2">
-                            <a href="{{ route('admin.deposit-methods.index') }}" class="text-xs font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">Manage global deposit methods →</a>
+                            <a href="{{ route('admin.deposit-methods.index') }}" class="text-xs font-medium text-[var(--accent)] hover:opacity-80 transition-opacity">Manage global deposit methods â†’</a>
                         </div>
                     </div>
                 @endif
@@ -175,7 +175,7 @@
                                         @endif
                                         <div>
                                             <p class="font-semibold text-[var(--text)]">{{ $method->name }}</p>
-                                            <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} • Code: {{ $method->code }}</p>
+                                            <p class="text-xs text-[var(--text-muted)]">{{ ucfirst($method->type) }} â€¢ Code: {{ $method->code }}</p>
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $method->pivot->is_active ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--line-soft)] text-[var(--text-muted)]' }}">
@@ -216,7 +216,7 @@
                         </div>
                         <div class="text-right">
                             <p class="text-sm font-medium {{ ((int) $txn->from_account_id === (int) $account->id) ? 'text-[var(--danger)]' : 'text-[var(--success)]' }}">
-                                {{ ((int) $txn->from_account_id === (int) $account->id) ? '-' : '+' }}{{ number_format((float) $txn->amount, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol ?? '' }}
+                                {{ ((int) $txn->from_account_id === (int) $account->id) ? '-' : '+' }}{{ number_format((float) $txn->amount, $account?->currency?->decimals ?? 2) }} {{ $account?->currency?->symbol ?? '' }}
                             </p>
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs {{ $statusValue === 'posted' || $statusValue === 'credited' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--warning-bg)] text-[var(--warning)]' }}">
                                 {{ ucfirst($statusValue) }}
@@ -240,19 +240,19 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Account number</span>
-                        <span class="text-[var(--text)] font-mono">{{ $account->account_number ?: '—' }}</span>
+                        <span class="text-[var(--text)] font-mono">{{ $account->account_number ?: 'â€”' }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Currency</span>
-                        <span class="text-[var(--text)]">{{ $account->currency->name ?? '—' }} ({{ $account->currency->code ?? '—' }})</span>
+                        <span class="text-[var(--text)]">{{ $account?->currency?->name ?? 'â€”' }} ({{ $account?->currency?->code ?? 'â€”' }})</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Type</span>
-                        <span class="text-[var(--text)]">{{ $account->type ?: '—' }}</span>
+                        <span class="text-[var(--text)]">{{ $account->type ?: 'â€”' }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-[var(--text-muted)]">Opened</span>
-                        <span class="text-[var(--text)]">{{ $account->opened_at?->format('d M Y') ?: '—' }}</span>
+                        <span class="text-[var(--text)]">{{ $account->opened_at?->format('d M Y') ?: 'â€”' }}</span>
                     </div>
                 </div>
             </div>

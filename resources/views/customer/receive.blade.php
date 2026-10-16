@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+﻿@extends('layouts.customer')
 
 @section('title', 'Receive')
 
@@ -58,7 +58,7 @@
         @endphp
         <div class="space-y-4">
             <div class="flex items-center justify-between">
-                <h2 class="text-sm font-semibold text-[var(--text-muted)]">{{ $account->name }} ({{ $account->currency->code }})</h2>
+                <h2 class="text-sm font-semibold text-[var(--text-muted)]">{{ $account->name }} ({{ $account?->currency?->code }})</h2>
             </div>
 
             @if($depositMethods->isNotEmpty())
@@ -315,3 +315,4 @@ document.addEventListener('keydown', function (e) {
 });
 </script>
 @endsection
+

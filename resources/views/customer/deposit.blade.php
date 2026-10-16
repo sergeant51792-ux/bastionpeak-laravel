@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+﻿@extends('layouts.customer')
 
 @section('title', 'Add money')
 
@@ -10,8 +10,8 @@
             'name' => $method->name,
             'account_id' => $method->account_id,
             'account_name' => $method->account_name,
-            'currency_symbol' => $method->currency->symbol ?? '$',
-            'currency_code' => $method->currency->code ?? 'USD',
+            'currency_symbol' => $method?->currency?->symbol ?? '$',
+            'currency_code' => $method?->currency?->code ?? 'USD',
             'address' => $method->pivot->address ?? '',
             'instructions' => $method->pivot->instructions ?? '',
             'qr_path' => $method->pivot->qr_path ?? '',
@@ -63,7 +63,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-xs text-[var(--text-muted)]">{{ __('Amount') }}</span>
-                                <span class="text-xs font-semibold text-[var(--text)] tabular-nums">+{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</span>
+                                <span class="text-xs font-semibold text-[var(--text)] tabular-nums">+{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</span>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                     {{ __('View activity') }}
                 </a>
                 <button onclick="window.location.href='{{ route('home') }}'" class="mt-4 text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
-                    ← {{ __('Back to dashboard') }}
+                    â† {{ __('Back to dashboard') }}
                 </button>
             </div>
         </div>
@@ -141,7 +141,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <span class="text-xs text-[var(--text-muted)] bg-[var(--line-soft)] px-2.5 py-1 rounded-full shrink-0">{{ $method->currency->code ?? 'USD' }}</span>
+                                <span class="text-xs text-[var(--text-muted)] bg-[var(--line-soft)] px-2.5 py-1 rounded-full shrink-0">{{ $method?->currency?->code ?? 'USD' }}</span>
                             </div>
                         </button>
                     @endforeach
@@ -300,3 +300,4 @@ function copyAddressText() {
 }
 </script>
 @endsection
+

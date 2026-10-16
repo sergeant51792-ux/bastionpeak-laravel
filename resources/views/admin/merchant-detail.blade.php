@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', $merchant->name)
 @section('content')
@@ -63,13 +63,13 @@
                     <tbody class="divide-y divide-[var(--line)]">
                         @forelse($transactions as $txn)
                             @php
-                                $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
-                                $statusLabel = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? '—');
+                                $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? 'â€”');
+                                $statusLabel = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->label() : ($txn->status ?? 'â€”');
                             @endphp
                             <tr class="hover:bg-[var(--surface-raised)]/50">
                                 <td class="px-4 py-2">{{ $txn->created_at->format('d M Y, H:i') }}</td>
                                 <td class="px-4 py-2">{{ $typeLabel }}</td>
-                                <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</td>
+                                <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</td>
                                 <td class="px-4 py-2">{{ $statusLabel }}</td>
                             </tr>
                         @empty
@@ -85,3 +85,4 @@
     </div>
 </div>
 @endsection
+

@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+﻿@extends('layouts.customer')
 
 @section('title', 'Transactions')
 @section('content')
@@ -50,7 +50,7 @@
                             <select name="account_id" class="input-field w-full">
                                 <option value="0">All accounts</option>
                                 @foreach($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->currency->code }})</option>
+                                    <option value="{{ $account->id }}">{{ $account->name }} ({{ $account?->currency?->code }})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -100,7 +100,7 @@
                                      };
                                  @endphp
                                  <a href="{{ route('activity.receipt', $txn) }}" class="{{ $amountClass }}">
-                                     {{ $isIncoming ? '+' : '−' }}{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}
+                                      {{ $isIncoming ? '+' : 'âˆ’' }}{{ number_format((float) $txn->amount, $txn->currency?->decimals ?? 2) }} {{ $txn->currency?->symbol ?? '' }}
                                  </a>
                              </td>
                              <td class="px-3 sm:px-4 py-3 hidden sm:table-cell">
@@ -126,3 +126,4 @@
     </div>
 </div>
 @endsection
+

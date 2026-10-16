@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Manual credit / debit')
 @section('content')
@@ -36,7 +36,7 @@
         <div>
             <label for="amount" class="block text-sm font-medium mb-1.5">Amount</label>
             <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">{{ $account->currency->symbol }}</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">{{ $account?->currency?->symbol }}</span>
                 <input type="text" inputmode="decimal" id="amount" name="amount" required class="w-full pl-8 pr-4 py-3 bg-[var(--surface)] border border-[var(--line)] rounded-xl" placeholder="0.00">
             </div>
         </div>
@@ -54,11 +54,11 @@
         <div class="p-4 bg-[var(--surface-raised)] rounded-xl space-y-2">
             <div class="flex items-center justify-between text-sm">
                 <span class="text-[var(--text-muted)]">Balance now</span>
-                <span style="font-variant-numeric: tabular-nums;">{{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol }}</span>
+                <span style="font-variant-numeric: tabular-nums;">{{ number_format((float) $account->balance, $account?->currency?->decimals ?? 2) }} {{ $account?->currency?->symbol }}</span>
             </div>
             <div class="flex items-center justify-between text-sm">
                 <span class="text-[var(--text-muted)]">Balance after</span>
-                <span id="balance-after" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }} {{ $account->currency->symbol }}</span>
+                <span id="balance-after" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $account->balance, $account?->currency?->decimals ?? 2) }} {{ $account?->currency?->symbol }}</span>
             </div>
         </div>
 
@@ -69,3 +69,4 @@
     </form>
 </div>
 @endsection
+

@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'account',
     'size' => 'full',
     'theme' => 'default',
@@ -38,10 +38,11 @@
             <p class="text-xs text-[var(--text-muted)] font-mono">****{{ substr($account->account_number, -4) }}</p>
         @endif
     </div>
-    @if(!$isCompact && $account->currency && in_array(strtolower($account->currency->code), ['btc', 'eth']))
+    @if(!$isCompact && $account->currency && in_array(strtolower($account?->currency?->code), ['btc', 'eth']))
         <div class="mt-3 flex items-center gap-1 text-xs text-[var(--text-muted)]">
             <x-icon name="external-link"  class="h-3 w-3" />
-             <span>Rate: 1 {{ $account->currency->symbol }} = {{ number_format((float) $account->currency->exchange_rate, 2) }} USD</span>
+             <span>Rate: 1 {{ $account?->currency?->symbol }} = {{ number_format((float) $account?->currency?->exchange_rate, 2) }} USD</span>
         </div>
     @endif
 </div>
+

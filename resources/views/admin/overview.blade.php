@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Overview')
 @section('content')
@@ -36,7 +36,7 @@
                             <p class="text-sm text-[var(--text-muted)]">{{ $deposit->memo ?? 'No memo' }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-semibold">{{ number_format((float) $deposit->amount, $deposit->currency->decimals ?? 2) }} {{ $deposit->currency->symbol ?? '' }}</p>
+                            <p class="font-semibold">{{ number_format((float) $deposit->amount, $deposit?->currency?->decimals ?? 2) }} {{ $deposit?->currency?->symbol ?? '' }}</p>
                             <p class="text-xs text-[var(--text-muted)]">{{ $deposit->created_at->diffForHumans() }}</p>
                         </div>
                     </a>
@@ -61,7 +61,7 @@
                             <p class="text-sm text-[var(--text-muted)]">{{ $payment->memo ?? 'No memo' }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-semibold">{{ number_format((float) $payment->amount, $payment->currency->decimals ?? 2) }} {{ $payment->currency->symbol ?? '' }}</p>
+                            <p class="font-semibold">{{ number_format((float) $payment->amount, $payment?->currency?->decimals ?? 2) }} {{ $payment?->currency?->symbol ?? '' }}</p>
                             <p class="text-xs text-[var(--text-muted)]">{{ $payment->created_at->diffForHumans() }}</p>
                         </div>
                     </a>
@@ -113,3 +113,4 @@
     </div>
 </div>
 @endsection
+

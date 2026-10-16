@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', $card->card_number_masked ? 'Card ****' . substr($card->card_number_masked, -4) : 'Card detail')
 @section('content')
@@ -10,7 +10,7 @@
             </a>
             <div>
                 <h1 class="text-xl font-semibold">Card ****{{ $card->card_number_masked ? substr($card->card_number_masked, -4) : '0000' }}</h1>
-                <p class="text-sm text-[var(--text-muted)]">{{ $card->user->name ?? '—' }} • {{ $card->account->name ?? '—' }}</p>
+                <p class="text-sm text-[var(--text-muted)]">{{ $card->user->name ?? 'â€”' }} â€¢ {{ $card->account->name ?? 'â€”' }}</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Type</span>
-                    <span>{{ ucfirst($card->card_type ?? '—') }}</span>
+                    <span>{{ ucfirst($card->card_type ?? 'â€”') }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Status</span>
@@ -58,11 +58,11 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Valid from</span>
-                    <span>{{ $card->valid_from ? $card->valid_from->format('d M Y') : '—' }}</span>
+                    <span>{{ $card->valid_from ? $card->valid_from->format('d M Y') : 'â€”' }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="text-[var(--text-muted)]">Valid to</span>
-                    <span>{{ $card->valid_to ? $card->valid_to->format('d M Y') : '—' }}</span>
+                    <span>{{ $card->valid_to ? $card->valid_to->format('d M Y') : 'â€”' }}</span>
                 </div>
             </div>
         </div>
@@ -100,12 +100,12 @@
                 <tbody class="divide-y divide-[var(--line)]">
                     @forelse($transactions as $txn)
                         @php
-                            $txnTypeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : '—';
+                            $txnTypeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : 'â€”';
                         @endphp
                         <tr class="hover:bg-[var(--surface-raised)]/50">
                             <td class="px-4 py-2">{{ $txn->created_at->format('d M Y, H:i') }}</td>
                             <td class="px-4 py-2">{{ $txn->memo ?? $txnTypeLabel }}</td>
-                            <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</td>
+                            <td class="px-4 py-2 text-right" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="3" class="px-4 py-6 text-center text-[var(--text-muted)]">No transactions.</td></tr>
@@ -119,3 +119,4 @@
     </div>
 </div>
 @endsection
+

@@ -1,4 +1,4 @@
-@php
+﻿@php
     $decimals = 2;
     $symbol   = '$';
     $code     = 'USD';
@@ -50,7 +50,7 @@
 
     <div class="row">
         <dt>Statement period</dt>
-        <dd>{{ $startDate }} → {{ $endDate }}</dd>
+        <dd>{{ $startDate }} â†’ {{ $endDate }}</dd>
     </div>
     <div class="row">
         <dt>Account holder</dt>
@@ -76,7 +76,7 @@
     </div>
     <div class="row">
         <dt>Total debits</dt>
-        <dd class="money-out">−{{ $totalWithdrawals }}</dd>
+        <dd class="money-out">âˆ’{{ $totalWithdrawals }}</dd>
     </div>
     <div class="row" style="border-top: 2px solid #E5E7EB; padding-top: 6px; margin-top: 4px;">
         <dt>Closing balance</dt>
@@ -129,7 +129,7 @@
                         </td>
                         <td class="text-right">
                             <span class="{{ $isIncoming ? 'money-in' : 'money-out' }}">
-                                {{ $isIncoming ? '+' : '−' }}{{ $txn->amount }} {{ $txn->currency->symbol ?? '' }}
+                                {{ $isIncoming ? '+' : 'âˆ’' }}{{ $txn->amount }} {{ $txn?->currency?->symbol ?? '' }}
                             </span>
                         </td>
                     </tr>
@@ -142,9 +142,10 @@
 
     <div class="stamp">
         <div style="font-weight: 600; color: #1E3A8A; margin-bottom: 4px;">BASTION PEAK FINANCIAL SERVICES</div>
-        <div class="mini">{{ $user->name }} · {{ $startDate }} to {{ $endDate }} · Generated {{ $generatedAt->format('j M Y, H:i') }}</div>
+        <div class="mini">{{ $user->name }} Â· {{ $startDate }} to {{ $endDate }} Â· Generated {{ $generatedAt->format('j M Y, H:i') }}</div>
         <div class="mini" style="margin-top: 2px;">This statement reflects all non-reversed transactions within the selected period.</div>
     </div>
 </div>
 </body>
 </html>
+

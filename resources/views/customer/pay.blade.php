@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+﻿@extends('layouts.customer')
 
 @section('title', 'Transfer')
 @section('content')
@@ -277,7 +277,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-xs text-[var(--text-muted)]">{{ __('Amount') }}</span>
-                            <span class="text-xs font-semibold text-[var(--text)] tabular-nums">−{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</span>
+                            <span class="text-xs font-semibold text-[var(--text)] tabular-nums">âˆ’{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</span>
                         </div>
                     </div>
                 </div>
@@ -436,7 +436,7 @@
             var btn = document.getElementById('submit-btn');
             if (btn) {
                 btn.disabled = true;
-                btn.textContent = 'Processing…';
+                btn.textContent = 'Processingâ€¦';
             }
         });
     });
@@ -444,3 +444,4 @@
     selectMethod(@json($selectedMethod));
 </script>
 @endsection
+

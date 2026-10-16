@@ -127,7 +127,7 @@
                                      <p class="text-xs text-[var(--text-muted)]">{{ $item->type instanceof \App\Enums\TransactionType ? $item->type->label() : ($item->type ?? '—') }}</p>
                                  </div>
                                  <div class="text-right">
-                                      <p class="font-semibold text-sm">{{ number_format((float) $item->amount, $item->currency->decimals ?? 2) }} {{ $item->currency->symbol ?? '' }}</p>
+                                       <p class="font-semibold text-sm">{{ number_format((float) $item->amount, $item->currency?->decimals ?? 2) }} {{ $item->currency?->symbol ?? '' }}</p>
                                      <p class="text-xs text-[var(--text-muted)]">{{ $item->created_at->diffForHumans() }}</p>
                                  </div>
                              </div>
@@ -146,7 +146,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <h2 class="text-lg font-semibold">{{ $openTransaction->type instanceof \App\Enums\TransactionType ? $openTransaction->type->label() : ($openTransaction->type ?? '—') }}</h2>
-                            <p class="text-2xl font-semibold mt-1">{{ number_format((float) $openTransaction->amount, $openTransaction->currency->decimals ?? 2) }} {{ $openTransaction->currency->symbol ?? '' }}</p>
+                            <p class="text-2xl font-semibold mt-1">{{ number_format((float) $openTransaction->amount, $openTransaction->currency?->decimals ?? 2) }} {{ $openTransaction->currency?->symbol ?? '' }}</p>
                             <p class="text-sm text-[var(--text-muted)]">{{ $openTransaction->fromAccount?->name ?? 'External' }} to {{ $openTransaction->toAccount?->name ?? $openTransaction->toUser?->name ?? 'External' }}</p>
                         </div>
                         <span @class(['px-3 py-1 rounded-full text-sm font-medium', 'bg-[var(--warning-bg)] text-[var(--warning)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingReview, 'bg-[var(--accent-subtle)] text-[var(--accent)]' => $openTransaction->status === \App\Enums\TransactionStatus::PendingMatch, 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Approved, \App\Enums\TransactionStatus::Credited], true), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($openTransaction->status, [\App\Enums\TransactionStatus::Rejected, \App\Enums\TransactionStatus::Reversed], true)])>

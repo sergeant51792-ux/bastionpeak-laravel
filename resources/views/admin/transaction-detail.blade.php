@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', $transaction->transaction_id)
 @section('content')
@@ -17,7 +17,7 @@
     $txnStatus = $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->value : ($transaction->status ?? '');
 @endphp
 <span @class(['px-3 py-1 rounded-full text-xs font-medium', 'bg-[var(--success-bg)] text-[var(--success)]' => in_array($txnStatus, ['approved', 'posted', 'credited']), 'bg-[var(--warning-bg)] text-[var(--warning)]' => in_array($txnStatus, ['pending_review', 'pending_match']), 'bg-[var(--danger-bg)] text-[var(--danger)]' => in_array($txnStatus, ['rejected', 'reversed', 'cancelled'])])>
-    {{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? '—') }}
+    {{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? 'â€”') }}
 </span>
     </div>
 
@@ -28,35 +28,35 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div>
                         <span class="text-[var(--text-muted)]">Type</span>
-                        <span class="font-medium block">{{ $transaction->type instanceof \App\Enums\TransactionType ? $transaction->type->label() : ($transaction->type ?? '—') }}</span>
+                        <span class="font-medium block">{{ $transaction->type instanceof \App\Enums\TransactionType ? $transaction->type->label() : ($transaction->type ?? 'â€”') }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">Status</span>
-                        <span class="font-medium block">{{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? '—') }}</span>
+                        <span class="font-medium block">{{ $transaction->status instanceof \App\Enums\TransactionStatus ? $transaction->status->label() : ($transaction->status ?? 'â€”') }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">From account</span>
-                        <span class="font-medium block">{{ $transaction->fromAccount?->name ?? $transaction->fromUser?->name ?? '—' }}</span>
+                        <span class="font-medium block">{{ $transaction->fromAccount?->name ?? $transaction->fromUser?->name ?? 'â€”' }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">To account</span>
-                        <span class="font-medium block">{{ $transaction->toAccount?->name ?? $transaction->toUser?->name ?? '—' }}</span>
+                        <span class="font-medium block">{{ $transaction->toAccount?->name ?? $transaction->toUser?->name ?? 'â€”' }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">Amount</span>
-                        <span class="font-medium block" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $transaction->amount, $transaction->currency->decimals ?? 2) }} {{ $transaction->currency->symbol ?? '' }}</span>
+                        <span class="font-medium block" style="font-variant-numeric: tabular-nums;">{{ number_format((float) $transaction->amount, $transaction?->currency?->decimals ?? 2) }} {{ $transaction?->currency?->symbol ?? '' }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">Fee</span>
-                        <span class="font-medium block" style="font-variant-numeric: tabular-nums;">{{ number_format((float) ($transaction->fee ?? 0), $transaction->currency->decimals ?? 2) }} {{ $transaction->currency->symbol ?? '' }}</span>
+                        <span class="font-medium block" style="font-variant-numeric: tabular-nums;">{{ number_format((float) ($transaction->fee ?? 0), $transaction?->currency?->decimals ?? 2) }} {{ $transaction?->currency?->symbol ?? '' }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">Net amount</span>
-                        <span class="font-medium block" style="font-variant-numeric: tabular-nums;">{{ number_format((float) ($transaction->net_amount ?? 0), $transaction->currency->decimals ?? 2) }} {{ $transaction->currency->symbol ?? '' }}</span>
+                        <span class="font-medium block" style="font-variant-numeric: tabular-nums;">{{ number_format((float) ($transaction->net_amount ?? 0), $transaction?->currency?->decimals ?? 2) }} {{ $transaction?->currency?->symbol ?? '' }}</span>
                     </div>
                     <div>
                         <span class="text-[var(--text-muted)]">Operator</span>
-                        <span class="font-medium block">{{ $transaction->operator?->name ?? '—' }}</span>
+                        <span class="font-medium block">{{ $transaction->operator?->name ?? 'â€”' }}</span>
                     </div>
                 </div>
                 @if($transaction->memo)
@@ -125,3 +125,4 @@
     </div>
 </div>
 @endsection
+

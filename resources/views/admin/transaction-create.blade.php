@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Create transaction')
 @section('content')
@@ -31,7 +31,7 @@
                     <select name="account_id" required class="input-field">
                         <option value="">Select account</option>
                         @foreach($accounts as $account)
-                            <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->currency->code }})</option>
+                            <option value="{{ $account->id }}">{{ $account->name }} ({{ $account?->currency?->code }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -76,3 +76,4 @@
     </div>
 </div>
 @endsection
+

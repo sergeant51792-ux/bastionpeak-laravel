@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Transactions')
 @section('content')
@@ -51,10 +51,10 @@
             <tbody class="divide-y divide-[var(--line)]">
                 @foreach($transactions as $txn)
                     @php
-                        $fromName = optional($txn->fromAccount)->name ?? '—';
-                        $toName = optional($txn->toAccount)->name ?? '—';
-                        $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? '—');
-                        $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? '—');
+                        $fromName = optional($txn->fromAccount)->name ?? 'â€”';
+                        $toName = optional($txn->toAccount)->name ?? 'â€”';
+                        $status = $txn->status instanceof \App\Enums\TransactionStatus ? $txn->status->value : ($txn->status ?? 'â€”');
+                        $typeLabel = $txn->type instanceof \App\Enums\TransactionType ? $txn->type->label() : ($txn->type ?? 'â€”');
                         $statusLabel = match ($status) {
                             'approved', 'credited', 'posted' => 'Successful',
                             'rejected', 'reversed' => 'Failed',
@@ -75,7 +75,7 @@
                         <td class="px-4 py-3 text-right" style="font-variant-numeric: tabular-nums;">
                             @php $amount = (float) $txn->amount; @endphp
                             <span @class(['text-[var(--text)]', 'text-[var(--text-muted)]' => $amount < 0])>
-                                {{ $amount >= 0 ? '+' : '' }}{{ number_format($amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}
+                                {{ $amount >= 0 ? '+' : '' }}{{ number_format($amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}
                             </span>
                         </td>
                     </tr>
@@ -85,7 +85,7 @@
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--text-muted)]">
-        <span>Showing {{ $transactions->firstItem() ?? 0 }}–{{ $transactions->lastItem() ?? 0 }} of {{ $transactions->total() }}</span>
+        <span>Showing {{ $transactions->firstItem() ?? 0 }}â€“{{ $transactions->lastItem() ?? 0 }} of {{ $transactions->total() }}</span>
         <div class="flex gap-2">
             @if($transactions->previousPageUrl())
                 <a href="{{ $transactions->previousPageUrl() }}" class="px-4 py-2.5 bg-[var(--surface)] border border-[var(--line)] rounded-lg text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-all min-h-[44px] min-w-[44px] flex items-center justify-center">Previous</a>
@@ -97,3 +97,4 @@
     </div>
 </div>
 @endsection
+

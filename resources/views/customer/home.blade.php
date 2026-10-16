@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+﻿@extends('layouts.customer')
 
 @section('title', 'Home')
 
@@ -49,7 +49,7 @@
                                                 {{ number_format((float) $wallet['balance'], $wallet['decimals']) }}
                                             </span>
                                         </p>
-                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">••••••</p>
+                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">â€¢â€¢â€¢â€¢â€¢â€¢</p>
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@
             <div id="wallet-slider" class="relative overflow-hidden">
                 <div id="wallet-track" class="flex transition-transform duration-500 ease-out">
                     @foreach($accounts as $account)
-                            <div class="w-full flex-shrink-0" data-currency="{{ $account->currency->code }}">
+                            <div class="w-full flex-shrink-0" data-currency="{{ $account?->currency?->code }}">
                                 <div class="card-balance h-44 sm:h-48">
                                     <button id="toggle-balance" onclick="toggleHideBalance()" class="absolute top-4 right-4 w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 z-10" aria-label="Toggle balance visibility">
                                         <span id="eye-show-icon" class="{{ $hideBalance ? 'hidden' : '' }}">
@@ -89,11 +89,11 @@
                                         <p class="text-xs text-white/60 mb-1 uppercase tracking-wider font-medium">Available balance</p>
                                         <p class="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance" data-balance-sensitive>
                                             <span class="inline-flex items-baseline gap-1.5">
-                                                <span class="text-sm font-bold text-white/60">{{ $account->currency->symbol }}</span>
-                                                {{ number_format((float) $account->balance, $account->currency->decimals ?? 2) }}
+                                                <span class="text-sm font-bold text-white/60">{{ $account?->currency?->symbol }}</span>
+                                                {{ number_format((float) $account->balance, $account?->currency?->decimals ?? 2) }}
                                             </span>
                                         </p>
-                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">••••••</p>
+                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">â€¢â€¢â€¢â€¢â€¢â€¢</p>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
             </div>
             <div class="flex items-center justify-center gap-2 mt-3">
                 @foreach($accounts as $account)
-                    <button onclick="switchWallet('{{ $account->currency->code }}')"
+                    <button onclick="switchWallet('{{ $account?->currency?->code }}')"
                             class="wallet-dot h-1.5 rounded-full transition-all {{ $loop->first ? 'bg-[var(--primary)] w-5' : 'bg-[var(--line)] w-1.5' }}"
                             aria-label="Switch to {{ $account->name }}"></button>
                 @endforeach
@@ -149,7 +149,7 @@
                             <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $txn->created_at->format('d M Y, H:i') }}</p>
                         </div>
                         <div class="text-right flex-shrink-0">
-                            <p class="text-sm font-semibold text-balance text-[var(--text)]">{{ number_format((float) $txn->amount, $txn->currency->decimals ?? 2) }} {{ $txn->currency->symbol ?? '' }}</p>
+                            <p class="text-sm font-semibold text-balance text-[var(--text)]">{{ number_format((float) $txn->amount, $txn?->currency?->decimals ?? 2) }} {{ $txn?->currency?->symbol ?? '' }}</p>
                             <x-status-pill :status="$txn->status" :label="$txn->customerStatusLabel()" />
                         </div>
                     </a>
@@ -338,3 +338,4 @@ function toggleHideBalance() {
 }
 </script>
 @endsection
+
