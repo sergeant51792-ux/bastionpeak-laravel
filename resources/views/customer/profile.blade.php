@@ -270,47 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (input) {
-        input.addEventListener('change', function(e) {
-            if (this.files.length > 0) {
-                var formData = new FormData();
-                formData.append('_token', '{{ csrf_token() }}');
-                formData.append('picture', this.files[0]);
-                 fetch('{{ route('profile.picture.upload') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json',
-                    },
-                    body: formData
-                 }).then(function(r) {
-                    if (!r.ok) {
-                        return r.json().then(function(err) {
-                            var msg = err.error || err.message || (r.status + ': ' + r.statusText);
-                            throw new Error(msg);
-                        }).catch(function() {
-                            throw new Error(r.status + ': ' + r.statusText);
-                        });
-                    }
-                    return r.json();
-                }).then(function(data) {
-                    var statusDiv = document.createElement('div');
-                    statusDiv.className = 'mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border';
-                    statusDiv.style.cssText = 'background: var(--success-bg); color: var(--success); border-color: rgba(5,150,105,.2);';
-                    statusDiv.textContent = '{{ __('Profile picture updated.') }}';
-                    document.querySelector('#profile-page').prepend(statusDiv);
-                    setTimeout(function() { location.reload(); }, 1500);
-                }).catch(function(err) {
-                    var statusDiv = document.createElement('div');
-                    statusDiv.className = 'mb-4 p-4 rounded-xl text-sm flex items-center gap-2 border';
-                    statusDiv.style.cssText = 'background: var(--danger-bg); color: var(--danger); border-color: rgba(220,38,38,.2);';
-                    statusDiv.textContent = '{{ __('Upload failed:') }} ' + err.message;
-                    document.querySelector('#profile-page').prepend(statusDiv);
-                });
-                this.value = '';
-            }
-        });
-    }
 });
+
 </script>
 @endsection

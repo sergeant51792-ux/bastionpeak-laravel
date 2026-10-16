@@ -88,6 +88,10 @@
                                  <p class="font-semibold text-[var(--text)] text-sm">{{ $txn->memo ?: $txn->type->customerLabel() }}</p>
                                  <p class="text-xs text-[var(--text-muted)] mt-0.5">{{ $txn->transaction_id ?? 'TXN-' . strtoupper(substr($txn->id, 0, 8)) }}</p>
                                  <p class="text-xs text-[var(--text-muted)] mt-0.5 sm:hidden tabular-nums">{{ $txn->created_at->format('d M Y, H:i') }}</p>
+                                    <div class="sm:hidden mt-1">
+                                        <x-status-pill :status="$txn->status" :label="$txn->customerStatusLabel()" />
+                                    </div>
+                              
                              </td>
                              <td class="px-3 sm:px-4 py-3 text-sm text-[var(--text-muted)] hidden sm:table-cell whitespace-nowrap tabular-nums">{{ $txn->created_at->format('d M Y, H:i') }}</td>
                              <td class="px-3 sm:px-4 py-3 text-right font-semibold text-balance">

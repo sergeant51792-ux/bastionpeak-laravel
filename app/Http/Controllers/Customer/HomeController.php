@@ -90,8 +90,8 @@ class HomeController extends Controller
                 ->get(),
             'recentActivity'   => \App\Models\Transaction::where(function ($q) use ($accountIds) {
                 $q->whereIn('from_account_id', $accountIds)->orWhereIn('to_account_id', $accountIds);
-            })->whereNotIn('status', ['rejected', 'reversed'])
-              ->with('currency')->orderByDesc('created_at')->limit(5)->get(),
+            })->with('currency')->orderByDesc('created_at')->limit(5)->get(),
         ]);
     }
 }
+

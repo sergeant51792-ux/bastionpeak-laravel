@@ -108,7 +108,7 @@
     <div class="row" style="margin-top: 8px;">
         <dt class="muted">{{ $isDeposit ? 'CREDITED' : 'DEBITED' }}</dt>
         <dd class="amount" style="color: {{ $statusInfo['color'] }};">
-            {{ $isDeposit ? '+' : '−' }}{{ $amount }} {{ $symbol }}
+            {{ $isDeposit ? '+' : '-' }}{{ $amount }} {{ $symbol }}
         </dd>
     </div>
 
@@ -138,20 +138,6 @@
             <div style="text-align: right;">
                 <div class="section-title">Processed</div>
                 <div class="mono">{{ $settledAt->format('d M Y, H:i') }}</div>
-            </div>
-        @else
-            <div></div>
-        @endif
-        @if($origin)
-            <div>
-                <div class="section-title">{{ $isDeposit ? 'FROM' : 'SOURCE' }}</div>
-                <div>{{ $origin }}</div>
-            </div>
-        @endif
-        @if($destination)
-            <div style="text-align: right;">
-                <div class="section-title">{{ $isDeposit ? 'TO' : 'DESTINATION' }}</div>
-                <div>{{ $destination }}</div>
             </div>
         @else
             <div></div>

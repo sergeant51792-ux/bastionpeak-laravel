@@ -92,7 +92,7 @@
                     <p class="text-xs text-[var(--text-muted)] uppercase tracking-wider">{{ $isDeposit ? 'Credited' : 'Debited' }}</p>
                     <div class="mt-1">
                         <span class="text-3xl font-bold tabular-nums" style="color: {{ $statusInfo['color'] }};">
-                            {{ $isDeposit ? '+' : '−' }}{{ $amount }} {{ $symbol }}
+                            {{ $isDeposit ? '+' : '-' }}{{ $amount }} {{ $symbol }}
                         </span>
                     </div>
                     @if($fee > 0)
@@ -122,18 +122,7 @@
                         <p class="font-mono text-xs mt-0.5 tabular-nums">{{ $settledAt->format('d M Y, H:i') }}</p>
                     </div>
                 @endif
-                @if($origin)
-                    <div>
-                        <p class="text-xs text-[var(--text-muted)] uppercase tracking-wider">{{ $isDeposit ? 'From' : 'Source' }}</p>
-                        <p class="mt-0.5">{{ $origin }}</p>
-                    </div>
-                @endif
-                @if($destination)
-                    <div class="text-right">
-                        <p class="text-xs text-[var(--text-muted)] uppercase tracking-wider">{{ $isDeposit ? 'To' : 'Destination' }}</p>
-                        <p class="mt-0.5">{{ $destination }}</p>
-                    </div>
-                @endif
+                
             </div>
 
             <div class="text-sm">

@@ -49,7 +49,7 @@
                                                 {{ number_format((float) $wallet['balance'], $wallet['decimals']) }}
                                             </span>
                                         </p>
-                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">â€¢â€¢â€¢â€¢â€¢â€¢</p>
+                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">• • • • • •</p>
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
                                                 {{ number_format((float) $account->balance, $account?->currency?->decimals ?? 2) }}
                                             </span>
                                         </p>
-                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">â€¢â€¢â€¢â€¢â€¢â€¢</p>
+                                        <p class="balance-hidden text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">• • • • • •</p>
                                     </div>
                                 </div>
                             </div>
