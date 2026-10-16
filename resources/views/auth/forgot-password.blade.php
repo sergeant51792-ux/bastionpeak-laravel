@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Forgot password — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/utilities.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
     <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>

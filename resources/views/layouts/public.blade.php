@@ -6,7 +6,7 @@
     <title>@yield('title', 'Bastion Peak') — Bastion Peak</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="description" content="@yield('meta_description', 'Bastion Peak is a modern banking platform for secure account management, transfers, and financial operations.')">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/utilities.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('fonts/schibsted.css') }}">
     <link rel="stylesheet" href="{{ asset('fonts/ibm-plex.css') }}">
     <style>
