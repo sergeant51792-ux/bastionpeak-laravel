@@ -23,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use App\Http\Middleware\HandleLocale;
 use App\Http\Middleware\NoCache;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\SessionTimeout;
 use Symfony\Component\HttpFoundation\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -55,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             HandleLocale::class,
+            SessionTimeout::class,
         ]);
 
         // API middleware group

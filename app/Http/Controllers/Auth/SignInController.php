@@ -174,6 +174,8 @@ class SignInController extends Controller
     {
         Auth::login($user, $remember);
 
+        $request->session()->put('last_activity', time());
+
         $user->forceFill([
             'last_login_at' => now(),
             'failed_login_count' => 0,
@@ -227,6 +229,11 @@ class SignInController extends Controller
 
         \Illuminate\Support\Facades\Auth::login($user);
 
+        $request->session()->put('last_activity', time());
+
         return redirect()->route('home');
     }
 }
+
+
+
