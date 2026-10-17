@@ -18,16 +18,19 @@ class SessionTimeout
         if (Auth::check()) {
             $lastActivity = session('last_activity');
 
-            if ($lastActivity && (time() - $lastActivity) > $timeout) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
+            if ($lastActivity) {
+                if ((time() - $lastActivity) > $timeout) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
 
-                return redirect()->route('signin')->with('status', 'Your session has expired. Please sign in again to continue.');
+                    return redirect()->route('signin')->with('status', 'Your session has expired. Please sign in again to continue.');
+                }
+            } else {
+                session(['last_activity' => time()]);
             }
         }
 
         return $next($request);
     }
 }
-
