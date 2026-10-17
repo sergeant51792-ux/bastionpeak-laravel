@@ -23,12 +23,11 @@ class SessionTimeout
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('signin')->with('status', 'Your session has expired due to inactivity. Please sign in again to continue.');
+                return redirect()->route('signin')->with('status', 'Your session has expired. Please sign in again to continue.');
             }
-
-            session(['last_activity' => time()]);
         }
 
         return $next($request);
     }
 }
+
